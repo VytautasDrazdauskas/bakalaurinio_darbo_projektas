@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+	<head>
+			<link rel="stylesheet" href={{ url_for('static', filename='styles/sidebar.css') }}>
+	</head>
+	<body>
+		<ul class="sidebar">	
+			{% if current_user.is_authenticated %}
+			<li><a class="sidebar-btn" href="#"><font>Prietaisai</font></a></li>
+			<li><a class="sidebar-btn" href="#"><font>Naujas prietaisas</font></a></li>
+			{% endif %}
+			<li><a class="sidebar-btn" href="{{ url_for('main.about') }}"><font>Apie</font></a></li>
+		</ul>
+	</body>
+</html>
