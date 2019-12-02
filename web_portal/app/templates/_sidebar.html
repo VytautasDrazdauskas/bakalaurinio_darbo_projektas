@@ -7,7 +7,7 @@
 		<ul class="sidebar">	
 			{% if current_user.is_authenticated %}
 			<li><a class="sidebar-btn" href="#"><font>Prietaisai</font></a></li>
-			<li><a class="sidebar-btn" href="#"><font>Naujas prietaisas</font></a></li>
+			<li><a class="sidebar-btn" href="{{ url_for('main.newDevice') }}"><font>Naujas prietaisas</font></a></li>
 			{% endif %}
 			<li><a class="sidebar-btn" href="{{ url_for('main.about') }}"><font>Apie</font></a></li>
 		</ul>

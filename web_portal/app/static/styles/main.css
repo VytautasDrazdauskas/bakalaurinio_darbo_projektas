@@ -19,7 +19,7 @@ h1 {
 
 td {
 	text-align: center;
-	font-size: 18px;
+	font-size: 12px;
 }
 
 .display{
@@ -29,14 +29,18 @@ td {
 .fancy-button {
 	background: #cae9dd; 
 	border: none;
-	width: 110px;
-	height: 40px;
+	width: 150px;
+	height: 50px;
 	text-align:center; 
 	vertical-align:middle;
 	text-decoration: none;
 	display: inline-block;
-	font-size: 15px;
-	padding: 0px;
+	font-size: 20px;
+	color: white;
+	border-radius: 4px;
+	padding-top: 10px;
+	cursor:pointer;
+	display: inline-block;
   }
 
   
@@ -45,11 +49,6 @@ td {
 	width:100%;	
   }
  
-  .text {
-	margin-left: auto;
-	margin-right: auto;
-  }
-
   .paginate_button {
 	background: #cae9dd; 
 	border: none;
@@ -202,5 +201,35 @@ option {
     position: absolute;
 	top: 10%;
 	right: 0;
+}
+
+.upload-btn-wrapper {
+	position: relative;
+	overflow: hidden;
+	display: inline-block;
+	background-color:#fff;
+	color:#363636;
+	cursor:pointer;
+	justify-content:center;
+	text-align:center;
+	white-space:nowrap;
+	border-color:#dbdbdb;
+	border-width:1px;
+	padding:calc(.375em-1px) .75em;
+}
+
+.upload-btn-wrapper:hover{
+	background: linear-gradient(-0.45turn,#72e9db, #a0f8d5);
+	cursor: pointer;
+}
+
+.fancy-button input[type=file] {
+	font-size: inherit;
+	width: inherit;
+	height: inherit;
+	position: absolute;
+	left: 0;
+	top: 0;
+	opacity: 0;	
 }
 
