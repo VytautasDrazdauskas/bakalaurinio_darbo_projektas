@@ -18,7 +18,6 @@ def create_app():
     app.config['DEBUG'] = True
 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://dbupdate_user:DBupdate123@localhost:3306/MainDB'
-    app.config['SQLALCHEMY_BINDS'] = {'userDb' : 'mysql+pymysql://root:MANOkompas123@localhost:3306/7c7d7bb0145111eaa962507b9d8859de'}
     app.config['SQLALCHEMY_ECHO'] = True
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

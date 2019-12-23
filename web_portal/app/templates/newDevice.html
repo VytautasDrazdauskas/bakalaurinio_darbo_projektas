@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+    <script src={{ url_for('static', filename='js/html5-qrcode.js') }}></script>
+    <script src={{ url_for('static', filename='js/jsqrcode-combined.js') }}></script>
     <div class="column is-4 is-offset-4">
         <h3 class="title">Pridėti prietaisą</h3>
         <div class="box">
@@ -21,17 +23,28 @@
                         </div>
                     {% endfor -%}
                 {% endif %}
-            {% endwith %}               
-            <form method=post enctype=multipart/form-data>                    
+            {% endwith %}  
+            <!--<div id="reader" style="height: fit-content;"></div>-->
+            <form method=post enctype=multipart/form-data>                         
                 <div class="field">
                     <div class="control">
-                        <div class="fancy-button">
-                            <a>Įkelti QR kodą</a>
-                            <input type="file" name="file" accept="image/*" capture="camera"/>
-                        </div>                                                      
+                        <div class="upload-btn-wrapper">
+                            <button class="fancy-button">Įkelti QR kodą
+                            <input type="file" name="file" accept="image/*" capture="camera">  
+                            </button>    
+                        </div>                            
                     </div>
-                </div>
+                </div>                 
                 <input class="button is-block is-info is-large is-fullwidth" type="submit" value='Užregistruoti prietaisą'>
             </form>
         </div>
+        <script>
+            $('#reader').html5_qrcode(function(data){
+                /* do something when code is read */
+              }, function(error){
+                /* show read errors */
+              }, function(videoError){
+                /* the video stream could be opened */
+              });
+        </script>
 {% endblock %}

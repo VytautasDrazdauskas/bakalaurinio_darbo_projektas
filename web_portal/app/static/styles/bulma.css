@@ -3227,9 +3227,11 @@ to {
     margin-bottom:1.5rem;
     }
     
-    audio,img,video,img {
-    height:auto;
-    max-width:100%;
+    @media screen and (min-width:1088px){
+        audio,img,video,img {
+        height:auto;
+        max-width:100%;
+        }
     }
     
     article,aside,figure,footer,header,hgroup,section,.dropdown.is-active .dropdown-menu,.dropdown.is-hoverable:hover .dropdown-menu,.tabs li {

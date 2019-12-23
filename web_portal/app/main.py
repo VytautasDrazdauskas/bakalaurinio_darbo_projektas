@@ -3,6 +3,12 @@ from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required, current_user
 from app import ALLOWED_EXTENSIONS
 from werkzeug.utils import secure_filename
+from app.helpers.sessionMaker import table_exists
+from app.controllers.devices import add_new_device
+from app.helpers.codeDecode import decode
+import numpy as np
+import cv2
+from PIL import Image
 
 main = Blueprint('main', __name__)
 
@@ -40,10 +46,30 @@ def newDevice_post():
         if file.filename == '':
             flash('Neįkeltas failas','danger')
             return redirect(request.url)
+            
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
+            
+            try:
+                response = file.read()
+                
+                image = cv2.imdecode(np.fromstring(response, np.uint8), cv2.IMREAD_COLOR)
+                img = cv2.resize(image,(360,480))
+                code = decode(img)
+                if code:
+                    add_new_device(code)
+                else:
+                    flash("QR kodas nenuskaitytas!","danger")
+                    return redirect(request.url) 
+
+            except Exception as Ex:
+                flash("Prietaiso nepavyko užregistruoti!","danger")
+                return redirect(request.url)
+
             flash('Prietaisas sėkmingai užregistruotas!','success')
-               
+        else:
+            flash("Failas nėra tinkamo formato!","dangWer")
+
     return render_template('newDevice.html')
 
 @main.route('/devicesList')

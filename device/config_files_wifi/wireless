@@ -1,0 +1,19 @@
+
+config wifi-device 'radio0'
+	option type 'mac80211'
+	option channel '11'
+	option hwmode '11g'
+	option path 'platform/qca953x_wmac'
+	option htmode 'HT20'
+	option disabled '0'
+	option country 'LT'
+
+config wifi-iface
+	option device 'radio0'
+	option network 'wwan'
+	option mode 'sta'
+	option encryption 'psk2'
+	option ssid 'NeraInterneto'
+	option bssid '0C:80:63:4B:47:A2'
+	option key 'MANOkompas123'
+
