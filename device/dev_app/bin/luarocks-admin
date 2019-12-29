@@ -1,0 +1,21 @@
+#!/home/vytautas/repo/bakalaurinio_darbo_projektas/device/dev_app/bin/lua
+package.loaded["luarocks.core.hardcoded"] = { FORCE_CONFIG = true, SYSCONFDIR = [[/home/vytautas/repo/bakalaurinio_darbo_projektas/device/dev_app/luarocks]] }
+package.path=[[/home/vytautas/repo/bakalaurinio_darbo_projektas/device/dev_app/share/lua/5.1/?.lua;]] .. package.path
+
+-- Load cfg first so that luarocks.loader knows it is running inside LuaRocks
+local cfg = require("luarocks.core.cfg")
+
+local loader = require("luarocks.loader")
+local cmd = require("luarocks.cmd")
+
+local description = "LuaRocks repository administration interface"
+
+local commands = {
+   help = "luarocks.cmd.help",
+   make_manifest = "luarocks.admin.cmd.make_manifest",
+   add = "luarocks.admin.cmd.add",
+   remove = "luarocks.admin.cmd.remove",
+   refresh_cache = "luarocks.admin.cmd.refresh_cache",
+}
+
+cmd.run_command(description, commands, "luarocks.admin.cmd.external", ...)

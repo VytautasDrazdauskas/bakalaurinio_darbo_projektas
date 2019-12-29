@@ -1,5 +1,8 @@
 {
     "Lua.diagnostics.globals": [
         "fileExists"
+    ],
+    "Lua.diagnostics.disable": [
+        "redundant-parameter"
     ]
 }
