@@ -1,9 +1,9 @@
 #!/usr/bin/lua
+local socket = require "include.socket"
+local http = require "include.http"
+local MQTT = require "include.mqtt_library"
+local json = require "include.json"
 
-local socket = require("socket")
-local http = require("socket.http")
-local MQTT = require("mqtt_library")
-local json = require("json")
 local deviceMAC = "unknown"
 local userUID = "useruid"
 local systemName = "system"
@@ -102,7 +102,7 @@ function Main()
                 --print(IP)                
                
                 --publishingas
-                PublishData(mqtt_client,Topic,Message,"MQTT publisher " .. deviceMAC)
+                PublishData(mqtt_client,Topic,Message,"MQTT publisher " .. deviceMAC)          
         end
 
         mqtt_client:destroy()
