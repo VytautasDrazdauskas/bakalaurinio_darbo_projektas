@@ -3,12 +3,16 @@ local socket = require "include.socket"
 local http = require "include.http"
 local MQTT = require "include.mqtt_library"
 local json = require "include.json"
+local fileParser = require "include.file_parser"
 
 local deviceMAC = "unknown"
 local userUID = "useruid"
 local systemName = "system"
 
-local brokerIP = "192.168.137.53"
+
+
+--parametrai nuskaitomi is konfiguracinio failo
+BrokerIP = fileParser.ReadFileData("/root/app/broker.conf","ip")
 
 function Is_openwrt()
         return(os.getenv("USER") == "root" or os.getenv("USER") == nil)
@@ -68,9 +72,9 @@ function PublishData(mqtt_client,topic,message,deviceName)
 end
 
 function Main()
-        --sukuriamas sujungimas su MQTT brokeriu
-        local mqtt_client = MQTT.client.create(brokerIP, nil, Callback)
-        print("Connection with MQTT broker " .. brokerIP .. " established!")
+        --sukuriamas sujungimas su MQTT brokeriu        
+        local mqtt_client = MQTT.client.create(BrokerIP, nil, Callback)
+        print("Connection with MQTT broker " .. BrokerIP .. " established!")
 
         --kol nenutraukiamas rysys, tol sukasi
         Running = true
@@ -82,7 +86,7 @@ function Main()
                 local heater_2_state = false
                 local heater_3_state = false
                 local fanState = true
-                local outerTemp = ReadFileData("test.txt","temp")
+                local outerTemp = fileParser.ReadFileData("test.txt","temp")
 
                 --formuojama duomenu lenta, kuri veliau parsinama i 
                 local dataTable = { 
@@ -103,21 +107,21 @@ function Main()
                 
                 --patikrinam ar yra rysys su brokeriu
                 
-                if (CheckPing(brokerIP) == true) then   
+                if (CheckPing(BrokerIP) == true) then   
                         --nusiunciame duomenis    
                         --pcall - protected call. Jei ivyksta klaida, nenulauzia programos (vietoje try catch bloko)                     
                         if (pcall(PublishData,mqtt_client,Topic,Message,"MQTT publisher " .. deviceMAC)) then
                         else
                                 print("Trying to restore connection...")                
-                                while (CheckPing(brokerIP) == false) do
+                                while (CheckPing(BrokerIP) == false) do
                                         socket.sleep(5.0)
                                 end
-                                print("Connection with " .. brokerIP .. " restored!")
+                                print("Connection with " .. BrokerIP .. " restored!")
                                 Main()
                         end        
                 else
                         --jei nera rysio, nutraukiam perdavima
-                        print("Conncetion lost with " .. brokerIP)
+                        print("Conncetion lost with " .. BrokerIP)
                         Running = false
                         IsSignalLost = true
                 end 
@@ -129,10 +133,10 @@ function Main()
         if (IsSignalLost == true)then
                 print("Trying to restore connection...")
 
-                while (CheckPing(brokerIP) == false) do
+                while (CheckPing(BrokerIP) == false) do
                         socket.sleep(5.0)
                 end
-                print("Connection with " .. brokerIP .. " restored!")
+                print("Connection with " .. BrokerIP .. " restored!")
                 Main()
         end
         return
@@ -148,29 +152,5 @@ function CheckPing(IP)
         not string.match(response, "Network unreachable")) 
         then return true else return false end
 end
-
---failu nuskaitymas
-function ReadFileData(pathToFile, type)
-        local file, err = io.open(pathToFile,"r")
-        if err then print("File is empty"); return; end
-        local data = ""
-        while true do
-                local line = file:read()                
-                if line == nil then break else data = data .. line end
-        end        
-        file:close()
-
-        local result = nil
-
-        --Isparsinam is failo temperatura
-        if type == "temp"
-        then
-                local temperature = string.match(data, "t=(.*)")
-                result = temperature / 1000
-        end
-
-        return result
-end
-
 --startuojam
 Main()

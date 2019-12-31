@@ -46,18 +46,18 @@ restartDaemon()
     #pakeiciam working directory i skripto vieta ir istrinam senus logus, kad neissipustu
     cd /root/app
     rm /root/app/log.txt
+    
+    BROKER_IP=`cat /root/app/broker.conf | grep ip= | awk -F= '{print $2}'`
 
     #patikrinam, ar yra interneto rysys
-    while ! ping -c 1 -W 1 192.168.137.53 > /dev/null 2>&1; do
+    while ! ping -c 1 -W 1 $BROKER_IP > /dev/null 2>&1; do
         echo "Waiting for ping. Network interface might be down..." 
-        echo "Waiting for ping (192.168.137.53). Network interface might be down..." >> /root/app/log.txt
+        echo "Waiting for ping ($BROKER_IP). Network interface might be down..." >> /root/app/log.txt
         sleep 5
     done
 
     #restartinam
-    echo "stopping daemon" >> /root/app/log.txt
     stopDaemon
-    echo "starting daemon" >> /root/app/log.txt
     startDaemon
 }
 
