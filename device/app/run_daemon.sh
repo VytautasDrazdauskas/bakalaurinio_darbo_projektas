@@ -9,7 +9,7 @@ startDaemon()
         echo "Starting daemon..."
         echo "Starting daemon..." >> /root/app/log.txt
         #startuojam deamona
-        nohup /root/app/publish.lua >> /root/app/log.txt 2>&1 >/dev/null &
+        nohup /root/app/publish.lua >> /root/app/log.txt 2>&1 &
 
         #issaugom PID i tmp faila
         echo $! > /root/app/publish_daemon.pid
@@ -24,7 +24,7 @@ stopDaemon()
     if [ -f "$FILE" ]; then
         echo "Stopping daemon..."
         echo "Stopping daemon..." >> /root/app/log.txt
-        #viska pilam i null, nes turim labai ribota atminti
+        
         PID=`cat /root/app/publish_daemon.pid`
         #killinam procesa
         kill -9 $PID
@@ -48,10 +48,10 @@ restartDaemon()
     rm /root/app/log.txt
 
     #patikrinam, ar yra interneto rysys
-    while ! ping -c 1 -W 1 8.8.8.8 > /dev/null 2>&1; do
-        echo "Waiting for 8.8.8.8. Network interface might be down..." 
-        echo "Waiting for 8.8.8.8. Network interface might be down..." >> /root/app/log.txt
-        sleep 1
+    while ! ping -c 1 -W 1 192.168.137.53 > /dev/null 2>&1; do
+        echo "Waiting for ping. Network interface might be down..." 
+        echo "Waiting for ping (192.168.137.53). Network interface might be down..." >> /root/app/log.txt
+        sleep 5
     done
 
     #restartinam
