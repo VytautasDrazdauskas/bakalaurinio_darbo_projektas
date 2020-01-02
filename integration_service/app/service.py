@@ -23,7 +23,7 @@ class MQTT_service():
             fh.write("{}\n".format(str(msg.payload)))
 
     def start(self):
-        broker_ip = "192.168.137.53"
+        broker_ip = "127.0.0.1"
         broker_port = 1883   
 
         try:

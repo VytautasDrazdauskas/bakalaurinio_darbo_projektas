@@ -25,24 +25,11 @@ if (Is_openwrt()) then
         handle:close()
 end
 
---tema user/system/prietaisoMAC/
-local topic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/jsondata"
---local controlTopic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/control"
+--tema user/system/prietaisoMAC/control
+local topic = userUID .. "/" .. systemName .. "/" .. "+" .. "/control"
 PATH = Path();
 --parametrai nuskaitomi is konfiguracinio failo
 local brokerIP = fileParser.ReadFileData(PATH .. "/broker.conf","ip")
-
--- function Callback(client,msg)
---         assert(client:acknowledge(msg))
-        
---         print("received:", msg)
---         -- print("Received: " .. topic .. ": " .. message)
---         -- if (message == "quit") then Running = false end
---         -- if (message == "reboot") then 
---         --         Running = false
---         --         io.popen("reboot")
---         -- end
--- end
 
 --MQTT publish
 function PublishData(client,topic,message)
@@ -79,27 +66,19 @@ function Main()
                                 return
                         else
                                 print("Connection with MQTT broker " .. brokerIP .. " established!", connack) -- successful connection
-                        end                                                        
+                        end    
                         
-                        Running = true
-                        IsSignalLost = false
-                        
-                        while (Running) do 
-                                --duomenu nuskaitymas, etc  
-                                local Message = ReadData()
-                                
-                                --patikrinam ar yra rysys su brokeriu
-                                if (CheckPing(brokerIP) == true) then   
-                                        --nusiunciame duomenis    
-                                        --pcall - protected call. Jei ivyksta klaida, nenulauzia programos (vietoje try catch bloko)                     
-                                        if (pcall(PublishData,client,topic,Message)) then else RestoreConnection(brokerIP,client) end        
-                                else
-                                        --jei nera rysio, laukiam kol atsiras rysys
-                                        print("Conncetion lost with " .. brokerIP)
-                                        
-                                        RestoreConnection(brokerIP,client)
-                                end
-                        end                                                                                                  
+                        client:subscribe{ topic=topic, qos=1, callback=function(suback)end}
+                end,
+
+                message = function(msg)
+                    assert(client:acknowledge(msg))        
+                    print("received:", msg)
+                    
+                    if (msg.payload == "reboot") then 
+                            Running = false
+                            io.popen("reboot")
+                    end
                 end,
 
                 error = function(err)
@@ -138,32 +117,6 @@ function CheckPing(IP)
         if (string.match(response, " 0%% packet loss") and 
         not string.match(response, "Network unreachable")) 
         then return true else return false end
-end
-
-function ReadData()
-        --duomenu nuskaitymas, etc                
-        local innerTemp = 252.25  --test
-        local heater_1_state = true
-        local heater_2_state = false
-        local heater_3_state = false
-        local fanState = true
-        local outerTemp = fileParser.ReadFileData("test.txt","temp")
-
-        --formuojama duomenu lenta, kuri veliau parsinama i 
-        local dataTable = { 
-                deviceMAC=deviceMAC,
-                innerTemp=innerTemp,
-                outerTemp=outerTemp,
-                heaterStates={
-                        heater_1=heater_1_state,
-                        heater_2=heater_2_state,
-                        heater_3=heater_3_state
-                        },
-                fanState = fanState
-                }
-        
-
-        return json.encode(dataTable)
 end
 
 --startuojam
