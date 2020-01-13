@@ -26,7 +26,7 @@ if (Is_openwrt()) then
 end
 
 --tema user/system/prietaisoMAC/control
-local topic = userUID .. "/" .. systemName .. "/" .. "+" .. "/control"
+local topic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/control"
 PATH = Path();
 --parametrai nuskaitomi is konfiguracinio failo
 local brokerIP = fileParser.ReadFileData(PATH .. "/broker.conf","ip")
@@ -45,27 +45,23 @@ function PublishData(client,topic,message)
         socket.sleep(5.0)  -- seconds      
 end
 
-function CreateClientInstance(ip)
-        local client = mqtt.client{
-                uri = ip,
-                clean = true,
-                version = mqtt.v50,
-        }
-        return client
-end
-
 function Main()
         --sukuriamas sujungimas su MQTT brokeriu        
-        local client = CreateClientInstance(brokerIP)
+        local client = mqtt.client{
+                uri = brokerIP,
+                clean = false,
+                username = deviceMAC .. "_subscriber",
+                version = mqtt.v50,
+        }
       
         --kol nenutraukiamas rysys, tol sukasi
         client:on{
                 connect = function(connack)   
                         if connack.rc ~= 0 then
-                                print("Connection to broker " .. brokerIP .. " failed:", connack:reason_string(), connack)
+                                print("Subscribe connection to broker " .. brokerIP .. " failed:", connack:reason_string(), connack)
                                 return
                         else
-                                print("Connection with MQTT broker " .. brokerIP .. " established!", connack) -- successful connection
+                                print("Subscribe connection with MQTT broker " .. brokerIP .. " established! Topic: " .. topic, connack) -- successful connection
                         end    
                         
                         client:subscribe{ topic=topic, qos=1, callback=function(suback)end}
@@ -82,7 +78,7 @@ function Main()
                 end,
 
                 error = function(err)
-                        print("MQTT client error:", err)
+                        print("MQTT publish client error:", err)
                 end,
         }
 
@@ -91,32 +87,6 @@ function Main()
         print("Program stopped")
            
         return
-end
-
-function RestoreConnection(ip,client)
-        
-        print("Trying to restore connection...")                
-        while (CheckPing(ip) == false) do
-                socket.sleep(5.0)
-        end
-
-        client:disconnect()
-        print("Connection with " .. ip .. " restored!")
-        Main()
-end
-
-function CheckPing(IP)
-        if (Is_openwrt() == false) 
-        then return true end
-
-        local command = "ping -c 1 -W 1 " .. IP
-        local handler = io.popen(command)
-        local response = handler:read("*a")
-        handler:close()
-        
-        if (string.match(response, " 0%% packet loss") and 
-        not string.match(response, "Network unreachable")) 
-        then return true else return false end
 end
 
 --startuojam

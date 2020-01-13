@@ -1,72 +1,101 @@
 #!/bin/ash
+SCRIPT=$(readlink -f $0)
+SCRIPTPATH=`dirname $SCRIPT`
 
 startDaemon()
 {    
-    FILE=/root/app/publish_daemon.pid
+    FILE=$SCRIPTPATH/$1'_daemon.pid'
     if [ -f "$FILE" ]; then
-        echo "Daemon is already started! Stop or restart process."
+        echo "Daemon $1 is already started! Stop or restart process."
     else 
-        echo "Starting daemon..."
-        echo "Starting daemon..." >> /root/app/log.txt
-        #startuojam deamona
-        nohup /root/app/publish.lua >> /root/app/log.txt 2>&1 &
+        echo "Starting $1 daemon..."
+        echo "Starting $1 daemon..." >> $SCRIPTPATH/log.txt
+        #startuojam publish deamona
+        nohup $SCRIPTPATH/$1.lua >> $SCRIPTPATH/log.txt 2>&1 &
 
         #issaugom PID i tmp faila
-        echo $! > /root/app/publish_daemon.pid
-        echo "Daemon $! is started."
-        echo "Daemon $! is started." >> /root/app/log.txt
+        echo $! > $SCRIPTPATH/$1'_daemon.pid'
+        echo "Daemon $1 $! is started."
+        echo "Daemon $1 $! is started." >> $SCRIPTPATH/log.txt
     fi
 }
 
 stopDaemon()
 {    
-    FILE=/root/app/publish_daemon.pid
+    FILE=$SCRIPTPATH/$1'_daemon.pid'
     if [ -f "$FILE" ]; then
-        echo "Stopping daemon..."
-        echo "Stopping daemon..." >> /root/app/log.txt
+        echo "Stopping $1 daemon..."
+        echo "Stopping $1 daemon..." >> $SCRIPTPATH/log.txt
         
-        PID=`cat /root/app/publish_daemon.pid`
+        PID=`cat $SCRIPTPATH/$1'_daemon.pid'`
         #killinam procesa
         kill -9 $PID
         
         if [ $? -eq 0 ]; then
             #istrinam PID faila
-            echo "Daemon $PID is stopped." 
-            echo "Daemon $PID is stopped." >> /root/app/log.txt
+            echo "$1 Daemon $PID is stopped." 
+            echo "$1 Daemon $PID is stopped." >> $SCRIPTPATH/log.txt
         fi  
-        rm /root/app/publish_daemon.pid
-    else        
-        echo "Daemon is not started! Start process."
-        echo "Daemon is not started! Start process." >> /root/app/log.txt
+        rm $SCRIPTPATH/$1'_daemon.pid'
+    else       
+        echo "Daemon $1 is not started! Start process."
+        echo "Daemon $1 is not started! Start process." >> $SCRIPTPATH/log.txt
     fi
 }
 
-restartDaemon()
+startBothDaemons()
+{    
+    startDaemon "publish"
+    sleep 5
+    startDaemon "subscribe"
+}
+
+stopBothDaemons()
+{    
+    stopDaemon "publish"
+    stopDaemon "subscribe"
+}
+
+restorePublisher()
+{
+    stopDaemon "publisher" 
+    startDaemon "publisher"
+}
+
+restoreSubscriber()
+{
+    stopDaemon "subscribe" 
+    startDaemon "subscribe"
+}
+
+restartDaemons()
 {
     #pakeiciam working directory i skripto vieta ir istrinam senus logus, kad neissipustu
-    cd /root/app
-    rm /root/app/log.txt
+    cd $SCRIPTPATH
+    rm $SCRIPTPATH/log.txt
     
-    BROKER_IP=`cat /root/app/broker.conf | grep ip= | awk -F= '{print $2}'`
+    BROKER_IP=`cat $SCRIPTPATH/broker.conf | grep ip= | awk -F= '{print $2}'`
 
     #patikrinam, ar yra interneto rysys
     while ! ping -c 1 -W 1 $BROKER_IP > /dev/null 2>&1; do
         echo "Waiting for ping. Network interface might be down..." 
-        echo "Waiting for ping ($BROKER_IP). Network interface might be down..." >> /root/app/log.txt
+        echo "Waiting for ping ($BROKER_IP). Network interface might be down..." >> $SCRIPTPATH/log.txt
         sleep 5
     done
 
     #restartinam
-    stopDaemon
-    startDaemon
+    stopBothDaemons
+    startBothDaemons
 }
 
 if [ $# == 1 ]
 then
     case $1 in
-        'start')  startDaemon;;
-        'stop')   stopDaemon;;
-        'restart')    restartDaemon;;
+        'start')  startBothDaemons;;
+        'stop')   stopBothDaemons;;
+        'restart')    restartDaemons;;
+        'restorePublisher') restorePublisher;;
+        'restoreSubscriber') restoreSubscriber;;
     esac
 else
     echo "Use start|stop|restart"

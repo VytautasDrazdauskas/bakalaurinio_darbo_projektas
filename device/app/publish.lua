@@ -6,6 +6,7 @@ local fileParser = require "libraries.file_parser"
 local deviceMAC = "unknown"  --useruid/system/C493000EFE35/control
 local userUID = "useruid"
 local systemName = "system"
+IsSignalLost = false
 
 function Path()
         local str = debug.getinfo(2, "S").source:sub(2)
@@ -32,18 +33,6 @@ PATH = Path();
 --parametrai nuskaitomi is konfiguracinio failo
 local brokerIP = fileParser.ReadFileData(PATH .. "/broker.conf","ip")
 
--- function Callback(client,msg)
---         assert(client:acknowledge(msg))
-        
---         print("received:", msg)
---         -- print("Received: " .. topic .. ": " .. message)
---         -- if (message == "quit") then Running = false end
---         -- if (message == "reboot") then 
---         --         Running = false
---         --         io.popen("reboot")
---         -- end
--- end
-
 --MQTT publish
 function PublishData(client,topic,message)
         assert(client:publish{
@@ -52,84 +41,91 @@ function PublishData(client,topic,message)
                 qos = 1,
                 properties = {
                         payload_format_indicator = 1,
-                        content_type = "json",
+                        content_type = "text/plain",
+                },
+                user_properties = {
+                        hello = "world",
                 },
         })
         socket.sleep(5.0)  -- seconds      
 end
 
-function CreateClientInstance(ip)
-        local client = mqtt.client{
-                uri = ip,
-                clean = true,
-                version = mqtt.v50,
-        }
-        return client
-end
-
 function Main()
         --sukuriamas sujungimas su MQTT brokeriu        
-        local client = CreateClientInstance(brokerIP)
-      
-        --kol nenutraukiamas rysys, tol sukasi
-        client:on{
-                connect = function(connack)   
-                        if connack.rc ~= 0 then
-                                print("Connection to broker " .. brokerIP .. " failed:", connack:reason_string(), connack)
-                                return
-                        else
-                                print("Connection with MQTT broker " .. brokerIP .. " established!", connack) -- successful connection
-                        end                                                        
-                        
-                        Running = true
-                        IsSignalLost = false
-                        
-                        while (Running) do 
-                                --duomenu nuskaitymas, etc  
-                                local Message = ReadData()
-                                
-                                --patikrinam ar yra rysys su brokeriu
-                                if (CheckPing(brokerIP) == true) then   
-                                        --nusiunciame duomenis    
-                                        --pcall - protected call. Jei ivyksta klaida, nenulauzia programos (vietoje try catch bloko)                     
-                                        if (pcall(PublishData,client,topic,Message)) then else RestoreConnection(brokerIP,client) end        
-                                else
-                                        --jei nera rysio, laukiam kol atsiras rysys
-                                        print("Conncetion lost with " .. brokerIP)
-                                        
-                                        RestoreConnection(brokerIP,client)
-                                end
-                        end                                                                                                  
-                end,
-
-                error = function(err)
-                        print("MQTT client error:", err)
-                end,
+        local client = mqtt.client{
+                uri = brokerIP,
+                clean = false,
+                username = deviceMAC .. "_publisher",
+                version = mqtt.v50,
         }
+        
+        print("Program starting...")        
+               
+        while true do
+                local result = client:start_connecting()
 
-        print("Starting program")
-        mqtt.run_ioloop(client)
-        print("Program stopped")
-           
+                if result == false then
+                        print("Connection to broker " .. brokerIP .. " failed:")
+                        return
+                else
+                        print("Connection with MQTT broker " .. brokerIP .. " established!") -- successful connection
+                        IsSignalLost = false
+                end  
+
+                local response = Loop(client,2)
+
+                --dingo signalas
+                if(response == -2)then
+                        client:close_connection()  
+                        RestoreConnection(brokerIP)
+                else --kitos priezastys                        
+                        client:close_connection()                         
+                        break
+                end
+        end
+        print("Program stopped")  
+
         return
 end
 
-function RestoreConnection(ip,client)
+function Loop(client,sleepDelay)
+
+        Running = true
+        while (Running) do  
+                local Message = ReadData()
+
+                if (CheckPing(brokerIP) == true) then 
+                        client:publish{
+                                topic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/jsondata",
+                                payload = Message,
+                                qos = 0,
+                                properties = {
+                                        payload_format_indicator = 1,
+                                        content_type = "json",
+                                },
+                        }
+                        socket.sleep(sleepDelay)
+                else
+                        print("Signal is lost.")
+                        IsSignalLost = true
+                        return -2
+                end
+        end 
+end
+
+function RestoreConnection(ip)
         
         print("Trying to restore connection...")                
         while (CheckPing(ip) == false) do
                 socket.sleep(5.0)
         end
 
-        client:disconnect()
+        IsSignalLost = false
         print("Connection with " .. ip .. " restored!")
-        Main()
+        return true
 end
 
 function CheckPing(IP)
-        if (Is_openwrt() == false) 
-        then return true end
-
         local command = "ping -c 1 -W 1 " .. IP
         local handler = io.popen(command)
         local response = handler:read("*a")
