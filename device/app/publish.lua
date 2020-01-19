@@ -2,16 +2,18 @@
 local mqtt = require "libraries.mqtt.init"
 local json = require "libraries.json"
 local fileParser = require "libraries.file_parser"
-
-local deviceMAC = "unknown"  --useruid/system/C493000EFE35/control
-local userUID = "useruid"
-local systemName = "system"
-IsSignalLost = false
+local serialController = require "libraries.rs232_controller"
 
 function Path()
         local str = debug.getinfo(2, "S").source:sub(2)
         return str:match("(.*/)")
-     end
+end
+PATH = Path();
+
+local deviceMAC = "unknown"  --useruid/system/C493000EFE35/control
+local userUID = fileParser.ReadFileData(PATH .. "broker.conf","useruuid")
+local systemName = fileParser.ReadFileData(PATH .. "broker.conf","systemname")
+IsSignalLost = false
 
 function Is_openwrt()
         return(os.getenv("USER") == "root" or os.getenv("USER") == nil)
@@ -29,9 +31,9 @@ end
 --tema user/system/prietaisoMAC/
 local topic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/jsondata"
 --local controlTopic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/control"
-PATH = Path();
+
 --parametrai nuskaitomi is konfiguracinio failo
-local brokerIP = fileParser.ReadFileData(PATH .. "/broker.conf","ip")
+local brokerIP = fileParser.ReadFileData(PATH .. "broker.conf","ip")
 
 --MQTT publish
 function PublishData(client,topic,message)
@@ -77,7 +79,7 @@ function Main()
                 --dingo signalas
                 if(response == -2)then
                         client:close_connection()  
-                        RestoreConnection(brokerIP)
+                        RestoreConnection("8.8.8.8")
                 else --kitos priezastys                        
                         client:close_connection()                         
                         break
@@ -94,7 +96,7 @@ function Loop(client,sleepDelay)
         while (Running) do  
                 local Message = ReadData()
 
-                if (CheckPing(brokerIP) == true) then 
+                if (CheckPing("8.8.8.8") == true) then 
                         client:publish{
                                 topic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/jsondata",
                                 payload = Message,
@@ -137,28 +139,24 @@ function CheckPing(IP)
 end
 
 function ReadData()
-        --duomenu nuskaitymas, etc                
-        local innerTemp = 252.25  --test
-        local heater_1_state = true
-        local heater_2_state = false
-        local heater_3_state = false
-        local fanState = true
-        local outerTemp = fileParser.ReadFileData("test.txt","temp")
+        --duomenu nuskaitymas    
+        
+        local data = serialController.Get_serial_data("/dev/ttyUSB0")
+
+        local temp = fileParser.GetData(data,"t")  --test
+        local value = fileParser.GetData(data,"val")     
+        local ledState = fileParser.GetData(data,"ledState")      
 
         --formuojama duomenu lenta, kuri veliau parsinama i 
         local dataTable = { 
                 deviceMAC=deviceMAC,
-                innerTemp=innerTemp,
-                outerTemp=outerTemp,
-                heaterStates={
-                        heater_1=heater_1_state,
-                        heater_2=heater_2_state,
-                        heater_3=heater_3_state
-                        },
-                fanState = fanState
+                data={
+                        temp=temp,
+                        value=value,
+                        ledState=ledState
+                        }
                 }
         
-
         return json.encode(dataTable)
 end
 

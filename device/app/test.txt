@@ -1,2 +1,1 @@
-be 01 4b 46 7f ff 02 10 fe : crc=fe YES
-be 01 4b 46 7f ff 02 10 fe t=27875
+t=26.37;val=54;

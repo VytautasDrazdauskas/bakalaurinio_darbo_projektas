@@ -74,12 +74,12 @@ restartDaemons()
     cd $SCRIPTPATH
     rm $SCRIPTPATH/log.txt
     
-    BROKER_IP=`cat $SCRIPTPATH/broker.conf | grep ip= | awk -F= '{print $2}'`
+    #BROKER_IP=`cat $SCRIPTPATH/broker.conf | grep ip= | awk -F= '{print $2}'`
 
     #patikrinam, ar yra interneto rysys
-    while ! ping -c 1 -W 1 $BROKER_IP > /dev/null 2>&1; do
+    while ! ping -c 1 -W 1 8.8.8.8 > /dev/null 2>&1; do
         echo "Waiting for ping. Network interface might be down..." 
-        echo "Waiting for ping ($BROKER_IP). Network interface might be down..." >> $SCRIPTPATH/log.txt
+        echo "Waiting for ping (8.8.8.8). Network interface might be down..." >> $SCRIPTPATH/log.txt
         sleep 5
     done
 

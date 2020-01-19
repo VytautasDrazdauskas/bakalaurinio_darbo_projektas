@@ -2,15 +2,20 @@
 local mqtt = require "libraries.mqtt.init"
 local json = require "libraries.json"
 local fileParser = require "libraries.file_parser"
-
-local deviceMAC = "unknown"  --useruid/system/C493000EFE35/control
-local userUID = "useruid"
-local systemName = "system"
+local serial = require "libraries.rs232_controller"
 
 function Path()
         local str = debug.getinfo(2, "S").source:sub(2)
         return str:match("(.*/)")
-     end
+end
+
+PATH = Path();
+
+local deviceMAC = "unknown"  --useruid/system/C493000EFE02/control
+local userUID = fileParser.ReadFileData(PATH .. "broker.conf","useruuid")
+local systemName = fileParser.ReadFileData(PATH .. "broker.conf","systemname")
+
+local serialClient = serial.Serial_create_client("/dev/ttyUSB0")
 
 function Is_openwrt()
         return(os.getenv("USER") == "root" or os.getenv("USER") == nil)
@@ -27,23 +32,9 @@ end
 
 --tema user/system/prietaisoMAC/control
 local topic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/control"
-PATH = Path();
---parametrai nuskaitomi is konfiguracinio failo
-local brokerIP = fileParser.ReadFileData(PATH .. "/broker.conf","ip")
 
---MQTT publish
-function PublishData(client,topic,message)
-        assert(client:publish{
-                topic = topic,
-                payload = message,
-                qos = 1,
-                properties = {
-                        payload_format_indicator = 1,
-                        content_type = "json",
-                },
-        })
-        socket.sleep(5.0)  -- seconds      
-end
+--parametrai nuskaitomi is konfiguracinio failo
+local brokerIP = fileParser.ReadFileData(PATH .. "broker.conf","ip")
 
 function Main()
         --sukuriamas sujungimas su MQTT brokeriu        
@@ -64,26 +55,28 @@ function Main()
                                 print("Subscribe connection with MQTT broker " .. brokerIP .. " established! Topic: " .. topic, connack) -- successful connection
                         end    
                         
-                        client:subscribe{ topic=topic, qos=1, callback=function(suback)end}
+                        client:subscribe{ topic=topic, qos=2, callback=function(suback)end}
                 end,
 
                 message = function(msg)
                     assert(client:acknowledge(msg))        
-                    print("received:", msg)
+                    --print("received:", msg)
                     
                     if (msg.payload == "reboot") then 
-                            Running = false
-                            io.popen("reboot")
+                        Running = false
+                        io.popen("reboot")
+                    elseif (msg.payload == "LED ON") then
+                        serial.Serial_write(serialClient,"ON")
+                    elseif (msg.payload == "LED OFF") then
+                        serial.Serial_write(serialClient,"OFF")
                     end
-                end,
-
-                error = function(err)
-                        print("MQTT publish client error:", err)
-                end,
+                end
         }
 
         print("Starting program")
+        while true do
         mqtt.run_ioloop(client)
+        end
         print("Program stopped")
            
         return

@@ -1,22 +1,25 @@
 local file_parser = {}
 
 local function ReadLine(line,type)
-        local result = nil
-    
-        if type == "temp" and string.match(line,"t=")
-        then
-                local temperature = string.match(line, "t=(.*)")
-                result = temperature / 1000
-                return result
-        end
-    
-        if type == "ip" and string.match(line,"ip=")
-        then
-                result = string.match(line, "ip=(.*)")
-                return result
-        end
-        return nil
-    end
+        local result = nil          
+        
+        result = string.match(line, type.."=(.*)")
+
+        return result
+end
+
+function file_parser.GetData(string,type)
+	local result = nil
+	
+	for i in string.gmatch(string, "[^;]+") do
+		result = string.match(i, type .. "=(.*)")
+		if result ~= nil then
+			return result
+		end
+	end
+
+	return result
+end
     
 function file_parser.ReadFileData(pathToFile, type)
         local file, err = io.open(pathToFile,"r")
