@@ -18,3 +18,34 @@ b'{"data":{"value":"63","temp":"30.76","ledState":"1"},"deviceMAC":"C493000EFE02
 2020-01-23 11:54:00.943989
 Sender MAC address: C493000EFE02
 b'{"data":{"value":"63","temp":"30.76","ledState":"1"},"deviceMAC":"C493000EFE02"}'
+2020-01-23 11:54:11.029963
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"68","temp":"33.20","ledState":"1"},"deviceMAC":"C493000EFE02"}'
+2020-01-23 11:54:21.112956
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"63","temp":"30.76","ledState":"1"},"deviceMAC":"C493000EFE02"}'
+2020-01-23 11:54:31.215403
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"58","temp":"28.32","ledState":"1"},"deviceMAC":"C493000EFE02"}'
+Temperature lowered below treshold: 28.32
+2020-01-23 11:54:41.282317
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"57","temp":"27.83","ledState":"0"},"deviceMAC":"C493000EFE02"}'
+2020-01-23 11:54:51.371170
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"56","temp":"27.34","ledState":"0"},"deviceMAC":"C493000EFE02"}'
+2020-01-23 11:55:01.455814
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"58","temp":"28.32","ledState":"0"},"deviceMAC":"C493000EFE02"}'
+2020-01-23 11:55:11.549162
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"58","temp":"28.32","ledState":"0"},"deviceMAC":"C493000EFE02"}'
+2020-01-23 11:55:21.627250
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"58","temp":"28.32","ledState":"0"},"deviceMAC":"C493000EFE02"}'
+2020-01-23 11:55:31.722892
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"57","temp":"27.83","ledState":"0"},"deviceMAC":"C493000EFE02"}'
+2020-01-23 11:55:41.801606
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"57","temp":"27.83","ledState":"0"},"deviceMAC":"C493000EFE02"}'
