@@ -1,18 +1,20 @@
-2019-12-30 18:35:15.890754
-b'{"fanState":true,"innerTemp":252.25,"outerTemp":27.875,"heaterStates":{"heater_2":false,"heater_3":false,"heater_1":true},"deviceMAC":"C493000EFEA1"}'
-2019-12-30 18:35:20.893532
-b'{"fanState":true,"innerTemp":252.25,"outerTemp":27.875,"heaterStates":{"heater_2":false,"heater_3":false,"heater_1":true},"deviceMAC":"C493000EFEA1"}'
-2019-12-30 18:35:25.898836
-b'{"fanState":true,"innerTemp":252.25,"outerTemp":27.875,"heaterStates":{"heater_2":false,"heater_3":false,"heater_1":true},"deviceMAC":"C493000EFEA1"}'
-2019-12-30 18:35:30.899669
-2019-12-30 18:35:35.902375
-2019-12-30 18:35:40.909174
-2019-12-30 18:36:52.710152
-Sender MAC address: C493000EFEA1
-b'{"fanState":true,"innerTemp":252.25,"outerTemp":27.875,"heaterStates":{"heater_2":false,"heater_3":false,"heater_1":true},"deviceMAC":"C493000EFEA1"}'
-2019-12-30 18:41:09.590741
-Sender MAC address: C493000EFEA1
-b'{"fanState":true,"innerTemp":252.25,"outerTemp":27.875,"heaterStates":{"heater_2":false,"heater_3":false,"heater_1":true},"deviceMAC":"C493000EFEA1"}'
-2019-12-30 19:51:27.129779
-Sender MAC address: C493000EFEA1
-b'{"fanState":true,"innerTemp":252.25,"outerTemp":27.875,"heaterStates":{"heater_2":false,"heater_3":false,"heater_1":true},"deviceMAC":"C493000EFEA1"}'
+
+2020-01-23 11:53:10.511242
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"50","temp":"24.41","ledState":"0"},"deviceMAC":"C493000EFE02"}'
+2020-01-23 11:53:20.598648
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"60","temp":"29.30","ledState":"0"},"deviceMAC":"C493000EFE02"}'
+2020-01-23 11:53:30.686062
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"67","temp":"32.71","ledState":"0"},"deviceMAC":"C493000EFE02"}'
+Temperature treshold exceeded: 32.71
+2020-01-23 11:53:40.766554
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"76","temp":"37.11","ledState":"1"},"deviceMAC":"C493000EFE02"}'
+2020-01-23 11:53:50.861768
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"63","temp":"30.76","ledState":"1"},"deviceMAC":"C493000EFE02"}'
+2020-01-23 11:54:00.943989
+Sender MAC address: C493000EFE02
+b'{"data":{"value":"63","temp":"30.76","ledState":"1"},"deviceMAC":"C493000EFE02"}'

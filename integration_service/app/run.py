@@ -3,10 +3,11 @@ import datetime
 import os
 import time
 import sys
+import json
 from lib.daemon import Daemon
 from service import MQTT_service
 
-#reliatyvus kelias iki programos
+#absoliutus kelias iki programos
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 class MQTT_daemon(Daemon):
