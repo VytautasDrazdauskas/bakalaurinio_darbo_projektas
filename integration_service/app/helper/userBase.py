@@ -1,22 +1,18 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from app.models import Users
-from sqlalchemy import SQLAlchemy
-import app.loadConfig as config
+from models import Users
+import loadConfig as config
 
-def get_user_db_name():
-    if (current_user.is_authenticated): 
-        user_id = current_user.get_id()
-        user = db.session.query(Users).get(int(user_id))
-        db_name = user.uuid
-        db_name = db_name.replace('-', '')
+def get_user_db_name(user):
+    db_name = user.uuid
+    db_name = db_name.replace('-', '')
 
     return db_name
 
 #schemos formavimo metodai
-def table_exists(name):
-    engine = create_user_engine()
+def table_exists(user,name):
+    engine = create_user_engine(user)
     try:
         ret = engine.dialect.has_table(engine, name)
     except Exception as Ex:
@@ -31,12 +27,12 @@ def create_table(table_object):
     except Exception as Ex:
         raise
 
-def create_user_engine():
-    engine = create_engine('mysql+pymysql://'+config.db_user+':'+config.db_password+'@'+config.db_ip+':'+config.db_port+'/db_'+get_user_db_name())
+def create_user_engine(user):
+    engine = create_engine('mysql+pymysql://'+config.db_user+':'+config.db_password+'@'+config.db_ip+':'+config.db_port+'/db_'+get_user_db_name(user))
     return engine
 
-def create_user_session():
-    engine = create_user_engine()
+def create_user_session(user):
+    engine = create_user_engine(user)
     Session = sessionmaker(bind=engine)
     session = Session()
 
