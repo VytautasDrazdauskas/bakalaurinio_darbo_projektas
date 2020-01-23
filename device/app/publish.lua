@@ -10,7 +10,10 @@ function Path()
 end
 PATH = Path();
 
+--pagrindiniai parametrai
 local deviceMAC = "unknown"  --useruid/system/C493000EFE35/control
+
+--nuskaitom is config failo
 local userUID = fileParser.ReadFileData(PATH .. "broker.conf","useruuid")
 local systemName = fileParser.ReadFileData(PATH .. "broker.conf","systemname")
 IsSignalLost = false
@@ -22,34 +25,30 @@ end
 if (Is_openwrt()) then 
         local handle = io.popen("ifconfig -a | grep wlan0 | head -1")
         local result = handle:read("*a")
+        --jei prietaisas yra su openwrt OS, tuomet irasom prietaiso MAC adresa
         deviceMAC = string.match(result, "HWaddr(.*)")
         deviceMAC = deviceMAC:gsub("%:", "") --pasalinam dvitaskius
         deviceMAC = deviceMAC:gsub("%s+", "") --pasalinam tarpus
         handle:close()
 end
 
---tema user/system/prietaisoMAC/
+--tema user/system/prietaisoMAC/duomenuTipas
 local topic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/jsondata"
---local controlTopic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/control"
 
 --parametrai nuskaitomi is konfiguracinio failo
 local brokerIP = fileParser.ReadFileData(PATH .. "broker.conf","ip")
 
 --MQTT publish
 function PublishData(client,topic,message)
-        assert(client:publish{
+        client:publish{
                 topic = topic,
                 payload = message,
-                qos = 1,
+                qos = 0,
                 properties = {
                         payload_format_indicator = 1,
-                        content_type = "text/plain",
+                        content_type = "json",
                 },
-                user_properties = {
-                        hello = "world",
-                },
-        })
-        socket.sleep(5.0)  -- seconds      
+        }     
 end
 
 function Main()
@@ -70,7 +69,7 @@ function Main()
                         print("Connection to broker " .. brokerIP .. " failed:")
                         return
                 else
-                        print("Connection with MQTT broker " .. brokerIP .. " established!") -- successful connection
+                        print("Connection with MQTT broker " .. brokerIP .. " established!") -- sekmingas prijungimas
                         IsSignalLost = false
                 end  
 
@@ -79,7 +78,7 @@ function Main()
                 --dingo signalas
                 if(response == -2)then
                         client:close_connection()  
-                        RestoreConnection("8.8.8.8")
+                        RestoreConnection("8.8.8.8") --bandom atstatyti rysi
                 else --kitos priezastys                        
                         client:close_connection()                         
                         break
@@ -94,18 +93,10 @@ function Loop(client,sleepDelay)
 
         Running = true
         while (Running) do  
-                local Message = ReadData()
+                local message = ReadData()
 
                 if (CheckPing("8.8.8.8") == true) then 
-                        client:publish{
-                                topic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/jsondata",
-                                payload = Message,
-                                qos = 0,
-                                properties = {
-                                        payload_format_indicator = 1,
-                                        content_type = "json",
-                                },
-                        }
+                        PublishData(client,topic,message)
                         socket.sleep(sleepDelay)
                 else
                         print("Signal is lost.")

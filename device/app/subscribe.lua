@@ -15,6 +15,7 @@ local deviceMAC = "unknown"  --useruid/system/C493000EFE02/control
 local userUID = fileParser.ReadFileData(PATH .. "broker.conf","useruuid")
 local systemName = fileParser.ReadFileData(PATH .. "broker.conf","systemname")
 
+--sukuriamas rysys su Arduino Nano per UART sasaja
 local serialClient = serial.Serial_create_client("/dev/ttyUSB0")
 
 function Is_openwrt()
@@ -55,13 +56,15 @@ function Main()
                                 print("Subscribe connection with MQTT broker " .. brokerIP .. " established! Topic: " .. topic, connack) -- successful connection
                         end    
                         
+                        --uzprenumeruojama tema valdymui. QoS 2 reiskia, jog zinute privalo buti pristatyta lygiai viena karta.
                         client:subscribe{ topic=topic, qos=2, callback=function(suback)end}
                 end,
 
                 message = function(msg)
-                    assert(client:acknowledge(msg))        
-                    --print("received:", msg)
+                    --nusiunciam brokeriui ACK
+                    assert(client:acknowledge(msg)) 
                     
+                    --Arduino valdymas per UART
                     if (msg.payload == "reboot") then 
                         Running = false
                         io.popen("reboot")
