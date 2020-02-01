@@ -7,12 +7,11 @@ body{
 		list-style-type: none;
 		margin-top: 55px;
 		width: 150px;
-		background: linear-gradient(0turn,#70c0b5, #b8f1da);
-		position: absolute;
+		background: linear-gradient(0turn,#88d0c1, #b8f1da);
+		position: fixed;
 		height: 100%;
-		overflow: auto; 
 		font-size: 17px; 
-		color: #3d3737; 	  
+		color: #3d3737; 
 	}
 
 	.sidebar-btn { 
@@ -23,7 +22,7 @@ body{
 	}
 	
 	.sidebar-btn.active {
-		background-color: #70c0b5;
+		background-color: #88d0c1;
 		color: white;
 	}
 	
@@ -72,7 +71,7 @@ body{
 }*/
 
 .sidebar li a.active {
-	background-color: #70c0b5;
+	background-color: #88d0c1;
 	color: white;
 }
 

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container  has-text-centered">
+  <h1 class="title">
+    {{ name }} profilio atnaujinimas
+  </h1>   
+   <div class="box">
+    {% block messageBox %}
+    {% include '/_errorWindow.html' %}
+    {% endblock %}
+    <form method=post enctype=multipart/form-data action="/editProfile"> 
+      {{ form.hidden_tag() }}
+      <div class="form-row">
+          <div class="form-label-column">
+              {{ form.userName.label }}    
+          </div>
+          <div class="form-value-column">
+              {{ form.userName(class="form-field") }}
+          </div>
+      </div>
+      <div class="form-row">
+        <div class="form-label-column">
+            {{ form.email.label }}    
+        </div>
+        <div class="form-value-column">
+            {{ form.email(class="form-field") }}
+        </div>
+    </div>
+      <div class="form-row">
+          <div class="form-label-column">
+              {{ form.password.label }}
+          </div>                     
+          <div class="form-value-column">
+              {{ form.password(class="form-field") }}
+          </div>                 
+      </div>  
+      <div class="form-row">
+        <div class="form-label-column">
+            {{ form.newPassword.label }}
+        </div>                     
+        <div class="form-value-column">
+            {{ form.newPassword(class="form-field") }}
+        </div>                 
+      </div>
+      <br/>
+      <input class="fancy-button" style="float: right;" type="submit" value='Išsaugoti'>
+      <button id="back-btn" style="float: left;" class="fancy-button">Atšaukti</button>
+      <br/>
+  </form>
+   </div>
+</div>
+<script>
+    $('#back-btn').on('click', function () {            
+        window.location.href = '/profile'
+    });
+</script>
+
+{% endblock %}

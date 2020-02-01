@@ -3,9 +3,9 @@
 {% block content %}
     <script src={{ url_for('static', filename='js/html5-qrcode.js') }}></script>
     <script src={{ url_for('static', filename='js/jsqrcode-combined.js') }}></script>
-    <div class="column is-4 is-offset-4">
+    <div class="column is-4 is-offset-4  has-text-centered">
         <h3 class="title">Pridėti prietaisą</h3>
-        <div class="box">
+        <div class="content-box">
             {% with errors = get_flashed_messages(category_filter=["danger"]) %}
                 {% if errors %}
                     {%- for message in errors %}
@@ -25,26 +25,50 @@
                 {% endif %}
             {% endwith %}  
             <!--<div id="reader" style="height: fit-content;"></div>-->
-            <form method=post enctype=multipart/form-data>                         
-                <div class="field">
-                    <div class="control">
+            <form method=post enctype=multipart/form-data action="/newDevice"> 
+                {{ form.hidden_tag() }}
+                <div class="form-row">
+                    <div class="form-label-column">
+                        {{ form.deviceName.label }}    
+                    </div>
+                    <div class="form-value-column">
+                        {{ form.deviceName(class="form-field") }}
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-label-column">
+                        {{ form.deviceType.label }}
+                    </div>                     
+                    <div class="form-value-column">
+                        {{ form.deviceType(class="form-field") }}
+                    </div>                 
+                </div>   
+                <div class="form-row"> 
+                    <div class="form-label-column">
                         <div class="upload-btn-wrapper">
                             <button class="fancy-button">Įkelti QR kodą
                             <input type="file" name="file" accept="image/*" capture="camera">  
                             </button>    
                         </div>                            
                     </div>
-                </div>                 
+                    <div class="form-value-column">
+                        <h3 id="qr-text">Niekas neįkelta.</h3>
+                    </div>
+                </div>  
                 <input class="button is-block is-info is-large is-fullwidth" type="submit" value='Užregistruoti prietaisą'>
             </form>
         </div>
+
         <script>
-            $('#reader').html5_qrcode(function(data){
-                /* do something when code is read */
-              }, function(error){
-                /* show read errors */
-              }, function(videoError){
-                /* the video stream could be opened */
-              });
+            $('input[type="file"]').on('change', function() {
+                var result = "";
+                var fileName = $(this).val().split("fakepath\\")[1];
+
+                if (fileName != ""){
+                    result = "Įkeltas failas: " + fileName
+                }
+
+                document.getElementById('qr-text').innerHTML = result;
+            });
         </script>
 {% endblock %}

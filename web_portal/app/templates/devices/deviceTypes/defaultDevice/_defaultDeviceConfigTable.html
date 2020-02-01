@@ -1,0 +1,47 @@
+{% block table %} 
+<div>  
+    <h1 class="subtitle">Kaitintuvo konfigūracijos</h1>			
+    <table id="heaterConfigTable" class="display">
+        <thead>
+            <tr>
+                <th>Pavadinimas</th>
+                <th>Ribinė temperatūrą</th>
+                <th>Aktyvi?</th>
+                <th>Cron išraiška</th>
+                <th>Sukūrimo data</th>	
+                <th></th>	
+                <th></th>
+            </tr>
+        </thead>			
+    </table>
+</div>
+    <script>        
+        $(document).ready(function () {
+            var deviceId = window.location.href.split("deviceHistory/")[1];
+    
+            var table = $('#heaterConfigTable').DataTable({
+                "ajax": {
+                    "url": "/getUserDeviceConfigs/" + deviceId,
+                    "dataType": "json",
+                    "dataSrc": "data",
+                    "contentType":"application/json",
+                    "error": function (error){
+                        getErrorMessage(error);
+                    }  
+                },
+                "columns": [
+                    {"data": "name"},
+                    {"data": "temp"},
+                    {"data": "isActive"},
+                    {"data": "cron"},
+                    {"data": "date"},
+                    {"defaultContent": "<button id='edit-btn' class='fancy-button'>Redaguoti</button>"},
+                    {"defaultContent": "<button id='delete-btn' class='fancy-button'>Pašalinti</button>"}
+                ],
+                "order": [
+                    [ 4, "asc" ]
+                ]
+            }); 
+        });
+    </script>
+{% endblock %}

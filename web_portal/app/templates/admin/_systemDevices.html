@@ -1,0 +1,28 @@
+{% extends "admin/adminPanel.html" %}
+
+{% block boxContent %}
+<div class="tab-box">
+    <h2>Sistemos prietaisai</h2>
+    <div id="tableSection">				
+        <table id="devicesTable" class="display">
+            <thead>
+                <tr>
+                    <th>MAC adresas</th>
+                    <th>UUID numeris</th>
+                    <th>Naudotojas</th>
+                    <th>Būsena</th>
+                    <th></th>				
+                </tr>
+            </thead>			
+        </table>
+        <button id="createDevice" style="float: left;" class="fancy-button">Sukurti naują prietaisą</button>
+    </div>
+</div>
+<script>
+    $( window ).on( "load", loadDevicesTable );
+
+    $("#createDevice").click(function(){
+        window.location = "/adminPanel/editDevice"
+    });
+</script>
+{% endblock %}

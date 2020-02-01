@@ -1,0 +1,238 @@
+{% block controls %}  
+<div class="form-row"> 		
+    <div class="content-box">   
+        <h1 class="subtitle has-text-centered"> Kaitinimo tenai</h1>
+        <div class="form-row">
+            <div class="form-label-column">
+                <h1>Pirmas kanalas</h1>  
+            </div>                  
+            <div class="form-label-column">
+                <h1>Antras kanalas</h1>  
+            </div>  
+            <div class="form-label-column">
+                <h1>Trečias kanalas</h1>  
+            </div>                         
+        </div> 
+        <div class="form-row">
+            <div class="form-label-column">
+                <label class="switch">
+                    <input id="ch1-btn" value="1" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div> 
+            <div class="form-label-column">
+                <label class="switch">
+                    <input id="ch2-btn" value="2" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div> 
+            <div class="form-label-column">
+                <label class="switch">
+                    <input id="ch3-btn" value="3" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div> 
+        </div>
+        <br/>
+        <div class="form-row">
+            <div class="form-label-column">
+                <h1>Visus įjungti</h1>  
+            </div>                  
+            <div class="form-label-column">
+                <h1>Visus išjungti</h1>  
+            </div>                      
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                <button id="all-on-btn" class="fancy-button">Įjungti</button>
+            </div> 
+            <div class="form-label-column">
+                <button id="all-off-btn" class="fancy-button">Išjungti</button>
+            </div>
+            <div class="form-label-column"></div>
+            <div class="form-label-column">
+                <button id="execute-btn" class="fancy-button">Vykdyti!</button>
+            </div>                         
+        </div>  
+    </div> 
+    <!-- <div class="box">
+        <h1 class="subtitle has-text-centered">Aktyvi konfigūracija</h1>
+        <div class="form-row">
+            <div class="form-label-column">
+                <h1>Artimiausio rutininio darbo konfigūracija</h1>  
+            </div>             
+            <div class="form-value-column">
+                {{ config.name }}
+            </div> 
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                <h1>Temperatūros riba</h1>  
+            </div>             
+            <div class="form-value-column">
+                {{ config.temp }} °C
+            </div>  
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                <h1>Aktyvinti kanalai</h1>  
+            </div>             
+            <div class="form-value-column">
+                {{ config.channels }}
+            </div>  
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                <h1>Paleidimo laikas</h1>  
+            </div>             
+            <div class="form-value-column">
+                {{ config.startTime }}
+            </div>  
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                <h1>Sustabdymo laikas</h1>  
+            </div>             
+            <div class="form-value-column">
+                {{ config.finishTime }}
+            </div>  
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                <h1>Savaitės dienos</h1>  
+            </div>             
+            <div class="form-value-column">
+                {{ config.weekdays }}
+            </div>  
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                <h1>Sukūrimo data</h1>  
+            </div>             
+            <div class="form-value-column">
+                {{ config.config_create_date }}
+            </div> 
+        </div>
+    </div>  -->
+    <br/>
+
+    <div class="box">
+        <h1 class="subtitle has-text-centered"> Prietaiso informacija</h1>
+        <div class="form-value-column">   
+            <div class="form-row">
+                <div class="form-value-column">   
+                    <div class="form-label-column">
+                        <h1>Prietaiso MAC:</h1>  
+                    </div>  
+                    <div class="form-value-column">
+                        {{ device.mac }} 
+                    </div>  
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-value-column">   
+                    <div class="form-label-column">
+                        <h1>Prietaiso būsena:</h1>  
+                    </div>  
+                    <div class="form-value-column">
+                        {{ device.state }} 
+                    </div>  
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-value-column">   
+                    <div class="form-label-column">
+                        <h1>Prietaiso pridėjimo data:</h1>  
+                    </div>  
+                    <div class="form-value-column">
+                        {{ device.dateAdded }} 
+                    </div>  
+                </div>
+            </div>
+        </div>
+        <div class="form-value-column">   
+            <div class="form-row">
+                <div class="form-value-column">   
+                    <div class="form-label-column">
+                        <h1>Prietaiso tipas:</h1>  
+                    </div>  
+                    <div class="form-value-column">
+                        {{ device.deviceTypeName }} 
+                    </div>  
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-value-column">   
+                    <div class="form-label-column">
+                        <h1>Paskutinė temperatūra:</h1>  
+                    </div>  
+                    <div class="form-value-column">
+                        {{ data.temp }} °C
+                    </div>  
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-value-column">   
+                    <div class="form-label-column">
+                        <h1>Paskutinio įrašo gavimo data:</h1>  
+                    </div>  
+                    <div class="form-value-column">
+                        {{ data.date }} 
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+    <script>        
+        $(document).ready(function () {
+            $("#ch1-btn").prop("checked", GetBoolean("{{ data.actuator1_state }}"));
+            $("#ch2-btn").prop("checked", GetBoolean("{{ data.actuator2_state }}"));
+            $("#ch3-btn").prop("checked", GetBoolean("{{ data.actuator3_state }}"));
+        });
+
+        $('#all-on-btn').on( 'click', function () {
+            $("#ch1-btn").prop("checked", true);
+            $("#ch2-btn").prop("checked", true);
+            $("#ch3-btn").prop("checked", true);
+        });
+
+        $('#all-off-btn').on( 'click', function () {
+            $("#ch1-btn").prop("checked", false);
+            $("#ch2-btn").prop("checked", false);
+            $("#ch3-btn").prop("checked", false);
+        });
+
+        $('#execute-btn').on( 'click', function () {
+            var deviceId = "{{ device.id }}";
+
+            var channels = [];            
+            channels.push(document.getElementById("ch1-btn"));
+            channels.push(document.getElementById("ch2-btn"));
+            channels.push(document.getElementById("ch3-btn"));
+
+            if(channels.every(item => item.checked == true )){
+                ControlDevice(deviceId,"ALLON");
+            }
+            else if(channels.every(item => item.checked == false )){
+                ControlDevice(deviceId,"ALLOFF");
+            }
+            else{
+                channels.forEach(function(item) {
+                    switch(item.checked) {
+                        case true:
+                            ControlDevice(deviceId,item.value + "ON");
+                            break;
+                        case false:
+                            ControlDevice(deviceId,item.value + "OFF");
+                            break;
+                        default:
+                        notification('Klaida su kanalu: ' + item.id,5000); 
+                    }
+                }) 
+            }         
+        });
+    </script>
+</div>
+{% endblock %}

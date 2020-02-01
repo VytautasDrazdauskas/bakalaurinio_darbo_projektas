@@ -6,10 +6,14 @@
 	<body>
 		<ul class="sidebar">	
 			{% if current_user.is_authenticated %}
-			<li><a class="sidebar-btn" href="#"><font>Prietaisai</font></a></li>
+				{% if current_user.is_admin %}
+					<li><a class="sidebar-btn" href="{{ url_for('admin.adminPanel') }}"><font>Administravimas</font></a></li>
+				{% endif %}
+			<li><a class="sidebar-btn" href="{{ url_for('main.userDevices') }}"><font>Prietaisai</font></a></li>
 			<li><a class="sidebar-btn" href="{{ url_for('main.newDevice') }}"><font>Naujas prietaisas</font></a></li>
-			{% endif %}
+			{% else %}
 			<li><a class="sidebar-btn" href="{{ url_for('main.about') }}"><font>Apie</font></a></li>
+			{% endif %}
 		</ul>
 	</body>
 </html>

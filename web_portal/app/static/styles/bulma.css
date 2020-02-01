@@ -961,7 +961,7 @@ to {
     margin-right:-1px;
     }
     
-    .container {
+    .containers{
     position:relative;
     margin:0 auto;
     }
@@ -2356,7 +2356,7 @@ to {
     border-color:rgba(0,0,0,.7);
     }
     
-    .navbar>.container {
+    .navbar>.containers{
     align-items:stretch;
     display:flex;
     min-height:3.25rem;
@@ -3016,7 +3016,7 @@ to {
     }
 
 @media screen and (min-width:1088px){
-    .hero {
+    /* .hero {
     align-items:stretch;
     display:flex;
     flex-direction:column;
@@ -3033,11 +3033,11 @@ to {
     color:#4a4a4a;
     display:block;
     padding:1.25rem;
-    width:600px;
+    width:200px;
     position:center;
     margin-left:auto;
     margin-right:auto;
-    }
+    } */
 }
     
     .hero.is-white .subtitle {
@@ -3209,7 +3209,7 @@ to {
     }
     
     .hero-body {
-    flex-grow:1;
+    flex-grow:0;
     flex-shrink:0;
     padding:3rem 1.5rem;
     }
@@ -3961,7 +3961,7 @@ to {
     margin-right:.75rem;
     }
     
-    .field.is-grouped>.control.is-expanded,.navbar-item.is-expanded,.navbar-content,.hero.is-fullheight .hero-body>.container,.hero.is-fullheight-with-navbar .hero-body>.container,.hero.is-halfheight .hero-body>.container {
+    .field.is-grouped>.control.is-expanded,.navbar-item.is-expanded,.navbar-content,.hero.is-fullheight .hero-body>.container,.hero.is-fullheight-with-navbar .hero-body>.container,.hero.is-halfheight .hero-body>.containers{
     flex-grow:1;
     flex-shrink:1;
     }
@@ -4028,7 +4028,7 @@ to {
     
     /*background color*/
     .notification.is-primary,.table td.is-selected,.table th.is-selected,.table tr.is-selected,.tag:not(body).is-primary,.message.is-primary .message-header,.navbar.is-primary,.hero.is-primary {
-    background-color:#00cfb0a2;
+    background-color: #ecfdf6;
     color:#fff;
     }
     
@@ -5455,7 +5455,7 @@ to {
     visibility:hidden!important;
     }
     
-    .container {
+    .containers{
     max-width:960px;
     width:960px;
     }
@@ -5658,11 +5658,11 @@ to {
     right:0;
     }
     
-    .container>.navbar .navbar-brand,.navbar>.container .navbar-brand {
+    .container>.navbar .navbar-brand,.navbar>.containers.navbar-brand {
     margin-left:-.75rem;
     }
     
-    .container>.navbar .navbar-menu,.navbar>.container .navbar-menu {
+    .container>.navbar .navbar-menu,.navbar>.containers.navbar-menu {
     margin-right:-.75rem;
     }
     
@@ -6077,7 +6077,7 @@ to {
     visibility:hidden!important;
     }
     
-    .container {
+    .containers{
     max-width:1152px;
     width:1152px;
     }
@@ -6358,7 +6358,7 @@ to {
     visibility:hidden!important;
     }
     
-    .container {
+    .containers{
     max-width:1344px;
     width:1344px;
     }

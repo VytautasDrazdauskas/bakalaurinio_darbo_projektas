@@ -6,11 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>IoT portalas</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link rel="stylesheet" href={{ url_for('static', filename='styles/mobile.css') }}/>
     <link rel="stylesheet" href={{ url_for('static', filename='styles/bulma.css') }}/>
     <link rel="stylesheet" href={{ url_for('static', filename='styles/topbar.css') }}/>
     <link rel="stylesheet" href={{ url_for('static', filename='styles/main.css') }}/>    
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css"/>	    
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css"/>
+    <script src={{ url_for('static', filename='js/main.js') }}></script>
+    <script src={{ url_for('static', filename='js/dataTables.js') }}></script>	    
     <script src="https://code.jquery.com/jquery-3.3.1.js"></script>	
     <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>      
 </head>
@@ -45,7 +48,7 @@
         
     <section class="hero is-primary is-fullheight"> 
         <div class="hero-body">
-            <div class="container has-text-centered">
+            <div class="body-container">
                {% block content %}
                {% endblock %}
             </div>

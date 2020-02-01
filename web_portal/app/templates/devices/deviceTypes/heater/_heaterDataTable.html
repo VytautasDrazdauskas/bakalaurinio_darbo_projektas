@@ -1,0 +1,43 @@
+{% block table %} 
+<div>  
+    <h1 class="subtitle">Kaitintuvo "{{ device.deviceName }}" duomenys</h1>			
+    <table id="heaterDataTable" class="display">
+        <thead>
+            <tr>
+                <th>CH1</th>
+                <th>CH2</th>
+                <th>CH3</th>
+                <th>Temperatūra</th>
+                <th>Data</th>			
+            </tr>
+        </thead>			
+    </table>
+</div>
+    <script>        
+        $(document).ready(function () {
+            var deviceId = '{{ device.id }}';
+    
+            var table = $('#heaterDataTable').DataTable({
+                "ajax": {
+                    "url": "/getUserDeviceData/" + deviceId,
+                    "dataType": "json",
+                    "dataSrc": "data",
+                    "contentType":"application/json",
+                    "error": function (error){
+                        getErrorMessage(error);
+                    }  
+                },
+                "columns": [
+                    {"data": "actuator1"},
+                    {"data": "actuator2"},
+                    {"data": "actuator3"},
+                    {"data": "temp"},
+                    {"data": "date"}
+                ],
+                "order": [
+                    [ 1, "asc" ]
+                ]
+            }); 
+        });
+    </script>
+{% endblock %}

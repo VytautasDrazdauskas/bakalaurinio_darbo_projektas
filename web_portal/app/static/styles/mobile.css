@@ -160,9 +160,17 @@
     overflow:hidden;
     display:block;
     height: 250px;
-}
+  }
   #glass{
       margin-top: 0px;
       width: 250px;
   }
+
+  .display dataTable no-footer{
+    background-color:#00FFFF;
+    height:40px;
+    overflow-x:scroll;
+    white-space: nowrap;
+  }
+  
 }

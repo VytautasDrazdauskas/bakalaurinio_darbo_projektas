@@ -1,0 +1,39 @@
+{% block table %} 
+<div>  
+    <h1 class="subtitle">Standartinio prietaiso "{{ device.deviceName }}" duomenys</h1>			
+    <table id="userDeviceDataTable" class="display">
+        <thead>
+            <tr>
+                <th>LED būsena</th>
+                <th>Temperatūra</th>
+                <th>Data</th>			
+            </tr>
+        </thead>			
+    </table>
+</div>
+    <script>        
+        $(document).ready(function () {
+            var deviceId = '{{ device.id }}';
+
+            $('#userDeviceDataTable').DataTable({
+                "ajax": {
+                    "url": "/getUserDeviceData/" + deviceId,
+                    "dataType": "json",
+                    "dataSrc": "data",
+                    "contentType":"application/json",
+                    "error": function (error){
+                        getErrorMessage(error);
+                    }  
+                },
+                "columns": [
+                    {"data": "ledState"},
+                    {"data": "temp"},
+                    {"data": "date"}
+                ],
+                "order": [
+                    [ 2, "asc" ]
+                ]
+            });  
+        });
+    </script>
+{% endblock %}

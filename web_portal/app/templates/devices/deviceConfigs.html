@@ -1,0 +1,19 @@
+{% extends "/devices/devicePanel.html" %}
+
+{% block boxContent %}
+    <div class="tab-box">      
+        <div id="tableSection" class="has-text-centered">	
+            {% block table %}
+            {% endblock %}  
+            {% if device.deviceType == 1 %}
+                {% include '/devices/deviceTypes/heater/_heaterConfigTable.html' %}
+            {% elif device.deviceType == 0 %}
+                {% include '/devices/deviceTypes/defaultDevice/_defaultDeviceConfigTable.html' %}
+            {% endif %}             
+        </div>
+        <br/>    
+        <button id="back-btn" style="float: left;" class="fancy-button">Atšaukti</button>
+        <button id="new-config-btn" style="float: right;" class="fancy-button">Nauja konfigūracija</button>   
+        <button id="refresh-btn" style="float: right;" class="fancy-button">Atnaujinti</button>
+    </div>
+{% endblock %}

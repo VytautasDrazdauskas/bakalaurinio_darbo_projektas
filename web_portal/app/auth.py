@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, logout_user, login_required
-from .models import Users, Test
-from app.helpers.sessionMaker import create_user_session
+from flask_login import login_user, logout_user, login_required, current_user
+from .models import Users
 from app.helpers.formDatabase import create_new_user_db
-from . import db, Session
+from . import db
+from uuid import uuid4
 
 auth = Blueprint('auth', __name__)
 
@@ -30,7 +30,7 @@ def login_post():
     #sugeneruojam duombazę
     create_new_user_db(user, password)
 
-    return redirect(url_for('main.profile'))
+    return redirect(url_for('main.index'))
 
 @auth.route('/signup')
 def signup():
@@ -41,6 +41,7 @@ def signup_post():
     email = request.form.get('email')
     name = request.form.get('name')
     password = request.form.get('password')
+    repeatPassword = request.form.get('repeatPassword')
 
     if (not email):
         flash('Neįvedėte naujo naudotojo elektroninio pašto adreso!')
@@ -48,6 +49,10 @@ def signup_post():
 
     if (not name):
         flash('Neįvedėte naujo naudotojo vardo!')
+        return redirect(url_for('auth.signup'))
+
+    if (password != repeatPassword):
+        flash('Slaptažodžiai nesutampa!')
         return redirect(url_for('auth.signup'))
 
     if (not password):
@@ -58,11 +63,13 @@ def signup_post():
     user = session.query(Users).filter_by(email=email).first()
 
     if (user):
-        flash('Naudotojas su tokiu elektroniniu paštu jau egzistuoja')
+        flash('Naudotojas su tokiu elektroniniu paštu jau egzistuoja!')
         return redirect(url_for('auth.signup'))
+ 
+    new_user = Users(email=email, name=name, password=generate_password_hash(password, method='sha256'), uuid=str(uuid4()))
 
-    new_user = Users(email=email, name=name, password=generate_password_hash(password, method='sha256'))
-    
+    if (new_user.name == 'Admin' and session.query(Users).filter_by(name=new_user.name).first() is None):
+        new_user.is_admin = True    
 
     session.add(new_user)      
     session.commit()        

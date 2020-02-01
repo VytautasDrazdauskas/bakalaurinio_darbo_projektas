@@ -1,0 +1,36 @@
+{% block formContent %}   		
+    <div class="content-box">   
+        <div class="form-row">
+            <div class="form-label-column">
+                {{ form.tempTreshold.label }}    
+            </div>
+            <div class="form-value-column">
+                {{ form.tempTreshold(class="form-field") }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                {{ form.channel1.label }}    
+            </div>
+            <div class="form-value-column">
+                {{ form.channel1(class="form-field") }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                {{ form.channel2.label }}    
+            </div>
+            <div class="form-value-column">
+                {{ form.channel2(class="form-field") }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                {{ form.channel3.label }}    
+            </div>
+            <div class="form-value-column">
+                {{ form.channel3(class="form-field") }}
+            </div>
+        </div>
+    </div>  
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "/devices/devicePanel.html" %}
+
+{% block boxContent %}
+    <div class="tab-box">      
+        <form method=post enctype=multipart/form-data action="{{ url_for('main.createDeviceConfig', id=device.id) }}">
+            {{ form.hidden_tag() }}
+            <div class="form-row">
+                <div class="form-label-column">
+                    {% block commonFormContent %}
+                        {% include '/devices/_commonConfigForm.html' %}
+                    {% endblock %} 
+                </div>
+                <div class="form-label-column">
+                    {% block formContent %}
+                        {% if device.deviceType == 1 %}
+                            {% include '/devices/deviceTypes/heater/_heaterCreateConfig.html' %}
+                        {% elif device.deviceType == 0 %}
+                            {% include '/devices/deviceTypes/defaultDevice/_defaultDeviceCreateConfig.html' %}
+                        {% endif %} 
+                    {% endblock %}
+                </div>
+            </div>
+            <br/>
+            <button id="back-btn" style="float: left;" class="fancy-button">Atšaukti</button>   
+            <button id="refresh-btn" style="float: right;" type="submit" class="fancy-button">Išsaugoti</button>    
+        </form>    
+    </div>
+{% endblock %}
