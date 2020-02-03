@@ -4028,8 +4028,7 @@ to {
     
     /*background color*/
     .notification.is-primary,.table td.is-selected,.table th.is-selected,.table tr.is-selected,.tag:not(body).is-primary,.message.is-primary .message-header,.navbar.is-primary,.hero.is-primary {
-    background-color: #ecfdf6;
-    color:#fff;
+        color:#fff;
     }
     
     .notification.is-link,.tag:not(body).is-link,a.dropdown-item.is-active,button.dropdown-item.is-active,.list-item.is-active,.menu-list a.is-active,.message.is-link .message-header,.navbar.is-link,.hero.is-link {

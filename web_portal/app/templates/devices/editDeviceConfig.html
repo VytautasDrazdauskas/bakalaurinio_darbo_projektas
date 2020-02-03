@@ -2,14 +2,14 @@
 
 {% block boxContent %}
     <div class="tab-box">    
-        <h1 class="subtitle has-text-centered">Nauja prietaiso konfigūracija</h1>  
-        <form method=post enctype=multipart/form-data action="{{ url_for('main.createDeviceConfig', id=device.id) }}">
+        <h1 class="subtitle has-text-centered">Prietaiso {{ device.deviceName }} konfigūracija</h1>  
+        <form method=post enctype=multipart/form-data action="{{ url_for('main.editDeviceConfig', deviceId=device.id, configUUID=config.uuid) }}">
             {{ form.hidden_tag() }}
             <div class="control-panel">
                 {% block commonFormContent %}
                     {% include '/devices/commonPartials/_commonConfigForm.html' %}
                 {% endblock %} 
-                <br/>
+                <br>
                 {% block formContent %}
                     {% if device.deviceType == 1 %}
                         {% include '/devices/deviceTypes/heater/_heaterCreateConfig.html' %}

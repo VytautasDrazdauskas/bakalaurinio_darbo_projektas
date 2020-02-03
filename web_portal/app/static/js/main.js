@@ -3,15 +3,65 @@ function selectElement(id, valueToSelect) {
     element.value = valueToSelect;
 }
 
+//Klaidos ir informaciniai pranešimai
+function fadeIn(el){
+    var steps = 0;
+    document.body.appendChild(el);
+    var timer = setInterval(function() {
+        steps++;
+        el.style.opacity = 0.05 * steps;
+        if(steps >= 20) {
+            clearInterval(timer);
+            timer = undefined;
+        }
+    }, 20);
+}
+
+function fadeOut(el){
+    var steps = 20;
+    var timer = setInterval(function() {
+        steps--;
+        el.style.opacity = 0.05 * steps;
+        if(steps == 0) {
+            clearInterval(timer);
+            timer = undefined;
+        }
+    }, 20);
+}
+
 function notification(msg,duration)
 {
     var el = document.createElement("div");
     el.setAttribute("class","notification-box");
-    el.innerHTML = msg;
+
+    var text = document.createElement("h1");
+    text.setAttribute("class","otification-textnotification-text");
+
+    text.innerHTML = msg;
+    el.appendChild(text);
+    el.style.opacity = 0;
+
     setTimeout(function(){
-        el.parentNode.removeChild(el);
+        fadeOut(el);        
     },duration);
-    document.body.appendChild(el);
+    fadeIn(el);
+}
+
+function notificationDanger(msg,duration)
+{
+    var el = document.createElement("div");    
+    el.setAttribute("class","notification-box-danger");
+
+    var text = document.createElement("h1");
+    text.setAttribute("class","otification-textnotification-text");
+
+    text.innerHTML = msg;
+    el.appendChild(text);
+
+    setTimeout(function(){
+        fadeOut(el);
+    },duration);
+    fadeIn(el);
 }
 
 function getResponseMessage(response){
@@ -32,7 +82,7 @@ function getResponseMessage(response){
 function getErrorMessage(response){
     var message = response.responseText
     var code = response.status
-    notification("Klaidos: " + message, 5000);
+    notificationDanger("Klaidos: " + message, 5000);
 }
 
 function GetBoolean(data){            
@@ -57,4 +107,4 @@ function ControlDevice(deviceId, command){
     });
 }
 
-//bendri mygtukai
+

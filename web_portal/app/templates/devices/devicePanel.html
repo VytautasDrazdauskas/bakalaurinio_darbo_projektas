@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="title">Prietaisas "{{ device.deviceName }}"</h1> 
+<h1 class="title">Prietaisas - {{ device.deviceName }}</h1> 
 <div class="tab">
     <a class="tablinks" href="{{ url_for('main.deviceControlPanel', id=device.id) }}">Valdymas</a>
     <a class="tablinks" href="{{ url_for('main.deviceHistory', id=device.id) }}">Istorija</a>

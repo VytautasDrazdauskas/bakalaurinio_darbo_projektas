@@ -23,6 +23,8 @@ class DeviceType(enum.Enum):
 
     @classmethod
     def coerce(cls, item):
+        if (item is None):
+            return item
         return cls(int(item)) if not isinstance(item, cls) else item
 
     def __str__(self):

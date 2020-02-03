@@ -48,7 +48,27 @@
         
     <section class="hero is-primary is-fullheight"> 
         <div class="hero-body">
-            <div class="body-container">
+            <div class="body-container">                
+                {% with errors = get_flashed_messages(category_filter=["danger"]) %}
+                {% if errors %}
+                        {%- for message in errors %}
+                            <script>
+                                var message = '{{ message }}';
+                                notificationDanger(message,5000);
+                            </script>
+                        {% endfor -%}
+                    {% endif %}
+                {% endwith %}          
+                {% with errors = get_flashed_messages(category_filter=["success"]) %}
+                    {% if errors %}
+                        {%- for message in errors %}
+                            <script>
+                                var message = '{{ message }}';
+                                notification(message,2000);
+                            </script>
+                        {% endfor -%}
+                    {% endif %}
+                {% endwith %}
                {% block content %}
                {% endblock %}
             </div>

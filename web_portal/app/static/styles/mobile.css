@@ -41,12 +41,12 @@
     }
 
     .hero {
-        padding-left: 0px;
+        padding-left: 0px !important;
         align-items:stretch;
         display:flex;
         flex-direction:column;
         justify-content:space-between;
-        padding-right: 0px;
+        padding-right: 0px !important;
     }
 
     .navbar-top {
@@ -92,6 +92,11 @@
         max-width: fit-content;
     }
 
+    .body-container{
+      padding-top: 20px !important;
+      width: 100% !important;
+    }
+    
     a.box:active {
         box-shadow:inset 0 1px 2px rgba(10,10,10,.2),0 0 0 1px #3273dc;
     }

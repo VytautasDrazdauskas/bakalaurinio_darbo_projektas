@@ -40,7 +40,7 @@ def create_new_user_db(user, password):
 
     #sukuriama duomenų bazės schema. Sukuriama, jei prisijungta pirma karta.
     try:     
-        command = "CREATE DATABASE IF NOT EXISTS db_" + db_name + ";"
+        command = "CREATE DATABASE IF NOT EXISTS db_" + db_name + " CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
         cursor.execute(command)
         cursor.close()
         connection.close()

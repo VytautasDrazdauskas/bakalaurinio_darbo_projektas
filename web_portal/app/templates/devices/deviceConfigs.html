@@ -5,15 +5,65 @@
         <div id="tableSection" class="has-text-centered">	
             {% block table %}
             {% endblock %}  
-            {% if device.deviceType == 1 %}
-                {% include '/devices/deviceTypes/heater/_heaterConfigTable.html' %}
-            {% elif device.deviceType == 0 %}
-                {% include '/devices/deviceTypes/defaultDevice/_defaultDeviceConfigTable.html' %}
-            {% endif %}             
+            {% include '/devices/commonPartials/_commonConfigTable.html' %}           
         </div>
         <br/>    
         <button id="back-btn" style="float: left;" class="fancy-button">Atšaukti</button>
         <button id="new-config-btn" style="float: right;" class="fancy-button">Nauja konfigūracija</button>   
         <button id="refresh-btn" style="float: right;" class="fancy-button">Atnaujinti</button>
     </div>
+    <script>
+        $(document).ready(function () {
+            $('#configTable tbody').on('click', '#edit-cnfg-btn', function () {   
+                var table = $("#configTable").DataTable();         
+                var data = table.row( $(this).parents('tr')).data();
+                var uuid = data.uuid
+
+                window.location.href = "{{ url_for('main.editDeviceConfig', deviceId=device.id, configUUID=uuid) }}" + uuid
+            });
+
+            $('#configTable tbody').on('click', '#activate-cnfg-btn', function () {            
+                var table = $("#configTable").DataTable();         
+                var data = table.row( $(this).parents('tr')).data();
+                var uuid = data.uuid;
+                var deviceId = '{{ device.id }}'
+
+                $.ajax({
+                    url: '/activateDeviceConfig/' + deviceId + '/' + uuid,
+                    type: 'GET',
+                    success: function(response) {
+                        table.ajax.reload();
+                        getResponseMessage(response); 
+                    },
+                    error: function(error) {
+                        table.ajax.reload();
+                        getErrorMessage(error)
+                    }
+                });
+            });
+
+            $('#configTable tbody').on('click', '#delete-cnfg-btn', function () {
+                var table = $("#configTable").DataTable();         
+                var data = table.row( $(this).parents('tr')).data();
+                var uuid = data.uuid;
+                var configName = data.name;
+                var deviceId = '{{ device.id }}'
+                
+                if(confirm('Ar tikrai norite ištrinti konfigūraciją "' + configName + '"?')){
+                    $.ajax({
+                        url: '/deleteDeviceConfig/' + deviceId + '/' + uuid,
+                        type: 'GET',
+                        success: function(response) {
+                            table.ajax.reload();
+                            getResponseMessage(response); 
+                        },
+                        error: function(error) {
+                            table.ajax.reload();
+                            getErrorMessage(error)
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 {% endblock %}

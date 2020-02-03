@@ -1,6 +1,6 @@
 from app import db
 from app.helpers.userBase import *
-from app.models import UserDevices, Devices, Users
+from app.models import *
 from app.deviceTypes.heater import *
 from app.deviceTypes.defaultDevice import *
 import app.deviceTypes.heater as heater
@@ -22,6 +22,7 @@ def add_new_device(code, deviceName, deviceType):
         #sukuriam prietaisu lenta, jei tokios nera
         if not table_exists("user_devices"):                 
             UserDevices.__table__.create(session.bind)
+            session.commit()
                 
         #patikrinam, ar toks prietaisas egzistuoja MainDB        
         deviceInMain = mainDbSession.query(Devices).filter_by(uuid=code).first()
@@ -42,22 +43,23 @@ def add_new_device(code, deviceName, deviceType):
                     device_name=deviceName,
                     mac=deviceInMain.mac,
                     status=enums.DeviceState.Registered.value,
-                    device_type=deviceType
+                    device_type=deviceType,
                     )
+                    
                 session.add(new_device) 
 
                 deviceInMain.user_id = current_user.id 
                 
                 if (new_device.device_type == enums.DeviceType.Heater.value): 
                     #sukuriam lentas, jei tokios nera
-                    heater.createTablesIfNeeded()
+                    heater.createTablesIfNeeded(session)
                    
                 if (new_device.device_type == enums.DeviceType.Default.value): 
                     #sukuriam lentas, jei tokios nera
-                    defaultDevice.createTablesIfNeeded()
-                
-                mainDbSession.commit()
+                    defaultDevice.createTablesIfNeeded(session)
+                                
                 session.commit()
+                mainDbSession.commit()
 
                 flash('Prietaisas sėkmingai užregistruotas!','success')
             else:
@@ -70,7 +72,7 @@ def add_new_device(code, deviceName, deviceType):
             mainDbSession.rollback()
 
     except Exception as Ex:
-        raise
+        flash('Nenumatyta klaida: ' + Ex.args,'danger')
 
     finally:
         session.close()
@@ -91,13 +93,13 @@ def getUserDevices():
         devicesArr = []
         for device in devices:
             deviceObj = UserDevicesView(
-                device.id,
-                device.device_name,
-                device.mac,
-                enums.DeviceState(device.status).name,
-                str(device.date_added_local),
-                device.device_type,
-                enums.DeviceType(device.device_type).name
+                id=device.id,  
+                deviceName=device.device_name,
+                mac=device.mac,
+                state=enums.DeviceState(device.status).name,
+                dateAdded=str(device.date_added_local),
+                deviceType=device.device_type,
+                deviceTypeName=enums.DeviceType(device.device_type).name
             )
             devicesArr.append(deviceObj)
 
@@ -154,29 +156,46 @@ def getUserDeviceViewModel(deviceId):
     session.close()
 
     model = UserDevicesView(
-            device.id,
-            device.device_name,
-            device.mac,
-            enums.DeviceState(device.status).name,
-            str(device.date_added_local),
-            device.device_type,
-            enums.DeviceType(device.device_type).name
+            id=device.id,
+            deviceName=device.device_name,
+            mac=device.mac,
+            state=enums.DeviceState(device.status).name,
+            dateAdded=str(device.date_added_local),
+            deviceType=device.device_type,
+            deviceTypeName=enums.DeviceType(device.device_type).name
         )
 
     return model
 
+def appendConfigDataToForm(device,config,form):
+    session = create_user_session() 
+
+    device = session.query(UserDevices).filter_by(id=device.id).first()
+
+    if (device.device_type == enums.DeviceType.Heater.value):
+        form = heater.apppendConfigToForm(config, form)
+    elif (device.device_type == enums.DeviceType.Default.value):
+        form = defaultDevice.apppendConfigToForm(config, form)
+    
+    return form
+
 #Prietaisų konfigūracijos
-def getConfig(deviceId):
+def getConfig(deviceId, uuid=None):
     session = create_user_session() 
 
     device = session.query(UserDevices).filter_by(id=deviceId).first()
     config = None
     
-
-    if (device.device_type == enums.DeviceType.Heater.value):
-        config = session.query(HeaterConfig).filter_by(device_id=deviceId,is_active=True).order_by(start_time).first()
-    elif (device.device_type == enums.DeviceType.Default.value):
-        config = session.query(DefaultDeviceConfig).filter_by(device_id=deviceId,is_active=True).first()
+    if (uuid is None):
+        if (device.device_type == enums.DeviceType.Heater.value):
+            config = session.query(HeaterConfig).filter_by(device_id=deviceId,is_active=True).order_by(start_time).first()
+        elif (device.device_type == enums.DeviceType.Default.value):
+            config = session.query(DefaultDeviceConfig).filter_by(device_id=deviceId,is_active=True).first()
+    else:
+        if (device.device_type == enums.DeviceType.Heater.value):
+            config = session.query(HeaterConfig).filter_by(uuid=uuid).first()
+        elif (device.device_type == enums.DeviceType.Default.value):
+            config = session.query(DefaultDeviceConfig).filter_by(uuid=uuid).first()
     
     session.close()
     return config
@@ -186,7 +205,7 @@ def getConfigForm(device):
     if (device.deviceType == enums.DeviceType.Heater.value):
         return HeaterConfigForm()
     elif (device.deviceType == enums.DeviceType.Default.value):
-        return DeviceConfigForm()    
+        return DefaultDeviceConfigForm()    
     return None
 
 def getUserDeviceConfigurations(deviceId):
@@ -194,10 +213,11 @@ def getUserDeviceConfigurations(deviceId):
         session = create_user_session() 
         device = session.query(UserDevices).filter_by(id=deviceId).first() 
             
+        configArray = []
         if (device.device_type == enums.DeviceType.Heater.value):        
             configArray = heater.getConfigViewList(session, device.id)
         elif (device.device_type == enums.DeviceType.Default.value):
-            onfigArray = defaultDevice.getConfigViewList(session, device.id)
+            configArray = defaultDevice.getConfigViewList(session, device.id)
 
         session.close()    
         return jsonify({
@@ -209,38 +229,139 @@ def getUserDeviceConfigurations(deviceId):
     finally:
         session.close()
 
-def saveDeviceConfig(form, device, isNewConfig):
+def saveDeviceConfig(form, device, configUUID):
+    try:
+        session = create_user_session()
+        deviceConfig = None
+                
+        if (device.deviceType == enums.DeviceType.Heater.value):        
+            deviceConfig = heater.saveConfig(session, form, device.id, configUUID)
+        elif (device.deviceType == enums.DeviceType.Default.value):
+            deviceConfig = defaultDevice.saveConfig(session, form, device.id, configUUID) 
+
+        if (configUUID is None):
+            session.add(deviceConfig)
+            response = configureDeviceJobs(device,deviceConfig,deviceConfig.is_active)                       
+        else:
+            response = configureDeviceJobs(device,deviceConfig,deviceConfig.is_active)
+
+        if (response is not None):            
+            session.rollback()     
+            flash('Vidinė klaida! Konfigūracija "' + deviceConfig.name + '" pagrindinėje duomenų bazėje neišsaugota!','danger')     
+                    
+        session.commit()
+        flash('Konfigūracija "' + deviceConfig.name + '" išsaugota!','success')        
+    except Exception as ex:
+        flash('Nenumatyta klaida išsaugant "' + deviceConfig.name + '" prietaisą! Klaida: ' + ex.args,'success')
+        session.rollback()
+    finally:
+        session.close()
+
+def validateConfigForm(form):
+    if (not form.configName.data):
+        flash('Įveskite konfigūracijos pavadinimą!','danger')
+        return True
+    elif (not form.startTime.data):
+        flash('Įveskite programos pradžios laiką!','danger')
+        return True
+    elif (not form.finishTime.data):
+        flash('Įveskite programos pabaigos laiką!','danger')
+        return True
+    elif (not form.monday.data and not form.tuesday.data and not form.thursday.data and not form.wednesday.data and not form.friday.data and not form.saturday.data and not form.sunday.data):
+        flash('Įveskite bent vieną savaitės dieną!','danger')
+        return True
+    else:
+        return False
+
+def configureDeviceJobs(device,config,isActive):
+    try:
+        mainDbSession = db.session.session_factory()
+        mainDbDevice = mainDbSession.query(Devices).filter_by(mac=device.mac,user_id=current_user.id).first()
+
+        if (mainDbDevice is None): #jei prietaisas nepriskirtas useriui
+            return messenger.RaiseNotification(False, 'Naudotojas neturi priskirto prietaiso pagrindinėje duomenų bazėje!')
+
+        if (isActive): 
+            job = mainDbSession.query(DeviceJobs).filter_by(config_uuid=config.uuid,device_id=mainDbDevice.id).first()
+
+            if (job is None): #jei jobas neegzistuoja, kuriam nauja         
+                job = DeviceJobs(
+                    device_id=mainDbDevice.id,
+                    start_time=config.start_time,
+                    finish_time=config.finish_time,
+                    weekdays=config.weekdays,
+                    config_uuid=config.uuid
+                )
+                mainDbSession.add(job)  
+            else:
+                job.device_id=mainDbDevice.id,
+                job.start_time=config.start_time,
+                job.finish_time=config.finish_time,
+                job.weekdays=config.weekdays,
+                job.config_uuid=config.uuid
+        else: #jobo naikinimas
+            job = mainDbSession.query(DeviceJobs).filter_by(config_uuid=config.uuid,device_id=mainDbDevice.id).first()
+
+            if (job is not None):
+                mainDbSession.delete(job)
+
+        mainDbSession.commit()
+        return None
+    except Exception as ex:
+        raise
+    finally:
+        mainDbSession.close()
+    
+def activateDeviceConfig(device, configUUID):
     try:
         session = create_user_session()
 
-        if (device.device_type == enums.DeviceType.Heater.value):        
-            deviceConfig = heater.saveConfig(session, form, device.id, isNewConfig)
+        if (device.device_type == enums.DeviceType.Heater.value):
+            config = session.query(HeaterConfig).filter_by(uuid=configUUID).first()    
         elif (device.device_type == enums.DeviceType.Default.value):
-            deviceConfig = defaultDevice.saveConfig(session, form, device.id, isNewConfig)        
+            config = session.query(DefaultDeviceConfig).filter_by(uuid=configUUID).first() 
 
-        #prideti joba MainDB!
+        if (config.is_active):
+            config.is_active = False
+            response = configureDeviceJobs(device,config,False)
 
-        session.add(deviceConfig)
-        session.commit()
+            if (response is not None):
+                session.rollback()
+                return response
+
+            session.commit()
+            return messenger.RaiseNotification(True, 'Konfigūracija "' + config.name + '" deaktyvuota!')
+        else:
+            config.is_active = True
+            response = configureDeviceJobs(device,config,True)
+
+            if (response is not None):
+                session.rollback()
+                return response
+
+            session.commit()
+            return messenger.RaiseNotification(True, 'Konfigūracija "' + config.name + '" aktyvuota!')
+    
     except Exception as ex:
-        session.rollback()
         return messenger.RaiseNotification(False, 'Įvyko vidinė klaida:' + ex.args)
     finally:
         session.close()
-    return 0
 
-def getUserDeviceConfigModel(deviceId,configId):
+def deleteDeviceConfig(device, configUUID):
     try:
-        session = create_user_session() 
-        device = session.query(UserDevices).filter_by(id=deviceId).first() 
-    
-        if (device.device_type == enums.DeviceType.Heater.value):
-            config = heater.getConfig(session, device.id)
-        elif (device.device_type == enums.DeviceType.Default.value):
-            config = defaultDevice.getConfig(session, device.id)
-   
-        return config
+        session = create_user_session()
 
+        if (device.device_type == enums.DeviceType.Heater.value):
+            config = session.query(HeaterConfig).filter_by(uuid=configUUID).first() 
+        elif (device.device_type == enums.DeviceType.Default.value):
+            config = session.query(DefaultDeviceConfig).filter_by(uuid=configUUID).first()
+
+        configName = config.name
+
+        configureDeviceJobs(device,config,False)
+        session.delete(config)
+        session.commit()
+        return messenger.RaiseNotification(True, 'Konfigūracija "' + configName + '" panaikinta!')    
     except Exception as ex:
         return messenger.RaiseNotification(False, 'Įvyko vidinė klaida:' + ex.args)
     finally:

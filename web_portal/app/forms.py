@@ -6,7 +6,7 @@ from app.helpers.enums import DeviceType
 
 class NewDeviceForm(FlaskForm):
     deviceName = StringField('Prietaiso pavadinimas', validators=[DataRequired()])
-    deviceType = SelectField('Prietaiso tipas',choices = DeviceType.choices(),coerce = DeviceType.coerce)
+    deviceType = SelectField('Prietaiso tipas', choices = DeviceType.choices(), coerce = DeviceType.coerce)
 
 class ProfileForm(FlaskForm):
     userName = StringField('Naujas vartotojo vardas')
@@ -18,8 +18,8 @@ class DeviceForm(FlaskForm):
     deviceName = StringField('Prietaiso pavadinimas', validators=[DataRequired()])
     
 class DeviceConfigBaseForm(FlaskForm):
-    configName = StringField('Konfigūracijos pavadinimas')
-    isActive = BooleanField('Aktyvi konfigūracija?')
+    configName = StringField('Pavadinimas', validators=[DataRequired()])
+    isActive = BooleanField('Aktyvinta')
     monday = BooleanField('Pirmadienis')
     tuesday = BooleanField('Antradienis')
     wednesday = BooleanField('Trečiadienis')
@@ -27,5 +27,5 @@ class DeviceConfigBaseForm(FlaskForm):
     friday = BooleanField('Penktadienis')
     saturday = BooleanField('Šeštadienis')
     sunday = BooleanField('Sekmadienis')    
-    startTime = TimeField('Pradžios laikas')
-    finishTime = TimeField('Pabaigos laikas')
+    startTime = TimeField('Pradžios laikas', validators=[DataRequired()])
+    finishTime = TimeField('Pabaigos laikas', validators=[DataRequired()])

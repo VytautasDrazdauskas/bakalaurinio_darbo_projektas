@@ -1,5 +1,5 @@
 from app import db
-from app.models import Users, Devices
+from app.models import Users, Devices, DeviceJobs
 
 def BuildMainDb(session):
     if not table_exists("users"):                 
@@ -7,6 +7,9 @@ def BuildMainDb(session):
 
     if not table_exists("devices"):                 
         Devices.__table__.create(session.bind)
+
+    if not table_exists("device_jobs"):                 
+        DeviceJobs.__table__.create(session.bind)
 
 def table_exists(name):
     engine = db.engine

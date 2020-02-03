@@ -1,7 +1,7 @@
 {% block table %} 
 <div>  
-    <h1 class="subtitle">Kaitintuvo "{{ device.deviceName }}" duomenys</h1>			
-    <table id="heaterDataTable" class="display">
+    <h1 class="subtitle">Elektrinės krosnelės "{{ device.deviceName }}" duomenys</h1>			
+    <table id="dataTable" class="display">
         <thead>
             <tr>
                 <th>CH1</th>
@@ -17,7 +17,7 @@
         $(document).ready(function () {
             var deviceId = '{{ device.id }}';
     
-            var table = $('#heaterDataTable').DataTable({
+            var table = $('#dataTable').DataTable({
                 "ajax": {
                     "url": "/getUserDeviceData/" + deviceId,
                     "dataType": "json",
@@ -35,9 +35,11 @@
                     {"data": "date"}
                 ],
                 "order": [
-                    [ 1, "asc" ]
+                    [ 4, "desc" ]
                 ]
             }); 
         });
     </script>
+
+    
 {% endblock %}

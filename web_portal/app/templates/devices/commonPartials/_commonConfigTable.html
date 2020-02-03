@@ -1,25 +1,24 @@
 {% block table %} 
-<div>  
-    <h1 class="subtitle">Kaitintuvo konfigūracijos</h1>			
-    <table id="heaterConfigTable" class="display">
-        <thead>
-            <tr>
-                <th>Pavadinimas</th>
-                <th>Pradžios laikas</th>	
-                <th>Pabaigos laikas</th>	
-                <th>Savaitės dienos</th>	
-                <th>Aktyvi?</th>	
-                <th></th>	
-                <th></th>
-            </tr>
-        </thead>			
-    </table>
-</div>
+<h1 class="subtitle"> {{ device.deviceName}} konfigūracijos</h1>			
+<table id="configTable">
+    <thead>
+        <tr>
+            <th>Pavadinimas</th>
+            <th>Pradžios laikas</th>	
+            <th>Pabaigos laikas</th>	
+            <th>Savaitės dienos</th>	
+            <th>Aktyvi?</th>	
+            <th></th>
+            <th></th>	
+            <th></th>
+        </tr>
+    </thead>			
+</table>
     <script>        
         $(document).ready(function () {
             var deviceId = '{{ device.id }}'
     
-            var table = $('#heaterConfigTable').DataTable({
+            var table = $('#configTable').DataTable({
                 "ajax": {
                     "url": "/getUserDeviceConfigs/" + deviceId,
                     "dataType": "json",
@@ -35,8 +34,9 @@
                     {"data": "finishTime"},
                     {"data": "weekdays"},
                     {"data": "isActive"},
-                    {"defaultContent": "<button id='edit-btn' class='fancy-button'>Redaguoti</button>"},
-                    {"defaultContent": "<button id='delete-btn' class='fancy-button'>Pašalinti</button>"}
+                    {"defaultContent": "<button id='edit-cnfg-btn' class='fancy-button'>Redaguoti</button>"},
+                    {"defaultContent": "<button id='activate-cnfg-btn' class='fancy-button'>Aktyvinti</button>"},
+                    {"defaultContent": "<button id='delete-cnfg-btn' class='fancy-button'>Pašalinti</button>"}
                 ],
                 "order": [
                     [ 0, "asc" ]

@@ -3,12 +3,14 @@ from sqlalchemy.sql.schema import MetaData
 from _datetime import datetime
 from sqlalchemy.dialects.mysql import BINARY
 import app.helpers.enums as enums
+import app.helpers.codeDecode as codeDecode
 from app.helpers.userBase import *
 from flask import jsonify
 from app.forms import DeviceConfigBaseForm
 from flask_wtf import FlaskForm
 from wtforms import *
 from app.models import DeviceConfigBase, DeviceDataBase
+import uuid as uuid
 
 #Kaitintuvo duomenys ir config lenta
 #models
@@ -18,15 +20,35 @@ class HeaterData(DeviceDataBase):
     temp = db.Column(db.Numeric(8,2), nullable=False)
     actuator1_state = db.Column(db.Boolean, nullable=True)
     actuator2_state = db.Column(db.Boolean, nullable=True)
-    actuator3_state = db.Column(db.Boolean, nullable=True)
+    actuator3_state = db.Column(db.Boolean, nullable=True) 
 
+    def __init__(self, device_id, temp, actuator1_state, actuator2_state, actuator3_state):
+        self.temp = temp
+        self.actuator1_state = actuator1_state
+        self.actuator2_state = actuator2_state
+        self.actuator3_state = actuator3_state
+        self.device_id = device_id
+        
 class HeaterConfig(DeviceConfigBase):
     __tablename__ = "heater_config"
-    
+      
     temp_treshold = db.Column(db.Numeric(8,2), nullable=True)
-    actuator1_state = db.Column(db.Boolean, nullable=False, default=True)
-    actuator2_state = db.Column(db.Boolean, nullable=False, default=True)
-    actuator3_state = db.Column(db.Boolean, nullable=False, default=True)
+    actuator1_state = db.Column(db.Boolean, nullable=False)
+    actuator2_state = db.Column(db.Boolean, nullable=False)
+    actuator3_state = db.Column(db.Boolean, nullable=False)
+    
+    def __init__(self, device_id, temp_treshold, actuator1_state, actuator2_state, actuator3_state, name, is_active, weekdays, start_time, finish_time):
+        self.temp_treshold = temp_treshold
+        self.actuator1_state = actuator1_state
+        self.actuator2_state = actuator2_state
+        self.actuator3_state = actuator3_state
+        self.name = name        
+        self.device_id = device_id
+        self.start_time = start_time
+        self.finish_time = finish_time
+        self.weekdays = weekdays
+        self.is_active = is_active
+        self.uuid = str(uuid.uuid4())
 
 #view models
 class HeaterDataView():
@@ -50,8 +72,8 @@ class HeaterDataView():
         }
 
 class HeaterConfigView():
-    def __init__(self, id, name, isActive, temp, channels, weekdays, startTime, finishTime, creationDate, modificationDate):
-        self.id = id
+    def __init__(self, uuid, name, isActive, temp, channels, weekdays, startTime, finishTime, creationDate):
+        self.uuid = uuid
         self.name = name
         self.isActive = isActive
         self.temp = temp
@@ -60,12 +82,11 @@ class HeaterConfigView():
         self.startTime = startTime
         self.finishTime = finishTime
         self.creationDate = creationDate
-        self.modificationDate = modificationDate
         
     @property
     def serialize(self):
         return {
-            'id': self.id,
+            'uuid': self.uuid,
             'name': self.name,
             'isActive': self.isActive,
             'temp': self.temp,
@@ -73,19 +94,18 @@ class HeaterConfigView():
             'weekdays' : self.weekdays,
             'startTime': self.startTime,
             'finishTime': self.finishTime,
-            'creationDate': self.creationDate,
-            'modificationDate': self.modificationDate
+            'creationDate': self.creationDate
         }
 
 #formos, paveldim bazine klase
 class HeaterConfigForm(DeviceConfigBaseForm):    
-    tempTreshold = DecimalField('Temperatūros riba')
+    tempTreshold = DecimalField('Maksimali temperatūra')
     channel1 = BooleanField('Pirmas kanalas')
     channel2 = BooleanField('Antras kanalas')
     channel3 = BooleanField('Trečias kanalas')
 
 #METODAI
-def createTablesIfNeeded():
+def createTablesIfNeeded(session):
     if not table_exists("heater_config"):                 
         HeaterConfig.__table__.create(session.bind)
 
@@ -125,16 +145,15 @@ def getConfigViewList(session, deviceId):
     
     for config in configList:     
         configObj = HeaterConfigView(
-            id=config.id,
-            name=config.config_name,
+            uuid=config.uuid,
+            name=config.name,
             isActive=enums.ConfigState(config.is_active).name,
-            temp = config.temp_treshold,
+            temp = str(config.temp_treshold),
             channels = enums.ConfigState(config.actuator1_state).name + ' ' + enums.ConfigState(config.actuator2_state).name + ' ' + enums.ConfigState(config.actuator3_state).name,
-            weekdays = config.weekdays,
-            startTime = config.start_time,
-            finishTime = config.finish_time,
-            creationDate = config.create_date,
-            modificationDate = config.modification_date
+            weekdays = codeDecode.decodeWeekdaysLt(config.weekdays),
+            startTime = str(config.start_time),
+            finishTime = str(config.finish_time),
+            creationDate = str(config.create_date)
         )
         configArray.append(configObj)
 
@@ -143,7 +162,7 @@ def getConfigViewList(session, deviceId):
 def getConfigView(session, deviceId):
     config = session.query(DefaultDeviceConfig).filter_by(id=configId).first()          
     return HeaterConfigView(
-            id=config.id,
+            uuid=config.uuid,
             name=config.config_name,
             isActive=enums.ConfigState(config.is_active).name,
             temp = config.temp_treshold,
@@ -155,15 +174,57 @@ def getConfigView(session, deviceId):
             modificationDate = config.modification_date
         )
 
-def saveConfig(session, form, deviceId, isNewConfig):
+def saveConfig(session, form, deviceId, configUUID):    
     #nauja prietaiso konfiguracija
-    if (isNewConfig):
+    if (configUUID is None):
         return HeaterConfig(
-
+            temp_treshold=form.tempTreshold.data,
+            actuator1_state=form.channel1.data,
+            actuator2_state=form.channel2.data,
+            actuator3_state=form.channel3.data,
+            name=form.configName.data,
+            is_active=form.isActive.data,
+            weekdays=codeDecode.codeWeekdays(form),
+            start_time=form.startTime.data,
+            finish_time=form.finishTime.data,
+            device_id=deviceId
         )
     #egzistuojanti konfiguracija
     else:
-        return 
+        config = session.query(HeaterConfig).filter_by(uuid=configUUID).first()
+
+        config.temp_treshold=form.tempTreshold.data
+        config.actuator1_state=form.channel1.data
+        config.actuator2_state=form.channel2.data
+        config.actuator3_state=form.channel3.data
+        config.name=form.configName.data
+        config.is_active=form.isActive.data
+        config.weekdays=codeDecode.codeWeekdays(form)
+        config.start_time=form.startTime.data
+        config.finish_time=form.finishTime.data
+        config.device_id=deviceId
+
+        return config
+
+def apppendConfigToForm(config, form):
+    form.configName.data = config.name
+    form.tempTreshold.data = config.temp_treshold
+    form.channel1.data = config.actuator1_state
+    form.channel2.data = config.actuator2_state
+    form.channel3.data = config.actuator3_state
+    form.startTime.data = config.start_time
+    form.finishTime.data = config.finish_time
+    form.isActive.data = config.is_active
+    form.monday.data = "1" in config.weekdays
+    form.tuesday.data = "2" in config.weekdays
+    form.wednesday.data = "3" in config.weekdays
+    form.thursday.data = "4" in config.weekdays
+    form.friday.data = "5" in config.weekdays
+    form.saturday.data = "6" in config.weekdays
+    form.sunday.data = "7" in config.weekdays
+
+    return form
+
 
 #valdymas
 def formMqttPayload(session, command, deviceId):

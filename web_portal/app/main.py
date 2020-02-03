@@ -115,16 +115,39 @@ def deviceConfigs(id):
     device = userDevice.getUserDeviceViewModel(id)
     return render_template('devices/deviceConfigs.html', device=device)
 
-@main.route('/userDevices/createDeviceConfig/<id>', methods=['POST','GET'])
+
+@main.route('/userDevices/deviceConfigs/edit/<deviceId>/<configUUID>', methods=['POST','GET'])
+@login_required
+def editDeviceConfig(deviceId,configUUID):
+    device = userDevice.getUserDeviceViewModel(deviceId)
+    config = userDevice.getConfig(deviceId,configUUID)
+    form = userDevice.getConfigForm(device)
+
+    if form.validate_on_submit():
+        if userDevice.validateConfigForm(form):
+            return render_template('devices/editDeviceConfig.html', form=form, device=device, config=config)
+
+        userDevice.saveDeviceConfig(form, device, configUUID)        
+    else:        
+        form = userDevice.appendConfigDataToForm(device,config,form)
+            
+    return render_template('devices/editDeviceConfig.html', form=form, device=device, config=config)
+
+@main.route('/userDevices/deviceConfigs/create/<id>', methods=['POST','GET'])
 @login_required
 def createDeviceConfig(id):
     device = userDevice.getUserDeviceViewModel(id)
     form = userDevice.getConfigForm(device)
-
+        
     if form.validate_on_submit():
-        userDevice.saveDeviceConfig(form, device, True)
+        if userDevice.validateConfigForm(form):
+            return render_template('devices/createDeviceConfig.html', form=form, device=device)
+
+        userDevice.saveDeviceConfig(form, device, None)
+        return redirect(url_for('main.deviceConfigs',id=id))
     
     return render_template('devices/createDeviceConfig.html', form=form, device=device)
+    
 
 @main.route('/userDevices/deviceControlPanel/<id>', methods=['POST','GET'])
 @login_required
@@ -144,3 +167,17 @@ def deviceHistory(id):
 @login_required
 def deviceAction(id,command):  
     return userDevice.executeDeviceAction(id,command)
+
+
+@main.route('/activateDeviceConfig/<deviceId>/<configUUID>', methods=['GET'])
+@login_required
+def activateDeviceConfig(deviceId,configUUID):
+    device = userDevice.getUserDevice(deviceId)       
+    return userDevice.activateDeviceConfig(device, configUUID)
+
+@main.route('/deleteDeviceConfig/<deviceId>/<configUUID>', methods=['GET'])
+@login_required
+def deleteDeviceConfig(deviceId,configUUID):
+    device = userDevice.getUserDevice(deviceId)       
+    return userDevice.deleteDeviceConfig(device, configUUID)
+    

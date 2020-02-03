@@ -22,7 +22,7 @@ def login_post():
     user = session.query(Users).filter_by(email=email).first()
 
     if (not user or user and not check_password_hash(user.password, password)):
-        flash('Patikrinkite prisijungimo duomenis ir bandykite vėl.')
+        flash('Patikrinkite prisijungimo duomenis ir bandykite vėl.','danger')
         return redirect(url_for('auth.login'))
     
     login_user(user, remember=remember)
@@ -44,29 +44,33 @@ def signup_post():
     repeatPassword = request.form.get('repeatPassword')
 
     if (not email):
-        flash('Neįvedėte naujo naudotojo elektroninio pašto adreso!')
+        flash('Neįvedėte naujo naudotojo elektroninio pašto adreso!','danger')
         return redirect(url_for('auth.signup'))
 
     if (not name):
-        flash('Neįvedėte naujo naudotojo vardo!')
+        flash('Neįvedėte naujo naudotojo vardo!','danger')
         return redirect(url_for('auth.signup'))
 
     if (password != repeatPassword):
-        flash('Slaptažodžiai nesutampa!')
+        flash('Slaptažodžiai nesutampa!','danger')
         return redirect(url_for('auth.signup'))
 
     if (not password):
-        flash('Neįvedėte naujo naudotojo slaptažodžio!')
+        flash('Neįvedėte naujo naudotojo slaptažodžio!','danger')
         return redirect(url_for('auth.signup'))
 
     session = db.session.session_factory() 
     user = session.query(Users).filter_by(email=email).first()
 
     if (user):
-        flash('Naudotojas su tokiu elektroniniu paštu jau egzistuoja!')
+        flash('Naudotojas su tokiu elektroniniu paštu jau egzistuoja!','danger')
         return redirect(url_for('auth.signup'))
  
-    new_user = Users(email=email, name=name, password=generate_password_hash(password, method='sha256'), uuid=str(uuid4()))
+    new_user = Users(
+        email=email, 
+        name=name, 
+        password=generate_password_hash(password, method='sha256')
+        )
 
     if (new_user.name == 'Admin' and session.query(Users).filter_by(name=new_user.name).first() is None):
         new_user.is_admin = True    
