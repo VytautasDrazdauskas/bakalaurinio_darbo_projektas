@@ -4134,7 +4134,7 @@ to {
     
     .breadcrumb li,.hero.is-fullheight .hero-body,.hero.is-fullheight-with-navbar .hero-body,.hero.is-halfheight .hero-body {
     align-items:center;
-    display:flex;
+    
     }
     
     .breadcrumb .icon:first-child,.tabs .icon:first-child {

@@ -1,31 +1,31 @@
 from flask_wtf import FlaskForm
-from wtforms import *
+import wtforms as form
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import DataRequired
 from app.helpers.enums import DeviceType
 
 class NewDeviceForm(FlaskForm):
-    deviceName = StringField('Prietaiso pavadinimas', validators=[DataRequired()])
-    deviceType = SelectField('Prietaiso tipas', choices = DeviceType.choices(), coerce = DeviceType.coerce)
+    device_name = form.StringField('Prietaiso pavadinimas', validators=[DataRequired()])
+    device_type = form.SelectField('Prietaiso tipas', choices = DeviceType.choices(), coerce = DeviceType.coerce)
 
 class ProfileForm(FlaskForm):
-    userName = StringField('Naujas vartotojo vardas')
+    user_name = form.StringField('Naujas vardas')
     email = EmailField('Naujas el. paštas')
-    password = PasswordField('Dabartinis slaptažodis', validators=[DataRequired()])
-    newPassword = PasswordField('Naujas slaptažodis')
+    password = form.PasswordField('Dabartinis slaptažodis', validators=[DataRequired()])
+    new_password = form.PasswordField('Naujas slaptažodis')
     
 class DeviceForm(FlaskForm):
-    deviceName = StringField('Prietaiso pavadinimas', validators=[DataRequired()])
+    device_name = form.StringField('Prietaiso pavadinimas', validators=[DataRequired()])
     
 class DeviceConfigBaseForm(FlaskForm):
-    configName = StringField('Pavadinimas', validators=[DataRequired()])
-    isActive = BooleanField('Aktyvinta')
-    monday = BooleanField('Pirmadienis')
-    tuesday = BooleanField('Antradienis')
-    wednesday = BooleanField('Trečiadienis')
-    thursday = BooleanField('Ketvirtadienis')
-    friday = BooleanField('Penktadienis')
-    saturday = BooleanField('Šeštadienis')
-    sunday = BooleanField('Sekmadienis')    
-    startTime = TimeField('Pradžios laikas', validators=[DataRequired()])
-    finishTime = TimeField('Pabaigos laikas', validators=[DataRequired()])
+    config_name = form.StringField('Pavadinimas', validators=[DataRequired()])
+    is_active = form.BooleanField('Aktyvinta')
+    monday = form.BooleanField('Pirmadienis')
+    tuesday = form.BooleanField('Antradienis')
+    wednesday = form.BooleanField('Trečiadienis')
+    thursday = form.BooleanField('Ketvirtadienis')
+    friday = form.BooleanField('Penktadienis')
+    saturday = form.BooleanField('Šeštadienis')
+    sunday = form.BooleanField('Sekmadienis')    
+    start_time = form.TimeField('Pradžios laikas', validators=[DataRequired()])
+    finish_time = form.TimeField('Pabaigos laikas', validators=[DataRequired()])

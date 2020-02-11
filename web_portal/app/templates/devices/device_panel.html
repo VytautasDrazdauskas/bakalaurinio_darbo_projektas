@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">Prietaisas - {{ device.device_name }}</h1> 
+<div class="tab">
+    <a class="tablinks" href="{{ url_for('main.device_control_panel', id=device.id) }}">Valdymas</a>
+    <a class="tablinks" href="{{ url_for('main.device_history', id=device.id) }}">Istorija</a>
+    <a class="tablinks" href="{{ url_for('main.device_configurations', id=device.id) }}">Konfigūracijos</a>      
+    <a class="tablinks" href="#">Analitika</a>        
+    </div>      
+<div class="container">        
+    {% block boxContent %}
+    {% endblock %}        
+</div>
+<script>
+    $('#back-btn').on('click', function () {            
+        window.location.href = "{{ url_for('main.user_devices') }}"
+    });
+    
+    $('#refresh-btn').on( 'click', function () {
+        location.reload()
+    });
+
+    $('#new-config-btn').on( 'click', function () {
+        window.location.href = "{{ url_for('main.edit_config', device_id=device.id) }}"
+    });
+    
+</script>
+{% endblock %}

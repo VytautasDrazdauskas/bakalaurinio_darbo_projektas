@@ -25,12 +25,47 @@ function fadeOut(el){
         if(steps == 0) {
             clearInterval(timer);
             timer = undefined;
+            el.parentNode.removeChild(el);
         }
     }, 20);
+    
 }
 
-function notification(msg,duration)
-{
+function createLoader(){
+    if (!$("#loader-div")[0]){
+        var el = document.createElement("div");
+        el.setAttribute("class","loader");
+        el.setAttribute("id","loader-div");
+        //fadeIn(el);
+        document.body.appendChild(el);
+        el.style.opacity=1;
+
+        //uztemdom ekrana
+        var overlay = document.createElement("div");
+        overlay.setAttribute("class","overlay");
+        document.body.appendChild(overlay);
+        overlay.style.opacity=1;
+        //fadeIn(overlay);
+    }
+}
+
+function removeLoader(){
+    var elements = document.getElementsByClassName("loader");
+    for (var i = 0; i < elements.length; i++){
+        //fadeOut(elements[i]);
+        elements[i].style.opacity = 0;
+        elements[i].parentNode.removeChild(elements[i]);
+    }
+    //atstatom ekrana
+    var overlays = document.getElementsByClassName("overlay");
+    for (var i = 0; i < overlays.length; i++){
+        //fadeOut(overlays[i]);
+        overlays[i].style.opacity = 0;
+        overlays[i].parentNode.removeChild(overlays[i]);
+    }
+}
+
+function notification(msg,duration){
     var el = document.createElement("div");
     el.setAttribute("class","notification-box");
 
@@ -72,10 +107,10 @@ function getResponseMessage(response){
             notification(message,2000);
         }
         else{
-            notification(message,5000);
+            notificationDanger(message,5000);
         }    
     else{
-        notification(response.rensponseText);
+        notificationDanger(response.rensponseText,5000);
     }
 }
 
@@ -94,17 +129,57 @@ function GetBoolean(data){
     }
 }
 
-function ControlDevice(deviceId, command){
+function ControlDevice(device_id, command){
+    createLoader()
     $.ajax({
-        url: '/deviceAction/' + deviceId + '/' + command,
-        type: 'GET',
+        url: '/device-action',
+        type: 'POST',
+        data: {
+            'device_id': device_id,
+            'command': command,
+        },
         success: function(response) {
+            removeLoader()
             getResponseMessage(response); 
         },
         error: function(error) {
+            removeLoader()
             getErrorMessage(error)
         }
     });
+    
 }
 
+function ConfigDevice(device_id, type, data){
+    createLoader()
+    $.ajax({
+        url: '/configure-device',
+        type: 'POST',
+        data: {
+            'device_id': device_id,
+            'type': type,
+            'data': data
+        },
+        success: function(response) {
+            removeLoader()
+            getResponseMessage(response); 
+        },
+        error: function(error) {
+            removeLoader()
+            getErrorMessage(error)
+        }
+    });
+    
+}
+
+$(document).ready(function () {
+    //Submit mygtuko veiksmai
+    $('form').submit(function (e) {
+        createLoader();
+    });
+
+    $('#refresh-btn').on('click', function() {
+        createLoader();
+    });
+});
 

@@ -50,13 +50,16 @@ class DeviceJobs(db.Model):
     finish_time = db.Column(db.Time, nullable=True)
     weekdays = db.Column(db.String(7))
     config_uuid = db.Column(db.String(36))
+    running = db.Column(db.Boolean, nullable=False, default=False)
+    
 
-    def __init__(self, device_id, start_time, finish_time, weekdays, config_uuid):
+    def __init__(self, device_id, start_time, finish_time, weekdays, config_uuid, running):
         self.device_id = device_id
         self.start_time = start_time
         self.finish_time = finish_time
         self.weekdays = weekdays
         self.config_uuid = config_uuid
+        self.running = running
 
 #---------------------------- USER DB ---------------------------------
 
@@ -70,12 +73,14 @@ class UserDevices(db.Model):
     date_added_utc = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     date_added_local = db.Column(db.DateTime, nullable=False, default=datetime.now)
     device_type = db.Column(db.Integer, nullable=False)   
+    publish_interval = db.Column(db.Integer, nullable=False, default=30)
 
-    def __init__(self, device_name, mac, status, device_type):
+    def __init__(self, device_name, mac, status, device_type, publish_interval):
         self.device_type = device_type
         self.status = status
         self.device_name = device_name
         self.mac = mac
+        self.publish_interval = publish_interval
 
 #--------------------------  Abstrakcios baziniai modeliai  ----------------------------------
 class DeviceConfigBase(db.Model):

@@ -1,0 +1,104 @@
+{% block commonFormContent %}
+    <div class="content-box">          
+        <div class="form-label-column"> 
+            <h1 class="subtitle has-text-centered">Bendri nustatymai</h1>           
+            <div class="form-row">
+                <div class="form-label-column">
+                    {{ form.config_name.label }}    
+                </div>
+                <div class="form-value-column">
+                    {{ form.config_name(class="input form-field") }}
+                </div>
+            </div> 
+            <br/>              
+            <br/>
+            <div class="form-row">
+                <div class="form-label-column">
+                    {{ form.start_time.label }}    
+                </div>
+                <div class="form-value-column">
+                    {{ form.start_time(class="input form-field", type="time") }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-label-column">
+                    {{ form.finish_time.label }}    
+                </div>
+                <div class="form-value-column">
+                    {{ form.finish_time(class="input form-field", type="time") }}
+                </div>
+            </div>   
+            <br/>
+            <br/>
+            <br/>
+            <div class="form-row">
+                <div class="form-label-column">
+                    {{ form.is_active.label }}    
+                </div>
+                <div class="form-value-column">
+                    {{ form.is_active(class="form-field") }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-value-column">
+            <h1 class="subtitle has-text-centered">Savaitės dienos</h1>
+            <div class="form-row">
+                <div class="form-label-column">
+                    {{ form.monday.label }}    
+                </div>
+                <div class="form-value-column">
+                    {{ form.monday(class="form-field") }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-label-column">
+                    {{ form.tuesday.label }}    
+                </div>
+                <div class="form-value-column">
+                    {{ form.tuesday(class="form-field") }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-label-column">
+                    {{ form.wednesday.label }}    
+                </div>
+                <div class="form-value-column">
+                    {{ form.wednesday(class="form-field") }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-label-column">
+                    {{ form.thursday.label }}    
+                </div>
+                <div class="form-value-column">
+                    {{ form.thursday(class="form-field") }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-label-column">
+                    {{ form.friday.label }}    
+                </div>
+                <div class="form-value-column">
+                    {{ form.friday(class="form-field") }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-label-column">
+                    {{ form.saturday.label }}    
+                </div>
+                <div class="form-value-column">
+                    {{ form.saturday(class="form-field") }}
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-label-column">
+                    {{ form.sunday.label }}    
+                </div>
+                <div class="form-value-column">
+                    {{ form.sunday(class="form-field") }}
+                </div>
+            </div>   
+        </div>                 
+    </div>
+{% endblock %} 

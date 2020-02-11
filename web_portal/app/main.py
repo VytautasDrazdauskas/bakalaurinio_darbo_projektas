@@ -1,14 +1,15 @@
 import os
+from app import Logger
 from flask import Blueprint, render_template, request, redirect, flash, url_for, json
 from flask_login import login_required, current_user
 from app import ALLOWED_EXTENSIONS
 from werkzeug.utils import secure_filename
-from app.helpers.userBase import table_exists
+from app.helpers.user_base import table_exists
 import app.controllers.profiles as profiles
-import app.controllers.devices as userDevice
+import app.controllers.devices as user_device
 import app.helpers.enums as enums
-from app.helpers.codeDecode import decode
-from app.helpers.messaging import RaiseNotification
+from app.helpers.code_decode import decode
+from app.helpers.messaging import raise_notification
 from app.forms import NewDeviceForm, ProfileForm
 import numpy as np
 import cv2
@@ -17,24 +18,25 @@ from PIL import Image
 main = Blueprint('main', __name__)
 
 @main.route('/')
+@main.route('/index')
 def index():
     return render_template('index.html')
 
-@main.route('/editProfile', methods=['GET','POST'])
+@main.route('/edit-profile', methods=['GET','POST'])
 @login_required
-def editProfile():
+def edit_profile():
     form = ProfileForm()
     name = current_user.name
 
     if form.validate_on_submit():
-        profiles.saveUserProfile(form)
+        profiles.save_user_profile(form)
 
-    return render_template('editProfile.html', form=form, name=name)
+    return render_template('edit_profile.html', form=form, name=name)
 
 @main.route('/profile', methods=['GET','POST'])
 @login_required
 def profile():
-    model = profiles.loadUserProfile()
+    model = profiles.load_user_profile()
     
     return render_template('profile.html', model=model)
 
@@ -42,22 +44,22 @@ def profile():
 def about():
     return render_template('about.html')
 
-@main.route('/newDevice', methods=['GET','POST'])
+@main.route('/new-device', methods=['GET','POST'])
 @login_required
-def newDevice():
+def new_device():
     form = NewDeviceForm()
 
     if form.validate_on_submit():
-        newDevice_post(request,form.deviceName.data,form.deviceType.data.value)
+        new_device_post(request,form.device_name.data,form.device_type.data.value)
         
-    return render_template('devices/newDevice.html',form=form)
+    return render_template('devices/new_device.html',form=form)
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @login_required
-def newDevice_post(request,deviceName,deviceType):
+def new_device_post(request,device_name,device_type):
     if 'file' not in request.files:
         flash('Neįkeltas failas','danger')
         return redirect(request.url)
@@ -77,107 +79,123 @@ def newDevice_post(request,deviceName,deviceType):
             img = cv2.resize(image,(360,480))
             code = decode(img)
             if code:
-                userDevice.add_new_device(code,deviceName,deviceType)
+                user_device.add_new_device(code,device_name,device_type)
             else:
                 flash("QR kodas nenuskaitytas!","danger")
                 return redirect(request.url) 
 
         except Exception as Ex:
             flash("Prietaiso nepavyko užregistruoti!","danger")
+            Logger.log_error(Ex.args)
             return redirect(request.url)
         
     else:
         flash("Failas nėra tinkamo formato!","danger")
 
-@main.route('/userDevices')
+@main.route('/user-devices')
 @login_required
-def userDevices():
-    return render_template('devices/userDevicesList.html')
+def user_devices():
+    return render_template('devices/user_devices_list.html')
 
-@main.route('/getUserDevicesList', methods=['POST','GET'])
+@main.route('/get-devices-list', methods=['POST','GET'])
 @login_required
-def getUserDevicesList():
-    return userDevice.getUserDevices()
+def get_devices_list():
+    return user_device.get_user_devices()
 
-@main.route('/getUserDeviceData/<id>', methods=['POST','GET'])
+@main.route('/get-device-data/<id>', methods=['POST','GET'])
 @login_required
-def getUserDeviceData(id):
-    return userDevice.getUserDeviceData(id)
+def get_device_data(id):
+    return user_device.get_device_data(id)
 
-@main.route('/getUserDeviceConfigs/<id>', methods=['POST','GET'])
+@main.route('/get-device-configs/<id>', methods=['POST','GET'])
 @login_required
-def getUserDeviceConfigs(id):
-    return userDevice.getUserDeviceConfigurations(id)  
+def get_device_configs(id):
+    return user_device.get_device_configurations(id)  
 
-@main.route('/userDevices/deviceConfigs/<id>', methods=['POST','GET'])
+@main.route('/user-devices/device-configurations/<id>', methods=['POST','GET'])
 @login_required
-def deviceConfigs(id):
-    device = userDevice.getUserDeviceViewModel(id)
-    return render_template('devices/deviceConfigs.html', device=device)
+def device_configurations(id):
+    device = user_device.get_device_view_model(id)
+    return render_template('devices/device_configurations.html', device=device)
 
-
-@main.route('/userDevices/deviceConfigs/edit/<deviceId>/<configUUID>', methods=['POST','GET'])
+@main.route('/user-devices/device-configurations/edit/<device_id>', methods=['POST','GET'])
+@main.route('/user-devices/device-configurations/edit/<device_id>/<config_uuid>', methods=['POST','GET'])
 @login_required
-def editDeviceConfig(deviceId,configUUID):
-    device = userDevice.getUserDeviceViewModel(deviceId)
-    config = userDevice.getConfig(deviceId,configUUID)
-    form = userDevice.getConfigForm(device)
+def edit_config(device_id,config_uuid=None):
+    if (config_uuid):
+        device = user_device.get_device_view_model(device_id)
+        config = user_device.get_device_config(device_id,config_uuid)
+        form = user_device.get_device_config_form(device)
 
-    if form.validate_on_submit():
-        if userDevice.validateConfigForm(form):
-            return render_template('devices/editDeviceConfig.html', form=form, device=device, config=config)
+        if form.validate_on_submit():
+            if user_device.validate_config_form(form):
+                return render_template('devices/edit_device_config.html', form=form, device=device, config=config)
 
-        userDevice.saveDeviceConfig(form, device, configUUID)        
-    else:        
-        form = userDevice.appendConfigDataToForm(device,config,form)
+            user_device.save_device_config(form, device, config_uuid)        
+        else:        
+            form = user_device.get_config_form(device,config,form)
             
-    return render_template('devices/editDeviceConfig.html', form=form, device=device, config=config)
+        return render_template('devices/edit_device_config.html', form=form, device=device, config=config)
+    else:
+        device = user_device.get_device_view_model(device_id)
+        form = user_device.get_device_config_form(device)
+            
+        if form.validate_on_submit():
+            if user_device.validate_config_form(form):
+                return render_template('devices/create_device_config.html', form=form, device=device)
 
-@main.route('/userDevices/deviceConfigs/create/<id>', methods=['POST','GET'])
-@login_required
-def createDeviceConfig(id):
-    device = userDevice.getUserDeviceViewModel(id)
-    form = userDevice.getConfigForm(device)
+            user_device.save_device_config(form, device, None)
+            return redirect(url_for('main.device_configurations',id=device_id))
         
-    if form.validate_on_submit():
-        if userDevice.validateConfigForm(form):
-            return render_template('devices/createDeviceConfig.html', form=form, device=device)
+        return render_template('devices/create_device_config.html', form=form, device=device)
+ 
 
-        userDevice.saveDeviceConfig(form, device, None)
-        return redirect(url_for('main.deviceConfigs',id=id))
-    
-    return render_template('devices/createDeviceConfig.html', form=form, device=device)
-    
-
-@main.route('/userDevices/deviceControlPanel/<id>', methods=['POST','GET'])
+@main.route('/user-devices/device-control-panel/<id>', methods=['POST','GET'])
 @login_required
-def deviceControlPanel(id):
-    device = userDevice.getUserDeviceViewModel(id)    
-    lastData = userDevice.getLastData(id)
+def device_control_panel(id):
+    device = user_device.get_device_view_model(id)    
+    lastData = user_device.get_last_data(id)
 
-    return render_template('devices/userDeviceControlPanel.html', device=device, data=lastData)
+    return render_template('devices/user_device_control_panel.html', device=device, data=lastData)
 
-@main.route('/userDevices/deviceHistory/<id>', methods=['POST','GET'])
+@main.route('/user-devices/device-history/<id>', methods=['POST','GET'])
 @login_required
-def deviceHistory(id):
-    device = userDevice.getUserDeviceViewModel(id)
-    return render_template('devices/userDeviceHistory.html', device=device)
+def device_history(id):
+    device = user_device.get_device_view_model(id)
+    return render_template('devices/user_device_history.html', device=device)
 
-@main.route('/deviceAction/<id>/<command>', methods=['GET'])
+@main.route('/device-action', methods=['POST'])
 @login_required
-def deviceAction(id,command):  
-    return userDevice.executeDeviceAction(id,command)
+def device_action():  
+    if request.method == "POST":
+          device_id=request.form['device_id']
+          command=request.form['command']
+    return user_device.execute_device_action(device_id,command)
 
-
-@main.route('/activateDeviceConfig/<deviceId>/<configUUID>', methods=['GET'])
+@main.route('/configure-device', methods=['POST'])
 @login_required
-def activateDeviceConfig(deviceId,configUUID):
-    device = userDevice.getUserDevice(deviceId)       
-    return userDevice.activateDeviceConfig(device, configUUID)
+def configure_device():  
+    if request.method == "POST":
+          device_id=request.form['device_id']
+          data_type=request.form['type']
+          data=request.form['data']
+    return user_device.send_device_configuration(device_id,data_type,data)
 
-@main.route('/deleteDeviceConfig/<deviceId>/<configUUID>', methods=['GET'])
+@main.route('/activate-device-configuration', methods=['POST'])
 @login_required
-def deleteDeviceConfig(deviceId,configUUID):
-    device = userDevice.getUserDevice(deviceId)       
-    return userDevice.deleteDeviceConfig(device, configUUID)
+def activate_device_configuration():
+    if request.method == "POST":
+          device_id=request.form['id']
+          config_uuid=request.form['uuid']
+    device = user_device.get_user_device(device_id)       
+    return user_device.activate_device_configuration(device, config_uuid)
+
+@main.route('/delete-device-config', methods=['POST'])
+@login_required
+def delete_device_config():
+    if request.method == "POST":
+        device_id=request.form['id']
+        config_uuid=request.form['uuid']
+    device = user_device.get_user_device(device_id)       
+    return user_device.delete_device_config(device, config_uuid)
     

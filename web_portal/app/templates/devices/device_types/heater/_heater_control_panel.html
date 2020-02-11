@@ -1,0 +1,106 @@
+{% block controls %}  
+    <div class="content-box">   
+        <h1 class="subtitle has-text-centered"> Kaitinimo tenai</h1>
+        <div class="form-row">
+            <div class="form-label-column">
+                <h1>Pirmas kanalas</h1>  
+            </div>                  
+            <div class="form-label-column">
+                <h1>Antras kanalas</h1>  
+            </div>  
+            <div class="form-label-column">
+                <h1>Trečias kanalas</h1>  
+            </div>                         
+        </div> 
+        <div class="form-row">
+            <div class="form-label-column">
+                <label class="switch">
+                    <input id="ch1-btn" value="1" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div> 
+            <div class="form-label-column">
+                <label class="switch">
+                    <input id="ch2-btn" value="2" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div> 
+            <div class="form-label-column">
+                <label class="switch">
+                    <input id="ch3-btn" value="3" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div> 
+        </div>
+        <br/>
+        <div class="form-row">
+            <div class="form-label-column">
+                <h1>Visus įjungti</h1>  
+            </div>                  
+            <div class="form-label-column">
+                <h1>Visus išjungti</h1>  
+            </div>                      
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                <button id="all-on-btn" class="fancy-button">Įjungti</button>
+            </div> 
+            <div class="form-label-column">
+                <button id="all-off-btn" class="fancy-button">Išjungti</button>
+            </div>
+            <div class="form-label-column"></div>
+            <div class="form-label-column">
+                <button id="execute-btn" class="fancy-button">Vykdyti!</button>
+            </div>                         
+        </div>  
+    </div> 
+    <script>        
+        $(document).ready(function () {
+            $("#ch1-btn").prop("checked", GetBoolean("{{ data.actuator1_state }}"));
+            $("#ch2-btn").prop("checked", GetBoolean("{{ data.actuator2_state }}"));
+            $("#ch3-btn").prop("checked", GetBoolean("{{ data.actuator3_state }}"));
+        });
+
+        $('#all-on-btn').on( 'click', function () {
+            $("#ch1-btn").prop("checked", true);
+            $("#ch2-btn").prop("checked", true);
+            $("#ch3-btn").prop("checked", true);
+        });
+
+        $('#all-off-btn').on( 'click', function () {
+            $("#ch1-btn").prop("checked", false);
+            $("#ch2-btn").prop("checked", false);
+            $("#ch3-btn").prop("checked", false);
+        });
+
+        $('#execute-btn').on( 'click', function () {
+            var device_id = "{{ device.id }}";
+
+            var channels = [];            
+            channels.push(document.getElementById("ch1-btn"));
+            channels.push(document.getElementById("ch2-btn"));
+            channels.push(document.getElementById("ch3-btn"));
+
+            if(channels.every(item => item.checked == true )){
+                ControlDevice(device_id,"ALLON");
+            }
+            else if(channels.every(item => item.checked == false )){
+                ControlDevice(device_id,"ALLOFF");
+            }
+            else{
+                channels.forEach(function(item) {
+                    switch(item.checked) {
+                        case true:
+                            ControlDevice(device_id,item.value + "ON");
+                            break;
+                        case false:
+                            ControlDevice(device_id,item.value + "OFF");
+                            break;
+                        default:
+                        notificationDanger('Klaida su kanalu: ' + item.id,5000); 
+                    }
+                }) 
+            }         
+        });
+    </script>
+{% endblock %}

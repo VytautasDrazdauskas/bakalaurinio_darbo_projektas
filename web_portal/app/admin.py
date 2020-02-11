@@ -3,73 +3,73 @@ from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required, current_user
 from app import ALLOWED_EXTENSIONS
 from app.forms import DeviceForm
-from app.controllers.adminPanel import getProfiles, getAllDevices, saveDeviceForm
+from app.controllers.admin_panel import get_profiles, get_system_devices, save_device_form
 from werkzeug.utils import secure_filename
 
 
 admin = Blueprint('admin', __name__)
 
-@admin.route('/adminPanel')
+@admin.route('/admin-panel')
 @login_required
-def adminPanel():
+def admin_panel():
     if (not current_user.is_admin):
         flash('Neteisėtas naudotojo veiksmas!')
-        return render_template('errorPage.html')
+        return render_template('error_page.html')
 
-    return render_template('admin/_profilesList.html')
+    return render_template('admin/_profiles_list.html')
 
-@admin.route('/adminPanel/profilesList')
+@admin.route('/admin-panel/profiles-list')
 @login_required
-def profilesList():
+def profiles_list():
     if (not current_user.is_admin):
         flash('Neteisėtas naudotojo veiksmas!')
-        return render_template('errorPage.html')
+        return render_template('error_page.html')
 
-    return render_template('admin/_profilesList.html')
+    return render_template('admin/_profiles_list.html')
 
-@admin.route('/adminPanel/getProfilesList')
+@admin.route('/admin-panel/get-system-profiles')
 @login_required
-def getProfilesList():
-    if (not current_user.is_admin):
-        flash('Neteisėtas naudotojo veiksmas!')
-
-    return getProfiles()
-
-@admin.route('/adminPanel/getDevicesList')
-@login_required
-def getDevicesList():
+def get_system_profiles():
     if (not current_user.is_admin):
         flash('Neteisėtas naudotojo veiksmas!')
 
-    return getAllDevices()
+    return get_profiles()
 
-@admin.route('/adminPanel/analytics')
+@admin.route('/admin-panel/get-system-devices')
+@login_required
+def get_system_devices():
+    if (not current_user.is_admin):
+        flash('Neteisėtas naudotojo veiksmas!')
+
+    return get_all_devices()
+
+@admin.route('/admin-panel/analytics')
 @login_required
 def analytics():
     if (not current_user.is_admin):
         flash('Neteisėtas naudotojo veiksmas!')
-        return render_template('errorPage.html')
+        return render_template('error_page.html')
 
     return render_template('admin/_analytics.html')
 
-@admin.route('/adminPanel/systemDevices')
+@admin.route('/admin-panel/admin-system-devices')
 @login_required
-def systemDevices():
+def admin_system_devices():
     if (not current_user.is_admin):
         flash('Neteisėtas naudotojo veiksmas!')
-        return render_template('errorPage.html')
+        return render_template('error_page.html')
 
-    return render_template('admin/_systemDevices.html')
+    return render_template('admin/_system_devices.html')
 
-@admin.route('/adminPanel/editDevice', methods=('GET', 'POST'))
+@admin.route('/admin-panel/admin-edit-device', methods=('GET', 'POST'))
 @login_required
-def editDevice():
+def admin_edit_device():
     if (not current_user.is_admin):
         flash('Neteisėtas naudotojo veiksmas!')
-        return render_template('errorPage.html')
+        return render_template('error_page.html')
 
     form = DeviceForm()
     if form.is_submitted():
-        response = saveDeviceForm(form)
+        response = save_device_form(form)
         return redirect('/admin/_systemDevices')
-    return render_template('admin/_editDevice.html', form=form)
+    return render_template('admin/_edit_device.html', form=form)

@@ -4,7 +4,8 @@ from flask_login import LoginManager
 import pymysql 
 from werkzeug.utils import secure_filename
 from queue import Queue
-import app.loadConfig as config
+from app.logger import Logger
+import app.load_config as config
 
 
 UPLOAD_FOLDER = '/path/qrcodes'
@@ -14,6 +15,7 @@ db = SQLAlchemy()
 personal_db = SQLAlchemy()
 pymysql.install_as_MySQLdb()
 queue = Queue()
+logger = Logger()
 
 def create_app():   
     app = Flask(__name__)
@@ -48,10 +50,10 @@ def create_app():
 
     #Suformuoja pagrindine db
     from app.models import Users, Devices
-    from app.helpers.buildMainDb import BuildMainDb
+    from app.helpers.build_main_database import build_main_database
     with app.app_context():
         session = db.session.session_factory()
-        BuildMainDb(session)
+        build_main_database(session)
 
     if __name__== '__main__':
         app.run(debug=True,host='0.0.0.0',port='43210')

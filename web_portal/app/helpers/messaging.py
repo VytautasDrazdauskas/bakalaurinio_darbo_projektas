@@ -1,4 +1,4 @@
 from flask import json
 
-def RaiseNotification(result, message):
+def raise_notification(result, message):
     return json.dumps({'success': result, 'message': message}, ensure_ascii=False, encoding='utf8')
