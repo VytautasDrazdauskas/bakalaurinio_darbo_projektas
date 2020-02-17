@@ -23,7 +23,7 @@ end
     
 function file_parser.ReadFileData(pathToFile, type)
         local file, err = io.open(pathToFile,"r")
-        if err then print("File is empty"); return; end
+        if err then print("File is empty"); return nil, true; end
 
         local data = ""
 
@@ -37,6 +37,36 @@ function file_parser.ReadFileData(pathToFile, type)
         file:close()
 
         return data
+end
+
+function file_parser.UpdateFileData(pathToFile, type, inputData)
+        local res, err = file_parser.ReadFileData(pathToFile, type)
+        if err then return -1; end
+
+        if res == inputData then return 1
+        else
+                local file = io.open( pathToFile, "r" )
+                local newContent = ""
+
+                while true do --iteruojam per failo eilutes
+                        local line = file:read()    
+                        if line == nil then break end
+                  
+                        if (ReadLine(line,type) ~= nil) then 
+                                newContent = newContent .. type .. "=" .. inputData .. "\n" --jei randame reikalinga eilute, sukuriam nauja reiksme
+                        else
+                                newContent =  newContent .. line .. '\n'  -- jei nerandam, paliekam taip, kaip yra
+                        end  
+                end   
+                file:close()
+
+                local fileToWrite = io.open(pathToFile, "w" )
+
+                fileToWrite:write(newContent)
+                fileToWrite:close()
+
+                return 0
+        end
 end
 
 return file_parser

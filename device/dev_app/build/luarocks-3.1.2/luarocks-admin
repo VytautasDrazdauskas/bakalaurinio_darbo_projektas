@@ -1,3 +1,0 @@
-#!/bin/sh
-unset LUA_PATH LUA_PATH_5_2 LUA_PATH_5_3 LUA_PATH_5_4
-LUAROCKS_SYSCONFDIR="/home/vytautas/repo/bakalaurinio_darbo_projektas/device/dev_app/luarocks" LUA_PATH="/home/vytautas/repo/bakalaurinio_darbo_projektas/device/dev_app/build/luarocks-3.1.2/src/?.lua;;" exec "/home/vytautas/repo/bakalaurinio_darbo_projektas/device/dev_app/bin/lua" "/home/vytautas/repo/bakalaurinio_darbo_projektas/device/dev_app/build/luarocks-3.1.2/src/bin/luarocks-admin" --project-tree="/home/vytautas/repo/bakalaurinio_darbo_projektas/device/dev_app/build/luarocks-3.1.2/lua_modules" "$@"

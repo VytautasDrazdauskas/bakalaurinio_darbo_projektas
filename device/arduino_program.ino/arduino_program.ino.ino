@@ -1,27 +1,51 @@
+#include <max6675.h>
+
 #define tempPin A2
-#define ledPin 8 
+#define actuatorPin1 5
+#define actuatorPin2 7 
+#define actuatorPin3 6  
+#define ktcSO 8
+#define ktcCS 9
+#define ktcCLK 10
+
+float temp = 0;
+int act1 = 0;
+int act2 = 0;
+int act3 = 0;
+
+MAX6675 ktc(ktcCLK, ktcCS, ktcSO);
 
 void setup()
 {
   Serial.begin(9600);
-  pinMode(ledPin, OUTPUT);
+  pinMode(actuatorPin1, OUTPUT);
+  pinMode(actuatorPin2, OUTPUT);
+  pinMode(actuatorPin3, OUTPUT);
+  delay(500);
 }
 void loop()
 {
-  int val = analogRead(tempPin);
-  float mv = ( val/1024.0)*500;
-  float cel = mv;
-  bool ledState = digitalRead(ledPin);
-   
-  Serial.print("t=" + (String)cel + ";");
-  Serial.print("val=" + (String)val + ";");
-  Serial.print("ledState=" + String(ledState) + ";");
+  temp = ktc.readCelsius();
+  act1 = digitalRead(actuatorPin1);
+  act2 = digitalRead(actuatorPin2);
+  act3 = digitalRead(actuatorPin3);
+
+  Serial.print("temp=");
+  Serial.print(temp);
+  Serial.print(":act1=");
+  Serial.print(act1);
+  Serial.print(":act2=");
+  Serial.print(act2);
+  Serial.print(":act3=");
+  Serial.print(act3);
+  Serial.print(";");
   Serial.println();
   
   serialEvent();
 
-  delay(100);
+  delay(300);
 }
+
 
 
 void serialEvent()
@@ -34,13 +58,29 @@ void serialEvent()
    
    if (c == '\n')
    {    
-     if (strcmp("ON", cmdBuffer) == 0)
+     if (strcmp("ACT1 ON", cmdBuffer) == 0)
      {
-        digitalWrite(ledPin,HIGH);
+        digitalWrite(actuatorPin1,HIGH);
      }
-     else if (strcmp("OFF", cmdBuffer) == 0)
+     else if (strcmp("ACT1 OFF", cmdBuffer) == 0)
      {
-        digitalWrite(ledPin,LOW);
+        digitalWrite(actuatorPin1,LOW);
+     }
+     else if (strcmp("ACT2 ON", cmdBuffer) == 0)
+     {
+        digitalWrite(actuatorPin2,HIGH);
+     }
+     else if (strcmp("ACT2 OFF", cmdBuffer) == 0)
+     {
+        digitalWrite(actuatorPin2,LOW);
+     }
+     else if (strcmp("ACT3 ON", cmdBuffer) == 0)
+     {
+        digitalWrite(actuatorPin3,HIGH);
+     }
+     else if (strcmp("ACT3 OFF", cmdBuffer) == 0)
+     {
+        digitalWrite(actuatorPin3,LOW);
      }
      cmdBuffer[0] = 0;
    }

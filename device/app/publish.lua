@@ -1,8 +1,8 @@
 #!/usr/bin/lua
 local mqtt = require "libraries.mqtt.init"
-local json = require "libraries.json"
 local fileParser = require "libraries.file_parser"
-local serialController = require "libraries.rs232_controller"
+local common = require "libraries.common"
+local socket = require "libraries.socket"
 
 function Path()
         local str = debug.getinfo(2, "S").source:sub(2)
@@ -23,7 +23,7 @@ function Is_openwrt()
 end
 
 if (Is_openwrt()) then 
-        local handle = io.popen("ifconfig -a | grep wlan0 | head -1")
+        local handle = io.popen("ifconfig -a | grep mesh0 | head -1")
         local result = handle:read("*a")
         --jei prietaisas yra su openwrt OS, tuomet irasom prietaiso MAC adresa
         deviceMAC = string.match(result, "HWaddr(.*)")
@@ -37,19 +37,7 @@ local topic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/jsondata"
 
 --parametrai nuskaitomi is konfiguracinio failo
 local brokerIP = fileParser.ReadFileData(PATH .. "broker.conf","ip")
-
---MQTT publish
-function PublishData(client,topic,message)
-        client:publish{
-                topic = topic,
-                payload = message,
-                qos = 0,
-                properties = {
-                        payload_format_indicator = 1,
-                        content_type = "json",
-                },
-        }     
-end
+local delay = fileParser.ReadFileData(PATH .. "broker.conf","delay")
 
 function Main()
         --sukuriamas sujungimas su MQTT brokeriu        
@@ -73,12 +61,12 @@ function Main()
                         IsSignalLost = false
                 end  
 
-                local response = Loop(client,2)
+                local response = Loop(client,delay)
 
                 --dingo signalas
                 if(response == -2)then
                         client:close_connection()  
-                        RestoreConnection("8.8.8.8") --bandom atstatyti rysi
+                        common.RestoreConnection("8.8.8.8") --bandom atstatyti rysi
                 else --kitos priezastys                        
                         client:close_connection()                         
                         break
@@ -93,10 +81,11 @@ function Loop(client,sleepDelay)
 
         Running = true
         while (Running) do  
-                local message = ReadData()
+                local message = common.ReadData(deviceMAC)
+                --print(message)
 
-                if (CheckPing("8.8.8.8") == true) then 
-                        PublishData(client,topic,message)
+                if (common.CheckPing("8.8.8.8") == true) then 
+                        common.PublishData(client,topic,message)
                         socket.sleep(sleepDelay)
                 else
                         print("Signal is lost.")
@@ -105,51 +94,5 @@ function Loop(client,sleepDelay)
                 end
         end 
 end
-
-function RestoreConnection(ip)
-        
-        print("Trying to restore connection...")                
-        while (CheckPing(ip) == false) do
-                socket.sleep(5.0)
-        end
-
-        IsSignalLost = false
-        print("Connection with " .. ip .. " restored!")
-        return true
-end
-
-function CheckPing(IP)
-        local command = "ping -c 1 -W 1 " .. IP
-        local handler = io.popen(command)
-        local response = handler:read("*a")
-        handler:close()
-        
-        if (string.match(response, " 0%% packet loss") and 
-        not string.match(response, "Network unreachable")) 
-        then return true else return false end
-end
-
-function ReadData()
-        --duomenu nuskaitymas    
-        
-        local data = serialController.Get_serial_data("/dev/ttyUSB0")
-
-        local temp = fileParser.GetData(data,"t")  --test
-        local value = fileParser.GetData(data,"val")     
-        local ledState = fileParser.GetData(data,"ledState")      
-
-        --formuojama duomenu lenta, kuri veliau parsinama i 
-        local dataTable = { 
-                deviceMAC=deviceMAC,
-                data={
-                        temp=temp,
-                        value=value,
-                        ledState=ledState
-                        }
-                }
-        
-        return json.encode(dataTable)
-end
-
 --startuojam
 Main()

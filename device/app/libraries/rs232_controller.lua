@@ -29,7 +29,6 @@ function rs232_controller.Serial_create_client(port_name)
     if err == -1 then
             return nil
     else        
-            print("Sucessful serial port connection.")
             rs232_controller.Serial_setup(serialClient) --9600,8,none,1,off
     end
 
@@ -54,8 +53,8 @@ end
 
 --nuskaitymas
 function rs232_controller.Serial_read(Client)
-    local read_len = 50
-    local timeout = 100
+    local read_len = 500
+    local timeout = 500
     local err, data = nil
 
 	--nuskaitom duomenis per serial porta
@@ -69,7 +68,7 @@ end
 function rs232_controller.Serial_write(serialClient, message)    
     --palaukiam, kol bus inicijuotas rysys, ir tik tada siunciam
     local timeout = 100
-    local read_len = 50
+    local read_len = 100
     local err, data_read = nil
     
     while data_read == nil do

@@ -3,6 +3,8 @@ local mqtt = require "libraries.mqtt.init"
 local json = require "libraries.json"
 local fileParser = require "libraries.file_parser"
 local serial = require "libraries.rs232_controller"
+local socket = require "libraries.socket"
+local common = require "libraries.common"
 
 function Path()
         local str = debug.getinfo(2, "S").source:sub(2)
@@ -10,10 +12,13 @@ function Path()
 end
 
 PATH = Path();
+local configPath = PATH .. "broker.conf"
 
 local deviceMAC = "unknown"  --useruid/system/C493000EFE02/control
-local userUID = fileParser.ReadFileData(PATH .. "broker.conf","useruuid")
-local systemName = fileParser.ReadFileData(PATH .. "broker.conf","systemname")
+local userUID = fileParser.ReadFileData(configPath,"useruuid")
+local systemName = fileParser.ReadFileData(configPath,"systemname")
+
+local emptyUserUID = "00000000-0000-0000-0000-000000000000"
 
 --sukuriamas rysys su Arduino Nano per UART sasaja
 local serialClient = serial.Serial_create_client("/dev/ttyUSB0")
@@ -23,7 +28,7 @@ function Is_openwrt()
 end
 
 if (Is_openwrt()) then 
-        local handle = io.popen("ifconfig -a | grep wlan0 | head -1")
+        local handle = io.popen("ifconfig -a | grep mesh0 | head -1")
         local result = handle:read("*a")
         deviceMAC = string.match(result, "HWaddr(.*)")
         deviceMAC = deviceMAC:gsub("%:", "") --pasalinam dvitaskius
@@ -32,10 +37,18 @@ if (Is_openwrt()) then
 end
 
 --tema user/system/prietaisoMAC/control
-local topic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/control"
+--Subscribe topics
+local device_root_topic = userUID .. "/" .. systemName .. "/" .. deviceMAC
+local topic = device_root_topic .. "/control"
+local config_topic = device_root_topic .. "/setconfig"
+
+--Publish topics
+local pub_topic = device_root_topic .. "/jsondata"
+local control_response_topic = device_root_topic .. "/control/response"
+local setconfig_response_topic = device_root_topic .. "/setconfig/response"
 
 --parametrai nuskaitomi is konfiguracinio failo
-local brokerIP = fileParser.ReadFileData(PATH .. "broker.conf","ip")
+local brokerIP = fileParser.ReadFileData(configPath,"ip")
 
 function Main()
         --sukuriamas sujungimas su MQTT brokeriu        
@@ -58,21 +71,80 @@ function Main()
                         
                         --uzprenumeruojama tema valdymui. QoS 2 reiskia, jog zinute privalo buti pristatyta lygiai viena karta.
                         client:subscribe{ topic=topic, qos=2, callback=function(suback)end}
+                        client:subscribe{ topic=config_topic, qos=2, callback=function(suback)end}
                 end,
 
                 message = function(msg)
                     --nusiunciam brokeriui ACK
-                    assert(client:acknowledge(msg)) 
-                    
-                    --Arduino valdymas per UART
-                    if (msg.payload == "reboot") then 
-                        Running = false
-                        io.popen("reboot")
-                    elseif (msg.payload == "LED ON") then
-                        serial.Serial_write(serialClient,"ON")
-                    elseif (msg.payload == "LED OFF") then
-                        serial.Serial_write(serialClient,"OFF")
-                    end
+                        assert(client:acknowledge(msg)) 
+                        local topic_type = string.match(msg.topic, ".+(/.+)$")                        local sendResponse = false
+
+                        if (userUID ~= emptyUserUID and topic_type == "/control") then
+                                --Arduino valdymas per UART
+                                if (msg.payload == "reboot") then 
+                                        Running = false
+                                        --viską išjungiam
+                                        serial.Serial_write(serialClient,"ACT1 OFF")
+                                        socket.sleep(1)
+                                        serial.Serial_write(serialClient,"ACT2 OFF")
+                                        socket.sleep(1)
+                                        serial.Serial_write(serialClient,"ACT3 OFF")
+                                        --Responsas
+                                        common.PublishData(client,control_response_topic,common.ResponseJson(true,"Command successfully executed!"))
+                                        -- tik po to perkraunam
+                                        io.popen("reboot")
+                                elseif (msg.payload == "ACT ALL ON") then
+                                        serial.Serial_write(serialClient,"ACT1 ON")
+                                        socket.sleep(1)
+                                        serial.Serial_write(serialClient,"ACT2 ON")
+                                        socket.sleep(1)
+                                        serial.Serial_write(serialClient,"ACT3 ON")
+                                        sendResponse = true
+                                elseif (msg.payload == "ACT ALL OFF") then
+                                        serial.Serial_write(serialClient,"ACT1 OFF")
+                                        socket.sleep(1)
+                                        serial.Serial_write(serialClient,"ACT2 OFF")
+                                        socket.sleep(1)
+                                        serial.Serial_write(serialClient,"ACT3 OFF")
+                                        sendResponse = true
+                                else 
+                                        serial.Serial_write(serialClient,msg.payload)
+                                        sendResponse = true
+                                end
+                                
+                                if (sendResponse == true) then
+                                        local message = common.ReadData(deviceMAC)
+                                        common.PublishData(client,control_response_topic,common.ResponseJson(true,"Command successfully executed!"))
+                                        common.PublishData(client,pub_topic,message)
+                                end
+                        elseif (topic_type == "/setconfig") then
+                                local config_type = string.match(msg.payload, "(.+)%=(.+)")
+                                local config_value = string.match(msg.payload, "=(.*)")
+                                local res = nil
+
+                                if (config_type == "useruuid") then 
+                                        res = fileParser.UpdateFileData(configPath,config_type,config_value)
+                                elseif (config_type == "systemname") then 
+                                        res = fileParser.UpdateFileData(configPath,config_type,config_value)
+                                elseif (config_type == "delay") then
+                                        res = fileParser.UpdateFileData(configPath,config_type,config_value)
+                                end
+                                print(res)
+                                print(setconfig_response_topic)
+
+                                if (res == 0) then
+                                        -- tik po to perkraunam
+                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(true,config_type .. " changed to " .. config_value .. ". Restarting."))
+                                        io.popen("./run_daemon.sh restart")
+                                elseif (res == 1) then
+                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"Same value."))
+                                elseif (res == -1) then
+                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"File does not exist."))
+                                else
+                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"Unknown reason."))
+                                end                        
+                        end
+                        
                 end
         }
 
