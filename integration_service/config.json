@@ -1,0 +1,15 @@
+{
+    "database":{
+        "host":"localhost",
+        "port":"3306",
+        "user":"root",
+        "password":"rootSlaptazodis"
+    },
+    "broker":{
+        "host":"78.56.117.253",
+        "port":1883
+    },
+    "scheduler":{
+        "interval":10
+    }
+}
