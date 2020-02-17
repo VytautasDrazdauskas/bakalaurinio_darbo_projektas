@@ -6,7 +6,7 @@ from flask_login import current_user
 from app.models import Users
 from app import db
 from flask_sqlalchemy import SQLAlchemy
-import app.load_config as config
+import app.load_config as app_config
 
 def get_user_db_name():
     if (current_user.is_authenticated): 
@@ -35,7 +35,7 @@ def create_table(table_object):
         raise
 
 def create_user_engine():
-    engine = create_engine('mysql+pymysql://'+config.db_user+':'+config.db_password+'@'+config.db_ip+':'+config.db_port+'/db_'+get_user_db_name() + '?charset=utf8mb4')
+    engine = create_engine('mysql+pymysql://'+app_config.db_user+':'+app_config.db_password+'@'+app_config.db_ip+':'+app_config.db_port+'/db_'+get_user_db_name() + '?charset=utf8mb4')
     return engine
 
 def create_user_session():

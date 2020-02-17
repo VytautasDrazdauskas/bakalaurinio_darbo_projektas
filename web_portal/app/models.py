@@ -46,17 +46,19 @@ class DeviceJobs(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     device_id = db.Column(db.Integer,db.ForeignKey('devices.id'), nullable=False)
-    start_time = db.Column(db.Time, nullable=True)
-    finish_time = db.Column(db.Time, nullable=True)
+    start_time = db.Column(db.Time, nullable=False)
+    duration = db.Column(db.Time, nullable=False)
+    finish_date = db.Column(db.DateTime, nullable=True, default=None)
     weekdays = db.Column(db.String(7))
     config_uuid = db.Column(db.String(36))
     running = db.Column(db.Boolean, nullable=False, default=False)
     
 
-    def __init__(self, device_id, start_time, finish_time, weekdays, config_uuid, running):
+    def __init__(self, device_id, start_time, duration, weekdays, config_uuid, running):
         self.device_id = device_id
         self.start_time = start_time
-        self.finish_time = finish_time
+        self.finish_time = None
+        self.duration = duration
         self.weekdays = weekdays
         self.config_uuid = config_uuid
         self.running = running
@@ -82,16 +84,29 @@ class UserDevices(db.Model):
         self.mac = mac
         self.publish_interval = publish_interval
 
+class UserDeviceHistory(db.Model):
+    __tablename__ = "user_device_history"
+
+    id = db.Column(db.Integer, primary_key=True)
+    device_id = db.Column(db.Integer, db.ForeignKey('user_devices.id'), nullable=False)
+    text = db.Column(db.String(255), nullable=True)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.now)
+
+    def __init__(self, device_id, text):
+        self.device_id = device_id
+        self.text = text
+
 #--------------------------  Abstrakcios baziniai modeliai  ----------------------------------
 class DeviceConfigBase(db.Model):
     __abstract__ = True
 
     uuid = db.Column(db.String(36), primary_key=True, nullable=False)
     name = db.Column(db.String(255), nullable=True)
-    is_active = db.Column(db.Boolean, nullable=False, default=True)    
+    is_active = db.Column(db.Boolean, nullable=False, default=True) 
+    job_state = db.Column(db.Boolean, nullable=True, default=None)   
     weekdays = db.Column(db.String(7), nullable=True)
     start_time = db.Column(db.Time, nullable=True)
-    finish_time = db.Column(db.Time, nullable=True)
+    duration = db.Column(db.Time, nullable=True)
     create_date = db.Column(db.DateTime, nullable=False, default=datetime.now)
     
     @declared_attr

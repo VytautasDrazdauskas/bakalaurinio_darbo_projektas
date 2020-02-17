@@ -4,8 +4,7 @@ import paho.mqtt.publish as publish
 import paho.mqtt.subscribe as subscribe
 import paho.mqtt.client as mqtt
 import time
-import app.load_config as config
-import asyncio
+import app.load_config as app_config
 
 class MqttService():
         
@@ -23,7 +22,7 @@ class MqttService():
         client.on_message = on_message
 
         #prisijungiam prie brokerio su confige esanciais parametrais
-        client.connect(config.broker_ip, config.broker_port, 60)
+        client.connect(app_config.broker_ip, app_config.broker_port, 60)
         client.subscribe(topic=response_topic,qos=2)
         client.publish(topic=topic, payload=message, qos=2)
 

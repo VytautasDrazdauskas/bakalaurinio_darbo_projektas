@@ -5,7 +5,7 @@
         <tr>
             <th>Pavadinimas</th>
             <th>Pradžios laikas</th>	
-            <th>Pabaigos laikas</th>	
+            <th>Trukmė</th>	
             <th>Savaitės dienos</th>	
             <th>Aktyvi?</th>	
             <th></th>
@@ -29,17 +29,34 @@
                 "columns": [
                     {"data": "name"},                    
                     {"data": "start_time"},
-                    {"data": "finish_time"},
+                    {"data": "duration"},
                     {"data": "weekdays"},
                     {"data": "is_active"},
                     {"defaultContent": "<button id='edit-cnfg-btn' class='fancy-button'>Redaguoti</button>"},
-                    {"defaultContent": "<button id='activate-cnfg-btn' class='fancy-button'>Aktyvinti</button>"},
+                    {"defaultContent": "<button id='activate-cnfg-btn' class='fancy-button'>Aktyvinti</button> <button id='stop-job-btn' class='fancy-button'>Stabdyti darbą</button>"},
                     {"defaultContent": "<button id='delete-cnfg-btn' class='fancy-button'>Pašalinti</button>"}
                 ],
                 "order": [
                     [ 0, "asc" ]
                 ]
             }); 
+
+            //paleidziama tik tada, kada prikabinami duomenys
+             $('#configTable').on( 'draw.dt', function () {
+                var table = $('#configTable').DataTable();
+                table.$('#stop-job-btn').hide()
+ 
+                table.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+                    var row = this.data();
+                    if (row.is_active === "Running"){
+                        this.$('#stop-job-btn').eq(rowLoop).show()
+                        this.$('#activate-cnfg-btn').eq(rowLoop).hide()
+                        this.$('#delete-cnfg-btn').eq(rowLoop).hide()
+                    }
+                } );
+            } );     
         });
+
+         
     </script>
 {% endblock %}

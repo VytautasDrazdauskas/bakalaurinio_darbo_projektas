@@ -2,7 +2,7 @@
 
 {% block boxContent %}
     <div class="tab-box">    
-        <h1 class="subtitle has-text-centered">Nauja prietaiso konfigūracija</h1>  
+        <h1 class="subtitle has-text-centered">Nauja prietaiso rutininių darbų konfigūracija</h1>  
         <form method=post enctype=multipart/form-data action="{{ url_for('main.edit_config', device_id=device.id) }}">
             {{ form.hidden_tag() }}
             <div class="control-panel">

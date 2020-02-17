@@ -7,7 +7,7 @@
                     {{ form.config_name.label }}    
                 </div>
                 <div class="form-value-column">
-                    {{ form.config_name(class="input form-field") }}
+                    {{ form.config_name(class="input form-field is-large") }}
                 </div>
             </div> 
             <br/>              
@@ -17,15 +17,15 @@
                     {{ form.start_time.label }}    
                 </div>
                 <div class="form-value-column">
-                    {{ form.start_time(class="input form-field", type="time") }}
+                    {{ form.start_time(class="input form-field is-large", type="time") }}
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-label-column">
-                    {{ form.finish_time.label }}    
+                    {{ form.duration.label }}    
                 </div>
                 <div class="form-value-column">
-                    {{ form.finish_time(class="input form-field", type="time") }}
+                    {{ form.duration(class="input form-field is-large", type="time") }}
                 </div>
             </div>   
             <br/>
@@ -36,7 +36,10 @@
                     {{ form.is_active.label }}    
                 </div>
                 <div class="form-value-column">
-                    {{ form.is_active(class="form-field") }}
+                    <label class="switch">
+                        {{ form.is_active(class="check-box") }}
+                        <span class="slider round"></span>
+                    </label>                    
                 </div>
             </div>
         </div>
@@ -48,7 +51,10 @@
                     {{ form.monday.label }}    
                 </div>
                 <div class="form-value-column">
-                    {{ form.monday(class="form-field") }}
+                    <label class="switch">
+                        {{ form.monday(class="check-box") }}
+                        <span class="slider round"></span>
+                    </label>                    
                 </div>
             </div>
             <div class="form-row">
@@ -56,7 +62,10 @@
                     {{ form.tuesday.label }}    
                 </div>
                 <div class="form-value-column">
-                    {{ form.tuesday(class="form-field") }}
+                    <label class="switch">
+                        {{ form.tuesday(class="check-box") }}
+                        <span class="slider round"></span>
+                    </label>                    
                 </div>
             </div>
             <div class="form-row">
@@ -64,7 +73,10 @@
                     {{ form.wednesday.label }}    
                 </div>
                 <div class="form-value-column">
-                    {{ form.wednesday(class="form-field") }}
+                    <label class="switch">
+                        {{ form.wednesday(class="check-box") }}
+                        <span class="slider round"></span>
+                    </label>                    
                 </div>
             </div>
             <div class="form-row">
@@ -72,7 +84,10 @@
                     {{ form.thursday.label }}    
                 </div>
                 <div class="form-value-column">
-                    {{ form.thursday(class="form-field") }}
+                    <label class="switch">
+                        {{ form.thursday(class="check-box") }}
+                        <span class="slider round"></span>
+                    </label>                    
                 </div>
             </div>
             <div class="form-row">
@@ -80,7 +95,10 @@
                     {{ form.friday.label }}    
                 </div>
                 <div class="form-value-column">
-                    {{ form.friday(class="form-field") }}
+                    <label class="switch">
+                        {{ form.friday(class="check-box") }}
+                        <span class="slider round"></span>
+                    </label>                    
                 </div>
             </div>
             <div class="form-row">
@@ -88,7 +106,10 @@
                     {{ form.saturday.label }}    
                 </div>
                 <div class="form-value-column">
-                    {{ form.saturday(class="form-field") }}
+                    <label class="switch">
+                        {{ form.saturday(class="check-box") }}
+                        <span class="slider round"></span>
+                    </label>                    
                 </div>
             </div>
             <div class="form-row">
@@ -96,7 +117,10 @@
                     {{ form.sunday.label }}    
                 </div>
                 <div class="form-value-column">
-                    {{ form.sunday(class="form-field") }}
+                    <label class="switch">
+                        {{ form.sunday(class="check-box") }}
+                        <span class="slider round"></span>
+                    </label>                    
                 </div>
             </div>   
         </div>                 

@@ -35,6 +35,20 @@ class DevicesView():
             'state': self.state
         }
 
+class UserDeviceHistoryView():
+    def __init__(self, id, text, date):
+        self.id = id
+        self.text = text
+        self.date = date
+
+    @property
+    def serialize(self):
+        return {
+            'id': self.id,
+            'text': self.text,
+            'date': self.date
+        }
+
 class UserDevicesView():
     def __init__(self, id, device_name, mac, state, date_added, device_type, device_type_name, publish_interval):
         self.id = id

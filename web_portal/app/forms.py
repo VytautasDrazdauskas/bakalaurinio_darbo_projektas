@@ -28,4 +28,4 @@ class DeviceConfigBaseForm(FlaskForm):
     saturday = form.BooleanField('Šeštadienis')
     sunday = form.BooleanField('Sekmadienis')    
     start_time = form.TimeField('Pradžios laikas', validators=[DataRequired()])
-    finish_time = form.TimeField('Pabaigos laikas', validators=[DataRequired()])
+    duration = form.TimeField('Trukmė', validators=[DataRequired()])

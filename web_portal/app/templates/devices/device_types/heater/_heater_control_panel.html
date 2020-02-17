@@ -15,19 +15,19 @@
         <div class="form-row">
             <div class="form-label-column">
                 <label class="switch">
-                    <input id="ch1-btn" value="1" type="checkbox">
+                    <input id="ch1-btn" value="CH1" type="checkbox">
                     <span class="slider round"></span>
                 </label>
             </div> 
             <div class="form-label-column">
                 <label class="switch">
-                    <input id="ch2-btn" value="2" type="checkbox">
+                    <input id="ch2-btn" value="CH2" type="checkbox">
                     <span class="slider round"></span>
                 </label>
             </div> 
             <div class="form-label-column">
                 <label class="switch">
-                    <input id="ch3-btn" value="3" type="checkbox">
+                    <input id="ch3-btn" value="CH3" type="checkbox">
                     <span class="slider round"></span>
                 </label>
             </div> 
@@ -82,10 +82,10 @@
             channels.push(document.getElementById("ch3-btn"));
 
             if(channels.every(item => item.checked == true )){
-                ControlDevice(device_id,"ALLON");
+                ControlDevice(device_id,"ALLCHON");
             }
             else if(channels.every(item => item.checked == false )){
-                ControlDevice(device_id,"ALLOFF");
+                ControlDevice(device_id,"ALLCHOFF");
             }
             else{
                 channels.forEach(function(item) {

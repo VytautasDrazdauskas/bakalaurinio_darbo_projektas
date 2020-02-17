@@ -12,7 +12,12 @@ class DeviceState(enum.Enum):
 class ConfigState(enum.Enum):
     Active = True
     Disabled = False
-
+    
+class ConfigJobState(enum.Enum):
+    Running = True
+    Idle = False
+    Disabled = None
+    
 class DeviceType(enum.Enum):
     Default = 0
     Heater = 1

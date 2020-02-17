@@ -4,9 +4,10 @@
 <h1 class="title">Prietaisas - {{ device.device_name }}</h1> 
 <div class="tab">
     <a class="tablinks" href="{{ url_for('main.device_control_panel', id=device.id) }}">Valdymas</a>
-    <a class="tablinks" href="{{ url_for('main.device_history', id=device.id) }}">Istorija</a>
-    <a class="tablinks" href="{{ url_for('main.device_configurations', id=device.id) }}">Konfigūracijos</a>      
-    <a class="tablinks" href="#">Analitika</a>        
+    <a class="tablinks" href="{{ url_for('main.device_data_history', id=device.id) }}">Duomenys</a>
+    <a class="tablinks" href="{{ url_for('main.device_configurations', id=device.id) }}">Konfigūracijos</a>  
+    <a class="tablinks" href="{{ url_for('main.device_action_history', id=device.id) }}">Veiksmų istorija</a>    
+    <a class="tablinks" href="{{ url_for('main.device_analytics', id=device.id) }}">Analitika</a>        
     </div>      
 <div class="container">        
     {% block boxContent %}

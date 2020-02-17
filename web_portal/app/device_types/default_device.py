@@ -12,6 +12,8 @@ from app.forms import *
 from app.models import DeviceConfigBase, DeviceDataBase
 import app.helpers.code_decode as code_decode
 import uuid as uuid
+from sqlalchemy.sql.expression import func
+from math import floor
 
 class DefaultDeviceData(DeviceDataBase):
     __tablename__ = "default_device_data"
@@ -30,13 +32,13 @@ class DefaultDeviceConfig(DeviceConfigBase):
     temp_treshold = db.Column(db.Numeric(8,2), nullable=True)
     led_state = db.Column(db.Boolean, nullable=True)   
 
-    def __init__(self, device_id, temp_treshold, led_state, name, is_active, weekdays, start_time, finish_time):
+    def __init__(self, device_id, temp_treshold, led_state, name, is_active, weekdays, start_time, duration):
         self.temp_treshold = temp_treshold
         self.led_state = led_state        
         self.name = name        
         self.device_id = device_id
         self.start_time = start_time
-        self.finish_time = finish_time
+        self.duration = duration
         self.weekdays = weekdays
         self.is_active = is_active
         self.uuid = str(uuid.uuid4())
@@ -59,7 +61,7 @@ class DeviceDataView():
         }
 
 class DefaultDeviceConfigView():
-    def __init__(self, uuid, name, temp, is_active, led_state, weekdays, start_time, finish_time, creation_date):
+    def __init__(self, uuid, name, temp, is_active, led_state, weekdays, start_time, duration, creation_date):
         self.uuid = uuid
         self.name = name
         self.is_active = is_active
@@ -67,7 +69,7 @@ class DefaultDeviceConfigView():
         self.led_state = led_state
         self.weekdays = weekdays
         self.start_time = start_time
-        self.finish_time = finish_time
+        self.duration = duration
         self.creation_date = creation_date
         
     @property
@@ -80,7 +82,7 @@ class DefaultDeviceConfigView():
             'led_state': self.led_state,
             'weekdays' : self.weekdays,
             'start_time': self.start_time,
-            'finish_time': self.finish_time,
+            'duration': self.duration,
             'creation_date': self.creation_date
         }
 
@@ -117,6 +119,42 @@ def get_data(session, device_id):
             'data': [result.serialize for result in data_object_list]
         })
 
+def get_data_range(session, device_id, date_from, date_to, resolution):
+    row_count = session.query(func.count(DefaultDeviceData.id)).filter(DefaultDeviceData.date > date_from, DefaultDeviceData.date < date_to).filter_by(device_id=device_id).scalar()
+    data_list = []
+    if (row_count > resolution):
+        all_data = session.query(DefaultDeviceData).filter(DefaultDeviceData.date > date_from, DefaultDeviceData.date < date_to).filter_by(device_id=device_id).all()
+
+        skip_rows = floor(row_count/resolution)
+        counter = 0
+        data_sum = 0
+        for item in all_data:
+            counter+=1
+            data_sum+=item.temp
+            if (counter == skip_rows):                
+                avg_item=item
+                avg_item.temp=round(data_sum/counter,2)
+                data_list.append(avg_item)
+
+                counter=0
+                data_sum=0
+    else:
+        data_list = session.query(DefaultDeviceData).filter(DefaultDeviceData.date > date_from, DefaultDeviceData.date < date_to).filter_by(device_id=device_id).all()
+    
+    data_object_list = []
+    for data in data_list:
+        data_object = DeviceDataView(
+            data.id,
+            1 if data.led_state else 0,
+            str(data.temp),
+            str(data.date)
+        )
+        data_object_list.append(data_object)
+
+    return jsonify({
+            'data': [result.serialize for result in data_object_list]
+        })
+
 def get_last_data(session,device_id):
     return session.query(DefaultDeviceData).filter_by(device_id=device_id).order_by(DefaultDeviceData.date.desc()).first()
 
@@ -127,22 +165,17 @@ def get_configuration_view_list(session, device_id):
         config_object = DefaultDeviceConfigView(
             uuid=config.uuid,
             name=config.name,
-            is_active=enums.ConfigState(config.is_active).name,
+            is_active=enums.ConfigState(config.is_active).name if config.job_state != enums.ConfigJobState.Running.value else enums.ConfigJobState(config.job_state).name,
             temp=str(config.temp_treshold),
             led_state=enums.ConfigState(config.led_state).name,
             weekdays=code_decode.decode_weekdays(config.weekdays),
             start_time=str(config.start_time),
-            finish_time=str(config.finish_time),
+            duration=str(config.duration),
             creation_date=str(config.create_date)
         )
         config_objects_list.append(config_object)
         
     return config_objects_list
-
-def get_configuration_view(session, device_id):
-    config = session.query(HeaterConfig).filter_by(id=configId).first()
-    return DefaultDeviceConfigView(
-    ) 
 
 def save_configuration(session, form, device_id, config_uuid):    
     #nauja prietaiso konfiguracija
@@ -154,7 +187,7 @@ def save_configuration(session, form, device_id, config_uuid):
             is_active=form.is_active.data,
             weekdays=code_decode.code_weekdays(form),
             start_time=form.start_time.data,
-            finish_time=form.finish_time.data,
+            duration=form.duration.data,
             device_id=device_id
         )
     #egzistuojanti konfiguracija
@@ -167,7 +200,7 @@ def save_configuration(session, form, device_id, config_uuid):
         config.is_active=form.is_active.data
         config.weekdays=code_decode.code_weekdays(form)
         config.start_time=form.start_time.data
-        config.finish_time=form.finish_time.data
+        config.duration=form.duration.data
         config.device_id=device_id
 
         return config
@@ -177,7 +210,7 @@ def append_to_config_form(config, form):
     form.temp_treshold.data = config.temp_treshold
     form.led_state.data = config.led_state
     form.start_time.data = config.start_time
-    form.finish_time.data = config.finish_time
+    form.duration.data = config.duration
     form.is_active.data = config.is_active
     form.monday.data = "0" in config.weekdays
     form.tuesday.data = "1" in config.weekdays
@@ -189,13 +222,14 @@ def append_to_config_form(config, form):
 
     return form
 
-def form_mqtt_payload(session, command, device_id):
-    lastData = session.query(DefaultDeviceData).filter_by(device_id=device_id).order_by(DefaultDeviceData.date.desc()).first()
+def form_mqtt_payload(command):
+    
+    if (command == 'CH1OFF'):
+        return "LED OFF"
+    elif (command == 'CH1ON'):
+        return "LED ON"
 
-    if (lastData is not None):
-        if (command == 'LED OFF' and lastData.led_state == True):
-            return "LED OFF"
-        elif (command == 'LED ON' and lastData.led_state == False):
-            return "LED ON"
+    if (command == 'STOP JOB'):
+        return "LED OFF"
 
     return "NO ACT"

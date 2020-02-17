@@ -4,14 +4,14 @@ from flask_login import login_user, logout_user, login_required
 from app.models import Users
 from app import db
 import mysql.connector
-import app.load_config as config
+import app.load_config as app_config
 
 def get_root_connection():    
     connection = mysql.connector.connect(
-    host=config.db_ip,
-    port=config.db_port,
-    user=config.db_user,
-    passwd=config.db_password
+    host=app_config.db_ip,
+    port=app_config.db_port,
+    user=app_config.db_user,
+    passwd=app_config.db_password
     )
     return connection
 

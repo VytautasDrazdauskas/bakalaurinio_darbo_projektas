@@ -1,4 +1,13 @@
 import pyzbar.pyzbar as pyzbar
+from flask import json
+
+class JsonParse(object):
+    def __init__(self, data):
+	    self.__dict__ = json.loads(data)
+
+    def decode_jsonify(self):
+        return JsonParse(self.data)
+        
 
 def decode(image): 
     # Find barcodes and QR codes
@@ -50,3 +59,4 @@ def decode_weekdays(weekdays):
         elif (day == '6'):
             result += 'Sk. '
     return result
+

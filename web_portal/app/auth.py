@@ -45,6 +45,8 @@ def signup_post():
         password = request.form.get('password')
         repeat_password = request.form.get('repeat_password')
 
+        session = db.session.session_factory()
+
         if (not email):
             flash('Neįvedėte naujo naudotojo elektroninio pašto adreso!','danger')
             return redirect(url_for('auth.signup'))
@@ -61,7 +63,7 @@ def signup_post():
             flash('Neįvedėte naujo naudotojo slaptažodžio!','danger')
             return redirect(url_for('auth.signup'))
 
-        session = db.session.session_factory() 
+         
         user = session.query(Users).filter_by(email=email).first()
 
         if (user):

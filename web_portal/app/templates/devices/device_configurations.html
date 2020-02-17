@@ -13,7 +13,7 @@
         <button id="refresh-btn" style="float: right;" class="fancy-button">Atnaujinti</button>
     </div>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function () {            
             $('#configTable tbody').on('click', '#edit-cnfg-btn', function () {   
                 var table = $("#configTable").DataTable();         
                 var data = table.row( $(this).parents('tr')).data();
@@ -47,6 +47,36 @@
                         getErrorMessage(error)
                     }
                 });
+            });
+
+            $('#configTable tbody').on('click', '#stop-job-btn', function () {            
+                var table = $("#configTable").DataTable();         
+                var data = table.row( $(this).parents('tr')).data();
+                var uuid = data.uuid;
+                var config_name = data.name;
+                var device_id = '{{ device.id }}'
+
+                if(confirm('Ar tikrai norite sustabdyti rutininį darbą pagal konfigūraciją "' + config_name + '"?')){
+                    createLoader();
+                    $.ajax({
+                        url: "{{ url_for('main.stop_device_job') }}",
+                        type: 'POST',
+                        data: {
+                            id: device_id,
+                            uuid: uuid
+                        },
+                        success: function(response) {
+                            table.ajax.reload();
+                            removeLoader();
+                            getResponseMessage(response); 
+                        },
+                        error: function(error) {
+                            table.ajax.reload();
+                            removeLoader();
+                            getErrorMessage(error)
+                        }
+                    });
+                }
             });
 
             $('#configTable tbody').on('click', '#delete-cnfg-btn', function () {

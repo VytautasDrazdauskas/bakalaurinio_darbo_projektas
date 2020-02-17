@@ -6,7 +6,7 @@
                 {{ form.temp_treshold.label }}    
             </div>
             <div class="form-value-column">
-                {{ form.temp_treshold(class="input form-field", type="number") }}
+                {{ form.temp_treshold(class="input form-field is-large", type="number") }}
             </div>
         </div>
         <div class="form-row">
@@ -14,7 +14,10 @@
                 {{ form.channel1.label }}    
             </div>
             <div class="form-value-column">
-                {{ form.channel1(class="form-field") }}
+                <label class="switch">
+                    {{ form.channel1(class="check-box") }}
+                    <span class="slider round"></span>
+                </label> 
             </div>
         </div>
         <div class="form-row">
@@ -22,15 +25,21 @@
                 {{ form.channel2.label }}    
             </div>
             <div class="form-value-column">
-                {{ form.channel2(class="form-field") }}
+                <label class="switch">
+                    {{ form.channel2(class="check-box") }}
+                    <span class="slider round"></span>
+                </label> 
             </div>
         </div>
         <div class="form-row">
             <div class="form-label-column">
                 {{ form.channel3.label }}    
             </div>
-            <div class="form-value-column">
-                {{ form.channel3(class="form-field") }}
+            <div class="form-value-column">                
+                <label class="switch">
+                    {{ form.channel3(class="check-box") }}
+                    <span class="slider round"></span>
+                </label> 
             </div>
         </div>
     </div>  

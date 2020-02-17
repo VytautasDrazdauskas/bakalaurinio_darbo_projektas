@@ -11,6 +11,8 @@ from flask_wtf import FlaskForm
 from wtforms import *
 from app.models import DeviceConfigBase, DeviceDataBase
 import uuid as uuid
+from sqlalchemy import func
+from math import ceil, floor
 
 #Kaitintuvo duomenys ir config lenta
 #models
@@ -37,7 +39,7 @@ class HeaterConfig(DeviceConfigBase):
     actuator2_state = db.Column(db.Boolean, nullable=False)
     actuator3_state = db.Column(db.Boolean, nullable=False)
     
-    def __init__(self, device_id, temp_treshold, actuator1_state, actuator2_state, actuator3_state, name, is_active, weekdays, start_time, finish_time):
+    def __init__(self, device_id, temp_treshold, actuator1_state, actuator2_state, actuator3_state, name, is_active, weekdays, start_time, duration):
         self.temp_treshold = temp_treshold
         self.actuator1_state = actuator1_state
         self.actuator2_state = actuator2_state
@@ -45,20 +47,20 @@ class HeaterConfig(DeviceConfigBase):
         self.name = name        
         self.device_id = device_id
         self.start_time = start_time
-        self.finish_time = finish_time
+        self.duration = duration
         self.weekdays = weekdays
         self.is_active = is_active
         self.uuid = str(uuid.uuid4())
 
 #view models
 class HeaterDataView():
-    def __init__(self, id, temp, date, actuator1, actuator2, actuator3):
+    def __init__(self, id, temp, date, ch1, ch2, ch3):
         self.id = id
         self.temp = temp
         self.date = date
-        self.actuator1 = actuator1
-        self.actuator2 = actuator2
-        self.actuator3 = actuator3
+        self.ch1 = ch1
+        self.ch2 = ch2
+        self.ch3 = ch3
 
     @property
     def serialize(self):
@@ -66,13 +68,13 @@ class HeaterDataView():
             'id': self.id,
             'temp': self.temp,
             'date': self.date,
-            'actuator1': self.actuator1,
-            'actuator2': self.actuator2,
-            'actuator3': self.actuator3
+            'ch1': self.ch1,
+            'ch2': self.ch2,
+            'ch3': self.ch3
         }
 
 class HeaterConfigView():
-    def __init__(self, uuid, name, is_active, temp, channels, weekdays, start_time, finish_time, creation_date):
+    def __init__(self, uuid, name, is_active, temp, channels, weekdays, start_time, duration, creation_date):
         self.uuid = uuid
         self.name = name
         self.is_active = is_active
@@ -80,7 +82,7 @@ class HeaterConfigView():
         self.channels = channels
         self.weekdays = weekdays
         self.start_time = start_time
-        self.finish_time = finish_time
+        self.duration = duration
         self.creation_date = creation_date
         
     @property
@@ -93,7 +95,7 @@ class HeaterConfigView():
             'channels': self.channels,
             'weekdays' : self.weekdays,
             'start_time': self.start_time,
-            'finish_time': self.finish_time,
+            'duration': self.duration,
             'creation_date': self.creation_date
         }
 
@@ -123,10 +125,48 @@ def get_data(session,device_id):
     for data in data_list:
         data_object = HeaterDataView(
             id=data.id,
-            actuator1=str(data.actuator1_state),
-            actuator2=str(data.actuator2_state),
-            actuator3=str(data.actuator3_state),
+            ch1=str(data.actuator1_state),
+            ch2=str(data.actuator2_state),
+            ch3=str(data.actuator3_state),
             temp=str(data.temp) + " C°",
+            date=str(data.date)
+        )
+        data_object_list.append(data_object)
+
+    return jsonify({
+            'data': [result.serialize for result in data_object_list]
+        })
+
+def get_data_range(session, device_id, date_from, date_to, resolution):
+    row_count = session.query(func.count(HeaterData.id)).filter(HeaterData.date > date_from, HeaterData.date < date_to).filter_by(device_id=device_id).scalar()
+    data_list = []
+    if (row_count > resolution):
+        all_data = session.query(HeaterData).filter(HeaterData.date > date_from, HeaterData.date < date_to).filter_by(device_id=device_id).all()
+
+        skip_rows = floor(row_count/resolution)
+        counter = 0
+        data_sum = 0
+        for item in all_data:
+            counter+=1
+            data_sum+=item.temp
+            if (counter == skip_rows):                
+                avg_item=item
+                avg_item.temp=round(data_sum/counter,2)
+                data_list.append(avg_item)
+
+                counter=0
+                data_sum=0
+    else:
+        data_list = session.query(HeaterData).filter(HeaterData.date > date_from, HeaterData.date < date_to).filter_by(device_id=device_id).all()  
+
+    data_object_list = []
+    for data in data_list:
+        data_object = HeaterDataView(
+            id=data.id,
+            temp=str(data.temp),
+            ch1= 1 if data.actuator1_state else 0,
+            ch2= 1 if data.actuator2_state else 0,
+            ch3= 1 if data.actuator3_state else 0,            
             date=str(data.date)
         )
         data_object_list.append(data_object)
@@ -147,32 +187,17 @@ def get_configuration_view_list(session, device_id):
         config_object = HeaterConfigView(
             uuid=config.uuid,
             name=config.name,
-            is_active=enums.ConfigState(config.is_active).name,
+            is_active=enums.ConfigState(config.is_active).name if config.job_state != enums.ConfigJobState.Running.value else enums.ConfigJobState(config.job_state).name,
             temp = str(config.temp_treshold),
             channels = enums.ConfigState(config.actuator1_state).name + ' ' + enums.ConfigState(config.actuator2_state).name + ' ' + enums.ConfigState(config.actuator3_state).name,
             weekdays = code_decode.decode_weekdays(config.weekdays),
             start_time = str(config.start_time),
-            finish_time = str(config.finish_time),
+            duration = str(config.duration),
             creation_date = str(config.create_date)
         )
         config_objects_list.append(config_object)
 
     return config_objects_list
-    
-def get_configuration_view(session, device_id):
-    config = session.query(DefaultDeviceConfig).filter_by(id=configId).first()          
-    return HeaterConfigView(
-            uuid=config.uuid,
-            name=config.config_name,
-            is_active=enums.ConfigState(config.is_active).name,
-            temp = config.temp_treshold,
-            channels = enums.ConfigState(config.actuator1_state).name + ' ' + enums.ConfigState(config.actuator2_state).name + ' ' + enums.ConfigState(config.actuator3_state).name,
-            weekdays = config.weekdays,
-            start_time = config.start_time,
-            finish_time = config.finish_time,
-            creation_date = config.create_date,
-            modificationDate = config.modification_date
-        )
 
 def save_configuration(session, form, device_id, config_uuid):    
     #nauja prietaiso konfiguracija
@@ -186,7 +211,7 @@ def save_configuration(session, form, device_id, config_uuid):
             is_active=form.is_active.data,
             weekdays=code_decode.code_weekdays(form),
             start_time=form.start_time.data,
-            finish_time=form.finish_time.data,
+            duration=form.duration.data,
             device_id=device_id
         )
     #egzistuojanti konfiguracija
@@ -201,7 +226,7 @@ def save_configuration(session, form, device_id, config_uuid):
         config.is_active=form.is_active.data
         config.weekdays=code_decode.code_weekdays(form)
         config.start_time=form.start_time.data
-        config.finish_time=form.finish_time.data
+        config.duration=form.duration.data
         config.device_id=device_id
 
         return config
@@ -213,7 +238,7 @@ def append_to_config_form(config, form):
     form.channel2.data = config.actuator2_state
     form.channel3.data = config.actuator3_state
     form.start_time.data = config.start_time
-    form.finish_time.data = config.finish_time
+    form.duration.data = config.duration
     form.is_active.data = config.is_active
     form.monday.data = "0" in config.weekdays
     form.tuesday.data = "1" in config.weekdays
@@ -227,24 +252,27 @@ def append_to_config_form(config, form):
 
 
 #valdymas
-def form_mqtt_payload(session, command, device_id):    
+def form_mqtt_payload(command):    
     
-    if (command == '1OFF'):
+    if (command == 'CH1OFF'):
         return "ACT1 OFF"
-    elif (command == '1ON'):
+    elif (command == 'CH1ON'):
         return "ACT1 ON"
-    elif (command == '2OFF'):
+    elif (command == 'CH2OFF'):
         return "ACT2 OFF"
-    elif (command == '2ON'):
+    elif (command == 'CH2ON'):
         return "ACT2 ON"
-    elif (command == '3OFF'):
+    elif (command == 'CH3OFF'):
         return "ACT3 OFF"
-    elif (command == '3ON'):
+    elif (command == 'CH3ON'):
         return "ACT3 ON"
     
-    if (command == 'ALLON'):
+    if (command == 'ALLCHON'):
         return "ACT ALL ON"
-    elif (command == 'ALLOFF'):
+    elif (command == 'ALLCHOFF'):
+        return "ACT ALL OFF"
+
+    if (command == 'STOP JOB'):
         return "ACT ALL OFF"
 
     return "NO ACT"
