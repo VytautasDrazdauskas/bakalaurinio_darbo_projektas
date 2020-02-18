@@ -1,0 +1,82 @@
+{% block deviceInfo %} 
+    <div class="content-box">
+        <h1 class="subtitle has-text-centered"> Prietaiso informacija</h1>
+        <div class="form-value-column">   
+            <div class="form-row">
+                <div class="form-value-column">   
+                    <div class="form-label-column">
+                        <h1>Prietaiso MAC:</h1>  
+                    </div>  
+                    <div class="form-value-column">
+                        {{ device.mac }} 
+                    </div>  
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-value-column">   
+                    <div class="form-label-column">
+                        <h1>Prietaiso būsena:</h1>  
+                    </div>  
+                    <div class="form-value-column">
+                        {{ device.state }} 
+                    </div>  
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-value-column">   
+                    <div class="form-label-column">
+                        <h1>Prietaiso pridėjimo data:</h1>  
+                    </div>  
+                    <div class="form-value-column">
+                        {{ device.date_added }} 
+                    </div>  
+                </div>
+            </div>
+        </div>
+        <div class="form-value-column">   
+            <div class="form-row">
+                <div class="form-value-column">   
+                    <div class="form-label-column">
+                        <h1>Prietaiso tipas:</h1>  
+                    </div>  
+                    <div class="form-value-column">
+                        {{ device.device_type_name }} 
+                    </div>  
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-value-column">   
+                    <div class="form-label-column">
+                        <h1>Paskutinė temperatūra:</h1>  
+                    </div>  
+                    <div class="form-value-column">
+                        {{ data.temp }} °C
+                    </div>  
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-value-column">   
+                    <div class="form-label-column">
+                        <h1>Paskutinio įrašo gavimo data:</h1>  
+                    </div>  
+                    <div class="form-value-column">
+                        {{ data.date }} 
+                    </div>  
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                <div class="form-label-column">
+                    <h1>Duomenų gavimo intervalas:</h1>  
+                </div>  
+                <div class="form-value-column">
+                    <input class="input form-field is-large" type="number" id="interval-field" placeholder="Intervalas" value="{{ device.publish_interval }}">
+                </div> 
+            </div>      
+            <div class="form-label-column">
+                <button id="execute-interval-btn" class="fancy-button">Išsiųsti intervalą</button>
+            </div>             
+        </div>
+    </div>
+{% endblock %}

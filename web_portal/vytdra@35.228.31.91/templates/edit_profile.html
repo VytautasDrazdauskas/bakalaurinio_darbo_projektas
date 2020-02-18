@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container  has-text-centered">
+  <h1 class="title">
+    {{ name }} profilio atnaujinimas
+  </h1>   
+   <div class="box">
+    <form method=post enctype=multipart/form-data action="/edit-profile"> 
+        {{ form.hidden_tag() }}
+        <div class="form-row">
+            <div class="form-label-column">
+                {{ form.user_name.label }}    
+            </div>
+            <div class="form-value-column">
+                {{ form.user_name(class="input form-field is-large is-fullwidth") }}
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                {{ form.email.label }}    
+            </div>
+            <div class="form-value-column">
+                {{ form.email(class="input form-field is-large is-fullwidth") }}
+            </div>
+        </div>   
+        <div class="form-row">
+            <div class="form-label-column">
+                {{ form.new_password.label }}
+            </div>                     
+            <div class="form-value-column">
+                {{ form.new_password(class="input form-field is-large is-fullwidth") }}
+            </div>                 
+        </div>
+        <br/>
+        <div class="form-row">
+            <div class="form-label-column">
+                {{ form.password.label }}
+            </div>                     
+            <div class="form-value-column">
+                {{ form.password(class="input form-field is-large is-fullwidth") }}
+            </div>                 
+        </div>  
+        <br/>
+      <button class="fancy-button" style="float: right;" type="submit">Išsaugoti</button>
+      <button id="back-btn" style="float: left;" class="fancy-button">Atšaukti</button>
+      <br/>
+  </form>
+   </div>
+</div>
+<script>
+    $('#back-btn').on('click', function () {            
+        window.location.href = '/profile'
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "/devices/device_panel.html" %}
+
+{% block boxContent %}
+    <div class="tab-box">
+        <div class="control-panel">	
+            <div class="content-box">
+                {% block filter %}
+                    {% include '/devices/common_partials/_common_graph_filter.html' %}
+                {% endblock %} 
+            </div>
+            <br/>
+            <div class="content-box">
+                {% block graph %}
+                    {% include '/devices/common_partials/_common_graph.html' %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

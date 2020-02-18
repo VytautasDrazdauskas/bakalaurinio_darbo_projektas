@@ -1,12 +1,12 @@
 {
     "database":{
-        "host":"localhost",
+        "host":"35.228.67.54",
         "port":"3306",
         "user":"root",
-        "password":"rootSlaptazodis"
+        "password":"rootSlaptazodis4169"
     },
     "broker":{
-        "host":"78.56.117.253",
+        "host":"35.228.139.171",
         "port":1883
     },
     "scheduler":{

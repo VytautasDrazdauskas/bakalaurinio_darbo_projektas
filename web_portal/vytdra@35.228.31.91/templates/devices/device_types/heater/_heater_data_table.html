@@ -1,0 +1,43 @@
+{% block table %} 
+<div>  
+    <h1 class="subtitle">Elektrinės krosnelės "{{ device.device_name }}" duomenys</h1>			
+    <table id="dataTable" class="display">
+        <thead>
+            <tr>
+                <th>CH1</th>
+                <th>CH2</th>
+                <th>CH3</th>
+                <th>Temperatūra</th>
+                <th>Data</th>			
+            </tr>
+        </thead>			
+    </table>
+</div>
+    <script>        
+        $(document).ready(function () {
+            var table = $('#dataTable').DataTable({
+                "ajax": {
+                    "url": "{{ url_for('main.get_device_data', id=device.id) }}",
+                    "data_type": "json",
+                    "dataSrc": "data",
+                    "contentType":"application/json",
+                    "error": function (error){
+                        getErrorMessage(error);
+                    }  
+                },
+                "columns": [
+                    {"data": "ch1"},
+                    {"data": "ch2"},
+                    {"data": "ch3"},
+                    {"data": "temp"},
+                    {"data": "date"}
+                ],
+                "order": [
+                    [ 4, "desc" ]
+                ]
+            }); 
+        });
+    </script>
+
+    
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">Naudotojo {{ current_user.name }} prietaisai</h1> 
+    <div class="tab-box">
+        <div id="tableSection">				
+            <table id="userDevicesTable" class="display">
+                <thead>
+                    <tr>
+                        <th>Prietaiso pavadinimas</th>
+                        <th>MAC adresas</th>
+                        <th>Būsena</th>
+                        <th>Pridėjimo data</th>
+                        <th>Tipas</th>
+                        <th></th>		
+                    </tr>
+                </thead>			
+            </table>
+            <button id="registerUserDevice" style="float: left;" class="fancy-button">Įregistruoti naują</button>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+
+            var table = $('#userDevicesTable').DataTable({
+                "ajax": {
+                    "url": "{{ url_for('main.get_devices_list') }}",
+                    "data_type": "json",
+                    "dataSrc": "data",
+                    "contentType":"application/json",
+                    "error": function (xhr){
+                        notification("Klaida: " + xhr.responseText, 5000);
+                    }  
+                },
+                "columns": [
+                    {"data": "device_name"},
+                    {"data": "mac"},
+                    {"data": "state"},
+                    {"data": "date_added"},
+                    {"data": "device_type_name"},
+                    {"defaultContent": "<button1 class='fancy-button'>Peržiūrėti</button1>"}      
+                ]
+            });
+
+            $('#userDevicesTable tbody').on( 'click', 'button1', function () {
+                var data = table.row( $(this).parents('tr')).data();
+                var id = data.id
+
+                window.location = "{{ url_for('main.device_control_panel',id=Null) }}" + id;	//perziuros langas
+            });       
+        });
+
+        $("#registerUserDevice").click(function(){
+            window.location = "{{ url_for('main.new_device') }}";
+        });
+    </script>
+{% endblock %}

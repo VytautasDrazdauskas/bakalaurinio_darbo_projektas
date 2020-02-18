@@ -56,7 +56,7 @@ function Main()
                 uri = brokerIP,
                 clean = false,
                 username = deviceMAC .. "_subscriber",
-                version = mqtt.v50,
+                version = mqtt.v311,
         }
       
         --kol nenutraukiamas rysys, tol sukasi

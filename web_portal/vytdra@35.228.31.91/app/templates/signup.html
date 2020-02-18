@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4  has-text-centered">
+    <h3 class="title">Registracija</h3>
+    <div class="box">        
+        <form action="/signup" method="POST">
+            <div class="field">
+                <div class="control">
+                    <input class="input form-field is-large is-fullwidth" type="email" name="email" placeholder="El. paštas" autofocus="">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <input class="input form-field is-large is-fullwidth" type="text" name="name" placeholder="Vardas" autofocus="">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <input class="input form-field is-large is-fullwidth" type="password" name="password" placeholder="Slaptažodis">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <input class="input form-field is-large is-fullwidth" type="password" name="repeat_password" placeholder="Pakartokite slaptažodį">
+                </div>
+            </div>
+
+            <button class="fancy-button is-block is-info is-large is-fullwidth">Užsiregistruoti</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% block filter %}
+    <div class="subtitle has-text-centered">
+        <h1>Duomenų intervalas:</h1>  
+    </div>
+    <div class="form-row">
+        <div class="form-label-column">
+            <div class="form-value-column">
+                <input class="input form-field is-large" type="datetime-local" id="date-interval-from" placeholder="Data nuo" value="">
+            </div> 
+            <div class="form-value-column">
+                <input class="input form-field is-large" type="datetime-local" id="date-interval-to" placeholder="Data iki">
+            </div> 
+        </div>      
+        <div class="form-label-column">
+            <button id="filter-btn" class="fancy-button">Filtruoti</button>
+        </div>             
+    </div>
+   
+    <script>
+        $(document).ready(function () {
+            createLoader();
+            
+            var deviceId = '{{ device.id }}';
+            var dateTo = new Date($.now())
+            var dateFrom = new Date($.now());
+            dateFrom.setMinutes(dateFrom.getMinutes() - 60);
+            var resolution = document.getElementById("resolution-field").value;
+
+
+            //uzpildom filtro laukus
+            $("#date-interval-from").val(formatJsonDate(dateFrom));
+            $("#date-interval-to").val(formatJsonDate(dateTo));
+            
+             $.ajax({
+                url: "{{ url_for('main.get_device_data_range') }}",
+                type: 'POST',
+                data: {
+                    'device_id': deviceId,
+                    'date_from': formatDate(dateFrom),
+                    'date_to': formatDate(dateTo),
+                    'resolution': resolution
+                },
+                success: function(response) {
+                    removeLoader();
+                    drawGraph(response.data)
+                },
+                error: function(error) {
+                    removeLoader();
+                    getErrorMessage(error);
+                }
+            });
+        });
+
+        $('#filter-btn').on( 'click', function () {
+            createLoader();
+            
+            var deviceId = '{{ device.id }}';
+            var dateFrom = document.getElementById("date-interval-from").value;
+            var dateTo = document.getElementById("date-interval-to").value;
+            var resolution = document.getElementById("resolution-field").value;
+
+            $.ajax({
+                url: "{{ url_for('main.get_device_data_range') }}",
+                type: 'POST',
+                data: {
+                    'device_id': deviceId,
+                    'date_from': dateFrom,
+                    'date_to': dateTo,
+                    'resolution': resolution
+                },
+                success: function(response) {
+                    removeLoader();
+                    drawGraph(response.data)
+                },
+                error: function(error) {
+                    removeLoader();
+                    getErrorMessage(error);
+                }
+            });
+        });
+    </script>
+
+{% endblock %}

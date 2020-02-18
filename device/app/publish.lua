@@ -45,7 +45,7 @@ function Main()
                 uri = brokerIP,
                 clean = false,
                 username = deviceMAC .. "_publisher",
-                version = mqtt.v50,
+                version = mqtt.v311,
         }
         
         print("Program starting...")        

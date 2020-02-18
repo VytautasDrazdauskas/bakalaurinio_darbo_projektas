@@ -1,0 +1,12 @@
+{
+  "database": {
+    "host": "35.228.67.54",
+    "port": "3306",
+    "user": "root",
+    "password": "rootSlaptazodis4169"
+  },
+  "broker": {
+    "host": "10.166.0.4",
+    "port": 1883
+  }
+}

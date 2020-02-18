@@ -1,0 +1,19 @@
+{% block graph %}
+    <script src="https://www.chartjs.org/dist/2.8.0/Chart.min.js"></script>
+
+     <div class="form-row">
+        <div class="form-label-column">
+            <h1 class="subtitle">Rezoliucija:</h1>   
+        </div>
+        <div class="form-value-column">
+            <input class="input form-field is-large" type="number" id="resolution-field" value="150">
+        </div>
+    </div> 
+    <div >
+        <div id="main-chart-wrap" class="form-row">
+        </div>
+    </div>
+    <div id="sec-chart-wrap" class="form-row">
+    </div>
+        
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container has-text-centered">
+  <h1 class="title">
+    Daiktų interneto portalas
+  </h1>
+  <h2 class="subtitle">
+    Vytauto Drazdausko baigiamasis bakalaurinis darbas
+  </h2>
+
+  {% if current_user.is_authenticated %}
+  <h1>Prisijungęs naudotojas:</h1>
+  <h1 class="subtitle">
+    {{ current_user.name }}
+  </h1>
+  {% endif %}
+</div>
+{% endblock %}
