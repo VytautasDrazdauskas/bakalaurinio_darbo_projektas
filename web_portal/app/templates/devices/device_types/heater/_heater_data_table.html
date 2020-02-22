@@ -13,9 +13,9 @@
         </thead>			
     </table>
 </div>
-    <script>        
+    <script>       
         $(document).ready(function () {
-            var table = $('#dataTable').DataTable({
+            var table = $('#dataTable').DataTable({                
                 "ajax": {
                     "url": "{{ url_for('main.get_device_data', id=device.id) }}",
                     "data_type": "json",
@@ -24,7 +24,12 @@
                     "error": function (error){
                         getErrorMessage(error);
                     }  
-                },
+                },   
+                "processing": true,
+                "language": {
+                    "processing": "Kraunama..."
+                }, 
+                "serverSide": true,       
                 "columns": [
                     {"data": "ch1"},
                     {"data": "ch2"},

@@ -61,8 +61,8 @@ def get_devices_list():
 
 @main.route('/get-device-data/<id>', methods=['POST','GET'])
 @login_required
-def get_device_data(id):
-    return user_device.get_device_data(id)
+def get_device_data(id):    
+    return user_device.get_device_data(id, request.values)
 
 @main.route('/get-device-configs/<id>', methods=['POST','GET'])
 @login_required
@@ -117,7 +117,7 @@ def device_control_panel(id):
 
 @main.route('/user-devices/device-data-history/<id>', methods=['POST','GET'])
 @login_required
-def device_data_history(id):
+def device_data_history(id):    
     device = user_device.get_device_view_model(id)
     return render_template('devices/user_device_data_history.html', device=device)
 

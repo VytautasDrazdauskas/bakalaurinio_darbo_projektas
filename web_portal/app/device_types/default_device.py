@@ -122,6 +122,31 @@ def get_data(session, device_id):
             'data': [result.serialize for result in data_object_list]
         })
 
+def get_deffered_data(session, device_id, values):
+    rows_to_skip = int(values['start']) 
+    rows_to_take = int(values['length']) 
+    data_list = session.query(DefaultDeviceData).filter_by(device_id=device_id).limit(rows_to_take).offset(rows_to_skip)  
+
+    data_object_list = []
+    for data in data_list:
+        data_object = DeviceDataView(
+            data.id,
+            str(data.led_state),
+            str(data.temp) + " C°",
+            str(data.date)
+        )
+        data_object_list.append(data_object)
+
+    row_count = get_data_count(session, device_id)
+    draw = int(values['draw']) 
+
+    return jsonify({
+            'data': [result.serialize for result in data_object_list],
+            'draw': draw,
+            'recordsTotal': row_count,
+            'recordsFiltered': row_count
+        })
+
 def get_data_range(session, device_id, date_from, date_to, resolution):
     row_count = session.query(func.count(DefaultDeviceData.id)).filter(DefaultDeviceData.date > date_from, DefaultDeviceData.date < date_to).filter_by(device_id=device_id).scalar()
     data_list = []
@@ -160,6 +185,9 @@ def get_data_range(session, device_id, date_from, date_to, resolution):
 
 def get_last_data(session,device_id):
     return session.query(DefaultDeviceData).filter_by(device_id=device_id).order_by(DefaultDeviceData.date.desc()).first()
+
+def get_data_count(session,device_id):
+    return session.query(func.count(DefaultDeviceData.id)).filter_by(device_id=device_id).scalar()
 
 def get_configuration_view_list(session, device_id):
     config_objects_list = []

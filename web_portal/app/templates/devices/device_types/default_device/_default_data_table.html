@@ -15,7 +15,7 @@
         $(document).ready(function () {
 
             $('#dataTable').DataTable({
-                "ajax": {
+                 "ajax": {
                     "url": "{{ url_for('main.get_device_data', id=device.id) }}",
                     "data_type": "json",
                     "dataSrc": "data",
@@ -23,7 +23,12 @@
                     "error": function (error){
                         getErrorMessage(error);
                     }  
-                },
+                },   
+                "processing": true,
+                "language": {
+                    "processing": "Kraunama..."
+                }, 
+                "serverSide": true,  
                 "columns": [
                     {"data": "led_state"},
                     {"data": "temp"},

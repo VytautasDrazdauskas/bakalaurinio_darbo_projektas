@@ -210,16 +210,23 @@ def get_device_data_range(device_id, date_from, date_to, resolution = None):
     session.close()
     return result
 
-def get_device_data(device_id):
+def get_device_data(device_id, values):
     session = create_user_session() 
     
     device = session.query(models.UserDevices).filter_by(id=device_id).first()
 
     device_type = select_device_type(device)
-    result = device_type.get_data(session,device.id)
-
+    result = device_type.get_deffered_data(session,device.id,values)
+    
     session.close()
     return result
+
+def get_device_data_count(device):
+    session = create_user_session()
+    device_type = select_device_type(device)
+    row_count = device_type.get_data_count(session, device.id)
+    session.close()
+    return row_count
 
 def get_device_action_history(device_id):
     session = create_user_session() 
