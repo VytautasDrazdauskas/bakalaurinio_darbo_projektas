@@ -31,6 +31,18 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def select_device_type(device):
+    if (device.device_type == enums.DeviceType.Heater.value): #kaitintuvas             
+        return heater
+    elif (device.device_type == enums.DeviceType.Default.value): #default             
+        return default_device
+    else:
+        return None
+
+def get_device_config_form(device): 
+    device_type = select_device_type(device)
+    return device_type.get_config_form()
+
 def new_device_post(request, device_name, device_type):
     if 'file' not in request.files:
         flash('Neįkeltas failas', 'danger')
@@ -110,14 +122,10 @@ def add_new_device(code, device_name, device_type):
                 session.add(new_device) 
 
                 deviceInMain.user_id = current_user.id 
-                
-                if (new_device.device_type == enums.DeviceType.Heater.value): 
-                    #sukuriam lentas, jei tokios nera
-                    heater.create_tables(session)
-                   
-                if (new_device.device_type == enums.DeviceType.Default.value): 
-                    #sukuriam lentas, jei tokios nera
-                    default_device.create_tables(session)
+
+                device_type = select_device_type(device)
+
+                device_type.create_tables(session)
 
                 #konfiguruojam devaisa. Nustatome devaiso confige naudotojo uuid
                 systemName = "system"
@@ -192,29 +200,13 @@ def get_user_devices():
     finally:
         session.close()
 
-def get_raw_device_data(device_id):
-    session = create_user_session() 
-    
-    device = session.query(models.UserDevices).filter_by(id=device_id).first()
-
-    result = None
-    if (device.device_type == enums.DeviceType.Heater.value):
-        result = session.query(heater.HeaterData).filter_by(device_id=device_id).limit(50).all()
-    elif (device.device_type == enums.DeviceType.Default.value):
-        result = session.query(default_device.DefaultDeviceData).filter_by(device_id=device_id).limit(50).all()
-    session.close()
-    return result
-
 def get_device_data_range(device_id, date_from, date_to, resolution = None):
     session = create_user_session() 
     
     device = session.query(models.UserDevices).filter_by(id=device_id).first()
 
-    result = None
-    if (device.device_type == enums.DeviceType.Heater.value):
-        result = heater.get_data_range(session, device.id, date_from, date_to, resolution)
-    elif (device.device_type == enums.DeviceType.Default.value):
-        result = default_device.get_data_range(session, device.id, date_from, date_to, resolution)
+    device_type = select_device_type(device)
+    result = device_type.get_data_range(session, device.id, date_from, date_to, resolution)
     session.close()
     return result
 
@@ -223,11 +215,8 @@ def get_device_data(device_id):
     
     device = session.query(models.UserDevices).filter_by(id=device_id).first()
 
-    result = None
-    if (device.device_type == enums.DeviceType.Heater.value):
-        result = heater.get_data(session,device.id)
-    elif (device.device_type == enums.DeviceType.Default.value):
-        result = default_device.get_data(session,device.id)
+    device_type = select_device_type(device)
+    result = device_type.get_data(session,device.id)
 
     session.close()
     return result
@@ -254,12 +243,9 @@ def get_last_data(device_id):
     session = create_user_session() 
 
     device = session.query(models.UserDevices).filter_by(id=device_id).first()
-    lastData = None
-
-    if (device.device_type == enums.DeviceType.Heater.value):
-        lastData = heater.get_last_data(session, device.id)
-    elif (device.device_type == enums.DeviceType.Default.value):
-        lastData = default_device.get_last_data(session, device.id)
+    
+    device_type = select_device_type(device)
+    lastData = device_type.get_last_data(session, device.id)
     
     session.close()
     return lastData
@@ -297,11 +283,8 @@ def get_config_form(device,device_config,form):
     session = create_user_session() 
 
     device = session.query(models.UserDevices).filter_by(id=device.id).first()
-
-    if (device.device_type == enums.DeviceType.Heater.value):
-        form = heater.append_to_config_form(device_config, form)
-    elif (device.device_type == enums.DeviceType.Default.value):
-        form = default_device.append_to_config_form(device_config, form)
+    device_type = select_device_type(device)    
+    form = device_type.append_to_config_form(device_config, form)
     
     return form
 
@@ -310,40 +293,26 @@ def get_device_config(device_id, uuid=None):
     session = create_user_session() 
 
     device = session.query(models.UserDevices).filter_by(id=device_id).first()
+    device_type = select_device_type(device)
     device_config = None
     
     if (uuid is None):
-        if (device.device_type == enums.DeviceType.Heater.value):
-            confdeviceConfigig = session.query(HeaterConfig).filter_by(device_id=device_id,is_active=True).order_by(HeaterConfig.start_time).first()
-        elif (device.device_type == enums.DeviceType.Default.value):
-            device_config = session.query(DefaultDeviceConfig).filter_by(device_id=device_id,is_active=True).order_by(DefaultDeviceConfig.start_time).first()
+        device_config = device_type.get_device_config(session, device_id)
     else:
-        if (device.device_type == enums.DeviceType.Heater.value):
-            device_config = session.query(HeaterConfig).filter_by(uuid=uuid).first()
-        elif (device.device_type == enums.DeviceType.Default.value):
-            device_config = session.query(DefaultDeviceConfig).filter_by(uuid=uuid).first()
-    
+        device_config = device_type.get_device_config_uuid(session, uuid)
+            
     session.close()
     return device_config
 
 #Prietaisų konfigūracijos
-def get_device_config_form(device): 
-    if (device.device_type == enums.DeviceType.Heater.value):
-        return HeaterConfigForm()
-    elif (device.device_type == enums.DeviceType.Default.value):
-        return DefaultDeviceConfigForm()    
-    return None
-
 def get_device_configurations(device_id):
     try:
         session = create_user_session() 
         device = session.query(models.UserDevices).filter_by(id=device_id).first() 
             
         config_objects_list = []
-        if (device.device_type == enums.DeviceType.Heater.value):        
-            config_objects_list = heater.get_configuration_view_list(session, device.id)
-        elif (device.device_type == enums.DeviceType.Default.value):
-            config_objects_list = default_device.get_configuration_view_list(session, device.id)
+        device_type = select_device_type(device)      
+        config_objects_list = device_type.get_configuration_view_list(session, device.id)
 
         session.close()    
         return jsonify({
@@ -359,12 +328,9 @@ def get_device_configurations(device_id):
 def save_device_config(form, device, config_uuid):
     try:
         session = create_user_session()
-        device_config = None
-                
-        if (device.device_type == enums.DeviceType.Heater.value):        
-            device_config = heater.save_configuration(session, form, device.id, config_uuid)
-        elif (device.device_type == enums.DeviceType.Default.value):
-            device_config = default_device.save_configuration(session, form, device.id, config_uuid) 
+        
+        device_type = select_device_type(device)                  
+        device_config = device_type.save_configuration(session, form, device.id, config_uuid)
 
         if (config_uuid is None):
             session.add(device_config)
@@ -454,11 +420,8 @@ def stop_job(device, config_uuid):
     try:
         session = create_user_session()
 
-        device_config = None
-        if (device.device_type == enums.DeviceType.Heater.value):
-            device_config = session.query(HeaterConfig).filter_by(uuid=config_uuid).first()  
-        elif (device.device_type == enums.DeviceType.Default.value):
-            device_config = session.query(DefaultDeviceConfig).filter_by(uuid=config_uuid).first() 
+        device_type = select_device_type(device)      
+        device_config = device_type.get_device_config_uuid(session, config_uuid)
         
         response = execute_device_action(device.id,"STOP JOB")
         
@@ -495,10 +458,8 @@ def activate_device_configuration(device, config_uuid):
     try:
         session = create_user_session()
 
-        if (device.device_type == enums.DeviceType.Heater.value):
-            device_config = session.query(HeaterConfig).filter_by(uuid=config_uuid).first()    
-        elif (device.device_type == enums.DeviceType.Default.value):
-            device_config = session.query(DefaultDeviceConfig).filter_by(uuid=config_uuid).first() 
+        device_type = select_device_type(device)
+        device_config = device_type.get_device_config_uuid(session, config_uuid)
 
         if (device_config.job_state != enums.ConfigJobState.Running.value):
             if (device_config.is_active):
@@ -539,10 +500,8 @@ def delete_device_config(device, config_uuid):
     try:
         session = create_user_session()
 
-        if (device.device_type == enums.DeviceType.Heater.value):
-            device_config = session.query(HeaterConfig).filter_by(uuid=config_uuid).first() 
-        elif (device.device_type == enums.DeviceType.Default.value):
-            device_config = session.query(DefaultDeviceConfig).filter_by(uuid=config_uuid).first()
+        device_type = select_device_type(device)
+        device_config = device_type.get_device_config_uuid(session, config_uuid)
 
         config_name = device_config.name
         if (device_config.job_state != enums.ConfigJobState.Running.value):
@@ -577,10 +536,8 @@ def execute_device_action(id, command):
             payload = None
 
             #komandos parinkimas
-            if (device.device_type == enums.DeviceType.Heater.value): #kaitintuvas             
-                payload = heater.form_mqtt_payload(command)
-            elif (device.device_type == enums.DeviceType.Default.value): #default             
-                payload = default_device.form_mqtt_payload(command)
+            device_type = select_device_type(device)
+            payload = device_type.form_mqtt_payload(command)
 
             #common commands
             if (command == 'REBOOT'):

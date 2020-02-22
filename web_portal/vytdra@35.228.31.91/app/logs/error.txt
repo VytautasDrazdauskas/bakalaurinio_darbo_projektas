@@ -1,4 +1,0 @@
-2020-02-17 22:54:24.094021
-('(pymysql.err.ProgrammingError) (1146, "Table \'db_4d7e3809261d4ba9b1b1aadee31d6baf.user_devices\' doesn\'t exist")',)
-2020-02-17 22:55:00.594254
-('(pymysql.err.ProgrammingError) (1146, "Table \'db_4d7e3809261d4ba9b1b1aadee31d6baf.user_devices\' doesn\'t exist")',)

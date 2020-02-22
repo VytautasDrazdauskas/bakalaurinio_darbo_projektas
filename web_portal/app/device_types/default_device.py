@@ -91,6 +91,9 @@ class DefaultDeviceConfigForm(DeviceConfigBaseForm):
     temp_treshold = DecimalField('Maksimali temperatūra')
     led_state = BooleanField('LED būsena')
 
+def get_config_form():
+    return DefaultDeviceConfigForm()
+
 def create_tables(session):
     if not table_exists("default_device_config"):                 
         DefaultDeviceConfig.__table__.create(session.bind)
@@ -221,6 +224,12 @@ def append_to_config_form(config, form):
     form.sunday.data = "6" in config.weekdays
 
     return form
+
+def get_device_config(session, device_id):
+    return session.query(DefaultDeviceConfig).filter_by(device_id=device_id,is_active=True).order_by(DefaultDeviceConfig.start_time).first()
+
+def get_device_config_uuid(session, uuid):
+    return session.query(DefaultDeviceConfig).filter_by(uuid=uuid).first()
 
 def form_mqtt_payload(command):
     

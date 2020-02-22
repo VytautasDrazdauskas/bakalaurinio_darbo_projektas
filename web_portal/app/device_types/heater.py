@@ -106,6 +106,9 @@ class HeaterConfigForm(DeviceConfigBaseForm):
     channel2 = BooleanField('Antras kanalas')
     channel3 = BooleanField('Trečias kanalas')
 
+def get_config_form():
+    return HeaterConfigForm()
+
 #METODAI
 def create_tables(session):
     if not table_exists("heater_config"):                 
@@ -250,6 +253,11 @@ def append_to_config_form(config, form):
 
     return form
 
+def get_device_config(session, device_id):
+    return session.query(HeaterConfig).filter_by(device_id=device_id,is_active=True).order_by(HeaterConfig.start_time).first()
+
+def get_device_config_uuid(session, uuid):
+    return session.query(HeaterConfig).filter_by(uuid=uuid).first()
 
 #valdymas
 def form_mqtt_payload(command):    
