@@ -5,6 +5,7 @@ import requests
 
 class MQTTService():    
     def publish_with_response(topic,response_topic,message, timeout): 
+        
         url = "http://" + config.rest_ip + ":" + config.rest_port + "/api" + config.rest_publish_resp
 
         data = {

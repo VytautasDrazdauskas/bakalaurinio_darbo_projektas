@@ -11,7 +11,7 @@
     },
     "restful":{
         "ip":"127.0.0.1",
-        "port":"443",
+        "port":"433",
         "publishresp":"/mqtt/publish-response"
     },
     "scheduler":{

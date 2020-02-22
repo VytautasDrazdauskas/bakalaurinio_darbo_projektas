@@ -26,7 +26,7 @@ def execute_job(user, device, config, stop_job=False):
 
     result = None
     for payload in payload_list:
-        response = JsonParse(mqtt.publish_with_response(topic=topic, response_topic=response_topic, message=payload, timeout=5))
+        response = JsonParse(mqtt.publish_with_response(topic=topic, response_topic=response_topic, message=payload, timeout=10))
 
         if(response.success):
             result = True
