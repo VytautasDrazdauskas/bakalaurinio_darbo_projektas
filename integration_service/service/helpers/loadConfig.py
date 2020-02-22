@@ -22,3 +22,9 @@ db_password = database_config['password']
 #scheduleris
 scheduler_config = config['scheduler']
 scheduler_interval = scheduler_config['interval']
+
+#restful servisas
+restful = config['restful']
+rest_ip = restful['ip']
+rest_port = restful['port']
+rest_publish_resp = restful['publishresp']

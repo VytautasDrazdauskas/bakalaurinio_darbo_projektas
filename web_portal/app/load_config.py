@@ -9,14 +9,15 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 with open(dir_path + '/../config.json') as config_file:
     config = json.load(config_file)
 
-#brokeris
-broker_config = config['broker']
-broker_ip = broker_config['host']
-broker_port = broker_config['port']
-
 #duomenu baze
 database_config = config['database']
 db_ip = database_config['host']
 db_port = database_config['port']
 db_user = database_config['user']
 db_password = database_config['password']
+
+#restful servisas
+restful = config['restful']
+rest_ip = restful['ip']
+rest_port = restful['port']
+rest_publish_resp = restful['publishresp']

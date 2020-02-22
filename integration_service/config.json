@@ -6,8 +6,13 @@
         "password":"rootSlaptazodis4169"
     },
     "broker":{
-        "host":"35.228.139.171",
+        "host":"127.0.0.1",
         "port":1883
+    },
+    "restful":{
+        "ip":"127.0.0.1",
+        "port":"443",
+        "publishresp":"/mqtt/publish-response"
     },
     "scheduler":{
         "interval":10

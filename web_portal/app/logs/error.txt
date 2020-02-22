@@ -4,3 +4,193 @@ Time is up.
 Time is up.
 2020-02-22 12:11:01.547763
 Time is up.
+2020-02-22 13:41:24.193239
+("'NoneType' object has no attribute 'device_type'",)
+2020-02-22 13:41:24.200534
+('can only concatenate str (not "tuple") to str',)
+2020-02-22 13:42:55.530194
+("module 'app.load_config' has no attribute 'rest_ip'",)
+2020-02-22 13:42:55.581610
+("module 'app.load_config' has no attribute 'rest_ip'",)
+2020-02-22 13:42:55.599549
+("module 'app.load_config' has no attribute 'rest_ip'",)
+2020-02-22 13:44:43.032765
+("module 'app.load_config' has no attribute 'rest_ip'",)
+2020-02-22 13:44:43.051102
+("module 'app.load_config' has no attribute 'rest_ip'",)
+2020-02-22 13:44:43.066021
+("module 'app.load_config' has no attribute 'rest_ip'",)
+2020-02-22 13:46:01.605716
+('the JSON object must be str, bytes or bytearray, not Response',)
+2020-02-22 13:46:01.605802
+('the JSON object must be str, bytes or bytearray, not Response',)
+2020-02-22 13:46:01.619868
+('the JSON object must be str, bytes or bytearray, not Response',)
+2020-02-22 13:46:39.555426
+('the JSON object must be str, bytes or bytearray, not Response',)
+2020-02-22 13:46:39.562254
+('the JSON object must be str, bytes or bytearray, not Response',)
+2020-02-22 13:46:39.591506
+('the JSON object must be str, bytes or bytearray, not Response',)
+2020-02-22 13:47:08.192390
+('the JSON object must be str, bytes or bytearray, not Response',)
+2020-02-22 14:02:05.668731
+Time is up.
+2020-02-22 15:09:06.424808
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 15:09:39.273425
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 15:09:39.364806
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 15:09:40.029867
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 15:09:58.748176
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 15:09:58.756332
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 15:09:58.764637
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 15:10:40.924200
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 15:10:40.934810
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 15:10:40.934925
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 15:11:13.624306
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 15:11:13.630670
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 15:11:13.649542
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 15:20:58.159917
+Time is up.
+2020-02-22 15:20:58.184772
+Time is up.
+2020-02-22 15:20:58.461213
+Time is up.
+2020-02-22 15:21:22.813706
+Time is up.
+2020-02-22 15:22:18.723193
+Time is up.
+2020-02-22 15:23:03.074374
+Time is up.
+2020-02-22 15:43:56.691042
+Time is up.
+2020-02-22 16:42:21.583476
+Time is up.
+2020-02-22 16:43:03.351617
+Time is up.
+2020-02-22 16:44:00.583794
+Time is up.
+2020-02-22 16:44:36.383278
+Time is up.
+2020-02-22 16:46:07.387078
+Time is up.
+2020-02-22 16:49:01.532186
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 16:49:49.416975
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 16:52:00.260683
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 16:52:34.544333
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 16:56:16.362327
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 16:57:29.577466
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 16:58:37.622553
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 16:58:52.225757
+(MaxRetryError("HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f3c32e5eba8>: Failed to establish a new connection: [Errno 111] Connection refused'))"),)
+2020-02-22 16:58:55.646208
+(MaxRetryError("HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f3c32e67c88>: Failed to establish a new connection: [Errno 111] Connection refused'))"),)
+2020-02-22 16:59:32.693786
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 17:01:20.480247
+Time is up.
+2020-02-22 17:01:50.716975
+(MaxRetryError("HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f3c32e449b0>: Failed to establish a new connection: [Errno 111] Connection refused'))"),)
+2020-02-22 17:03:38.768731
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 17:04:32.750404
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 17:05:19.662090
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 17:05:59.513998
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 17:07:36.877839
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 17:10:07.223493
+("__dict__ must be set to a dictionary, not a 'str'",)
+2020-02-22 17:16:12.779591
+('Expecting value: line 1 column 1 (char 0)',)
+2020-02-22 17:22:33.528152
+Time is up.
+2020-02-22 17:22:34.057391
+Time is up.
+2020-02-22 17:22:36.123419
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 17:23:34.095534
+('Expecting value: line 1 column 1 (char 0)',)
+2020-02-22 17:25:33.538800
+Time is up.
+2020-02-22 17:25:33.600968
+Time is up.
+2020-02-22 17:25:35.615135
+Time is up.
+2020-02-22 17:27:14.793155
+Time is up.
+2020-02-22 17:27:14.884695
+Time is up.
+2020-02-22 17:27:14.947227
+Time is up.
+2020-02-22 17:27:36.371650
+Time is up.
+2020-02-22 17:28:18.376307
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 17:29:41.174353
+Time is up.
+2020-02-22 17:30:57.482518
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 18:12:48.516151
+("'Session' object has no attribute 'config'",)
+2020-02-22 18:12:48.784975
+("'Session' object has no attribute 'config'",)
+2020-02-22 18:12:48.816777
+("'Session' object has no attribute 'config'",)
+2020-02-22 18:13:49.280568
+("__init__() got an unexpected keyword argument 'config'",)
+2020-02-22 18:13:49.620874
+("__init__() got an unexpected keyword argument 'config'",)
+2020-02-22 18:13:49.631930
+("__init__() got an unexpected keyword argument 'config'",)
+2020-02-22 18:14:44.217330
+("'Session' object has no attribute 'requests'",)
+2020-02-22 18:14:44.579742
+("'Session' object has no attribute 'requests'",)
+2020-02-22 18:14:44.654559
+("'Session' object has no attribute 'requests'",)
+2020-02-22 18:15:04.074588
+("'Session' object has no attribute 'requests'",)
+2020-02-22 18:15:04.568320
+("'Session' object has no attribute 'requests'",)
+2020-02-22 18:15:04.580907
+("'Session' object has no attribute 'requests'",)
+2020-02-22 18:15:34.227452
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 18:15:34.227660
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 18:15:34.245506
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 18:16:02.327889
+("'Session' object has no attribute 'requests'",)
+2020-02-22 18:16:02.677048
+("'Session' object has no attribute 'requests'",)
+2020-02-22 18:16:02.696879
+("'Session' object has no attribute 'requests'",)
+2020-02-22 18:22:29.332132
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 18:22:29.344024
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)
+2020-02-22 18:22:29.354100
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response')),)

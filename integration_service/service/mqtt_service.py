@@ -1,40 +1,19 @@
 from flask import jsonify
-import paho.mqtt.client as mqtt
 import service.helpers.loadConfig as config
 import time
+import requests
 
-class MQTTService():
-    
+class MQTTService():    
     def publish_with_response(topic,response_topic,message, timeout): 
-        global res
-        res = ""
+        url = "http://" + config.rest_ip + ":" + config.rest_port + "/api" + config.rest_publish_resp
 
-        def on_message(self, userdata, msg):            
-            global res
-            res = msg.payload
-            self.disconnect()
-        
-        #sukuriam klienta
-        client = mqtt.Client()
-        client.on_message = on_message
+        data = {
+            "topic":topic,
+            "response_topic":response_topic,
+            "message":message,
+            "timeout":timeout
+        }
 
-        #prisijungiam prie brokerio su confige esanciais parametrais
-        client.connect(config.broker_ip, config.broker_port, 60)
-        client.subscribe(topic=response_topic,qos=2)
-        client.publish(topic=topic, payload=message, qos=2)
-
-        #timeris
-        start_time = time.time()
-        wait_time = timeout
-        while True:
-            client.loop()
-            if (res == ""):
-                elapsed_time = time.time() - start_time
-                if elapsed_time > wait_time:
-                    client.disconnect()
-                    break
-            else:
-                return res
-        
-        result = jsonify(success=False,reason="Time is up.")
-        return result.data
+        with requests.Session() as session:
+            response = session.put(url=url, json=data)            
+            return response.text

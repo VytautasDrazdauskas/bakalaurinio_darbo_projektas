@@ -1,11 +1,11 @@
-#!/usr/local/bin/python3.7
+#!/usr/bin/python3
 import datetime
 import os
 import time
 import sys
 import json
 from service.lib.daemon import Daemon
-from service.scheduler import Scheduler
+from service.scheduler_service import Scheduler
 import service.logger as logger
 
 #absoliutus kelias iki programos

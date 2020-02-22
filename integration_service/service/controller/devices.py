@@ -4,7 +4,7 @@ import service.helpers.enums as enums
 import service.logger as logger
 import service.models as models
 from service.mqtt_service import MQTTService as mqtt
-from service.helpers.jsonParser import Parse
+from service.lib.json2obj import JsonParse
 
 def get_device_config(session, device, job): 
     if (device.device_type == enums.DeviceType.Heater.value):
@@ -26,7 +26,7 @@ def execute_job(user, device, config, stop_job=False):
 
     result = None
     for payload in payload_list:
-        response = Parse(mqtt.publish_with_response(topic=topic, response_topic=response_topic, message=payload, timeout=5))
+        response = JsonParse(mqtt.publish_with_response(topic=topic, response_topic=response_topic, message=payload, timeout=5))
 
         if(response.success):
             result = True
