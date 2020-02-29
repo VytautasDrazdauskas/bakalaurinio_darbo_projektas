@@ -26,3 +26,17 @@ Connected with result code 0
 Starting MQTT service...
 2020-02-18 19:06:48.370085
 Connected with result code 0
+2020-02-29 11:58:46.346483
+Starting MQTT service...
+2020-02-29 11:58:46.532293
+[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:852)
+2020-02-29 11:58:46.538248
+[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:852)
+2020-02-29 11:59:08.254995
+Starting MQTT service...
+2020-02-29 11:59:08.409071
+Connected with result code 0
+2020-02-29 11:59:13.438940
+Sender MAC address: C493000EFEA1
+2020-02-29 11:59:13.445912
+b'{"data":{"act2":"1","temp":"25.25","act3":"1","act1":"1"},"deviceMAC":"C493000EFEA1"}'

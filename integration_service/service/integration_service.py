@@ -143,6 +143,7 @@ class IntegrationService():
     def start(self):       
         try:
             client = mqtt.Client()
+            client.tls_set(ca_certs=config.broker_cafile)
             client.on_connect = IntegrationService.on_connect
             client.on_message = IntegrationService.on_message
             

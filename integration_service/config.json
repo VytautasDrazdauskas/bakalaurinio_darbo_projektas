@@ -6,8 +6,9 @@
         "password":"rootSlaptazodis4169"
     },
     "broker":{
-        "host":"127.0.0.1",
-        "port":1883
+        "host":"35.228.206.255",
+        "port":8883,
+        "cafile": "/ca.crt"
     },
     "restful":{
         "ip":"127.0.0.1",

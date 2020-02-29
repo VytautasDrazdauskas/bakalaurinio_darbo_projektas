@@ -1,6 +1,7 @@
 {
   "broker": {
     "host": "35.228.206.255",
-    "port": 1883
+    "port": 8883,
+    "cafile": "/ca.crt"
   }
 }

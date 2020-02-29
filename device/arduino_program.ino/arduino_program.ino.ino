@@ -4,9 +4,9 @@
 #define actuatorPin1 5
 #define actuatorPin2 7 
 #define actuatorPin3 6  
-#define ktcSO 8
-#define ktcCS 9
-#define ktcCLK 10
+#define ktcSO 12
+#define ktcCS 10
+#define ktcCLK 13
 
 float temp = 0;
 int act1 = 0;

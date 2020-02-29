@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.5
 from flask import Flask
 from flask import Blueprint
 from flask_restful import Api

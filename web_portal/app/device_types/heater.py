@@ -144,7 +144,8 @@ def get_data(session,device_id):
 def get_deffered_data(session,device_id,values):
     rows_to_skip = int(values['start']) 
     rows_to_take = int(values['length']) 
-    data_list = session.query(HeaterData).filter_by(device_id=device_id).limit(rows_to_take).offset(rows_to_skip)
+    
+    data_list = session.query(HeaterData).filter_by(device_id=device_id).order_by(HeaterData.id.desc()).limit(rows_to_take).offset(rows_to_skip)
 
     data_object_list = []
     for data in data_list:

@@ -1,7 +1,9 @@
 {
   "python.pythonPath": "/usr/bin/python3",
-  "editor.formatOnSave": true,
   "python.linting.pylintPath": "pylint",
-  "python.linting.pylintArgs": ["--load-plugins", "pylint_flask"],
+  "python.linting.pylintArgs": [
+    "--load-plugins",
+    "pylint_flask"
+  ],
   "python.linting.pylintEnabled": true
 }

@@ -11,3 +11,4 @@ with open(dir_path +'/config.json') as config_file:
 broker_config = config['broker']
 broker_ip = broker_config['host']
 broker_port = broker_config['port']
+broker_cafile = dir_path + broker_config['cafile']

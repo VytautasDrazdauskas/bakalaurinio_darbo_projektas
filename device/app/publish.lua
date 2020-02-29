@@ -8,14 +8,18 @@ function Path()
         local str = debug.getinfo(2, "S").source:sub(2)
         return str:match("(.*/)")
 end
+
 PATH = Path();
+local configPath = PATH .. "broker.conf"
+
 
 --pagrindiniai parametrai
 local deviceMAC = "unknown"  --useruid/system/C493000EFE35/control
 
 --nuskaitom is config failo
-local userUID = fileParser.ReadFileData(PATH .. "broker.conf","useruuid")
-local systemName = fileParser.ReadFileData(PATH .. "broker.conf","systemname")
+local userUID = fileParser.ReadFileData(configPath,"useruuid")
+local systemName = fileParser.ReadFileData(configPath,"systemname")
+local cafilePath = fileParser.ReadFileData(configPath,"cafile")
 IsSignalLost = false
 
 function Is_openwrt()
@@ -36,16 +40,24 @@ end
 local topic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/jsondata"
 
 --parametrai nuskaitomi is konfiguracinio failo
-local brokerIP = fileParser.ReadFileData(PATH .. "broker.conf","ip")
-local delay = fileParser.ReadFileData(PATH .. "broker.conf","delay")
+local brokerIP = fileParser.ReadFileData(configPath,"ip")
+local delay = fileParser.ReadFileData(configPath,"delay")
 
 function Main()
-        --sukuriamas sujungimas su MQTT brokeriu        
+        --sukuriamas sujungimas su MQTT brokeriu       
+        local parameters = {
+                mode = "client",
+                protocol = "tlsv1_2",
+                cafile = cafilePath,
+                verify = {"peer", "fail_if_no_peer_cert"},
+                options = "all",
+             }
+        
         local client = mqtt.client{
                 uri = brokerIP,
                 clean = false,
-                username = deviceMAC .. "_publisher",
                 version = mqtt.v311,
+                secure = parameters
         }
         
         print("Program starting...")        
@@ -82,7 +94,6 @@ function Loop(client,sleepDelay)
         Running = true
         while (Running) do  
                 local message = common.ReadData(deviceMAC)
-                --print(message)
 
                 if (common.CheckPing("8.8.8.8") == true) then 
                         common.PublishData(client,topic,message)

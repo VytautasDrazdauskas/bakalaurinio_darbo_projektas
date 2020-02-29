@@ -17,7 +17,7 @@ local configPath = PATH .. "broker.conf"
 local deviceMAC = "unknown"  --useruid/system/C493000EFE02/control
 local userUID = fileParser.ReadFileData(configPath,"useruuid")
 local systemName = fileParser.ReadFileData(configPath,"systemname")
-
+local cafilePath = fileParser.ReadFileData(configPath,"cafile")
 local emptyUserUID = "00000000-0000-0000-0000-000000000000"
 
 --sukuriamas rysys su Arduino Nano per UART sasaja
@@ -52,11 +52,19 @@ local brokerIP = fileParser.ReadFileData(configPath,"ip")
 
 function Main()
         --sukuriamas sujungimas su MQTT brokeriu        
+        local parameters = {
+                mode = "client",
+                protocol = "tlsv1_2",
+                cafile = cafilePath,
+                verify = {"peer", "fail_if_no_peer_cert"},
+                options = "all",
+             }
+        
         local client = mqtt.client{
                 uri = brokerIP,
                 clean = false,
-                username = deviceMAC .. "_subscriber",
                 version = mqtt.v311,
+                secure = parameters
         }
       
         --kol nenutraukiamas rysys, tol sukasi

@@ -8,11 +8,9 @@
             "name": "Ravi Debugger",
             "type": "lua",
             "request": "launch",
-            "program": "${workspaceRoot}/app/publish.lua",
+            "program": "${workspaceRoot}/app/subscribe.lua",
             "stopOnEntry": true,
-            "cwd": "${workspaceRoot}",
-            "LUA_PATH": "${workspaceRoot}/app/?.lua",
-            "LUA_CPATH": "${workspaceRoot}/app/?.dll"
+            "cwd": "${workspaceRoot}"
         }
     ]
 }
