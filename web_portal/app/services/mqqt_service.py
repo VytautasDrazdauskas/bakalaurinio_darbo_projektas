@@ -7,7 +7,7 @@ import requests
 class MqttService():
         
    def publish_with_response(topic,response_topic,message, timeout): 
-        url = "http://" + app_config.rest_ip + ":" + app_config.rest_port + "/api" + app_config.rest_publish_resp
+        url = "http://" + app_config.restful.host + ":" + app_config.restful.port + "/api" + app_config.restful.publishResp
 
         data = {
             "topic":topic,

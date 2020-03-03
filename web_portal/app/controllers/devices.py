@@ -132,7 +132,7 @@ def add_new_device(code, device_name, device_type):
 
                 deviceInMain.user_id = current_user.id
 
-                device_type = select_device_type(device)
+                device_type = select_device_type(new_device)
 
                 device_type.create_tables(session)
 

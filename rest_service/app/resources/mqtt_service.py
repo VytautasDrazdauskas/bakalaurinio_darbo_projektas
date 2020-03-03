@@ -38,10 +38,10 @@ class MQTTPublishWithResponse(Resource):
         # sukuriam klienta
         client = mqtt.Client()
         client.on_message = on_message
-        client.tls_set(ca_certs=config.broker_cafile)
+        client.tls_set(ca_certs=config.broker.cafile, certfile=config.broker.clientCert, keyfile=config.broker.clientKey)
 
         # prisijungiam prie brokerio su confige esanciais parametrais
-        client.connect(host=config.broker_ip, port=config.broker_port)
+        client.connect(host=config.broker.host, port=config.broker.port)
         client.subscribe(topic=response_topic, qos=2)
         client.publish(topic=topic, payload=message, qos=2)
 

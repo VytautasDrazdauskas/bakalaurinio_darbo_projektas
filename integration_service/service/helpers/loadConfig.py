@@ -1,4 +1,5 @@
 import json, os
+from service.lib.json2obj import JsonParse
 
 #absoliutus kelias iki programos
 dir_path = os.path.dirname(os.path.realpath(__package__))
@@ -8,24 +9,13 @@ with open(dir_path +'/config.json') as config_file:
     config = json.load(config_file)
 
 #brokeris
-broker_config = config['broker']
-broker_ip = broker_config['host']
-broker_port = broker_config['port']
-broker_cafile = dir_path + broker_config['cafile']
+broker = JsonParse(config['broker'])
 
 #duomenu baze
-database_config = config['database']
-db_ip = database_config['host']
-db_port = database_config['port']
-db_user = database_config['user']
-db_password = database_config['password']
+database = JsonParse(config['database'])
 
 #scheduleris
-scheduler_config = config['scheduler']
-scheduler_interval = scheduler_config['interval']
+scheduler = JsonParse(config['scheduler'])
 
 #restful servisas
-restful = config['restful']
-rest_ip = restful['ip']
-rest_port = restful['port']
-rest_publish_resp = restful['publishresp']
+restful = JsonParse(config['restful'])

@@ -6,8 +6,8 @@
     "password": "rootSlaptazodis4169"
   },
   "restful": {
-    "ip": "127.0.0.1",
-    "port": "5000",
-    "publishresp": "/mqtt/publish-response"
+    "host": "35.228.206.255",
+    "port": "433",
+    "publishResp": "/mqtt/publish-response"
   }
 }

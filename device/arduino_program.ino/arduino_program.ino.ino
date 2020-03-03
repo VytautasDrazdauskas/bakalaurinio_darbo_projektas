@@ -21,14 +21,17 @@ void setup()
   pinMode(actuatorPin1, OUTPUT);
   pinMode(actuatorPin2, OUTPUT);
   pinMode(actuatorPin3, OUTPUT);
+  digitalWrite(actuatorPin1,HIGH);
+  digitalWrite(actuatorPin2,HIGH);
+  digitalWrite(actuatorPin3,HIGH);
   delay(500);
 }
 void loop()
 {
   temp = ktc.readCelsius();
-  act1 = digitalRead(actuatorPin1);
-  act2 = digitalRead(actuatorPin2);
-  act3 = digitalRead(actuatorPin3);
+  act1 = !digitalRead(actuatorPin1);
+  act2 = !digitalRead(actuatorPin2);
+  act3 = !digitalRead(actuatorPin3);
 
   Serial.print("temp=");
   Serial.print(temp);
@@ -60,27 +63,27 @@ void serialEvent()
    {    
      if (strcmp("ACT1 ON", cmdBuffer) == 0)
      {
-        digitalWrite(actuatorPin1,HIGH);
+        digitalWrite(actuatorPin1,LOW);
      }
      else if (strcmp("ACT1 OFF", cmdBuffer) == 0)
      {
-        digitalWrite(actuatorPin1,LOW);
+        digitalWrite(actuatorPin1,HIGH);
      }
      else if (strcmp("ACT2 ON", cmdBuffer) == 0)
      {
-        digitalWrite(actuatorPin2,HIGH);
+        digitalWrite(actuatorPin2,LOW);
      }
      else if (strcmp("ACT2 OFF", cmdBuffer) == 0)
      {
-        digitalWrite(actuatorPin2,LOW);
+        digitalWrite(actuatorPin2,HIGH);
      }
      else if (strcmp("ACT3 ON", cmdBuffer) == 0)
      {
-        digitalWrite(actuatorPin3,HIGH);
+        digitalWrite(actuatorPin3,LOW);
      }
      else if (strcmp("ACT3 OFF", cmdBuffer) == 0)
      {
-        digitalWrite(actuatorPin3,LOW);
+        digitalWrite(actuatorPin3,HIGH);
      }
      cmdBuffer[0] = 0;
    }

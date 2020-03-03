@@ -2,6 +2,8 @@
   "broker": {
     "host": "35.228.206.255",
     "port": 8883,
-    "cafile": "/ca.crt"
+    "cafile": "/home/vytdra/rest_service/ca.crt",
+    "clientCert": "/home/vytdra/server_certificates/restful-service-certs/client.crt",
+    "clientKey": "/home/vytdra/server_certificates/restful-service-certs/client.key"
   }
 }

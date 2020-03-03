@@ -143,12 +143,12 @@ class IntegrationService():
     def start(self):       
         try:
             client = mqtt.Client()
-            client.tls_set(ca_certs=config.broker_cafile)
+            client.tls_set(ca_certs=config.broker.cafile, certfile=config.broker.clientCert, keyfile=config.broker.clientKey)
             client.on_connect = IntegrationService.on_connect
             client.on_message = IntegrationService.on_message
             
             #prisijungiam prie brokerio su confige esanciais parametrais
-            client.connect(config.broker_ip, config.broker_port, 60)
+            client.connect(config.broker.host, config.broker.port, 60)
             client.loop_forever()
         except Exception as Ex:
             logger.log(Ex)

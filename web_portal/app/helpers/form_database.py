@@ -8,10 +8,10 @@ import app.load_config as app_config
 
 def get_root_connection():    
     connection = mysql.connector.connect(
-    host=app_config.db_ip,
-    port=app_config.db_port,
-    user=app_config.db_user,
-    passwd=app_config.db_password
+    host=app_config.database.host,
+    port=app_config.database.port,
+    user=app_config.database.user,
+    passwd=app_config.database.password
     )
     return connection
 

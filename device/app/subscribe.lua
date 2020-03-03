@@ -18,6 +18,9 @@ local deviceMAC = "unknown"  --useruid/system/C493000EFE02/control
 local userUID = fileParser.ReadFileData(configPath,"useruuid")
 local systemName = fileParser.ReadFileData(configPath,"systemname")
 local cafilePath = fileParser.ReadFileData(configPath,"cafile")
+local clientCertPath = fileParser.ReadFileData(configPath,"clientCert")
+local clientKeyPath = fileParser.ReadFileData(configPath,"clientKey")
+
 local emptyUserUID = "00000000-0000-0000-0000-000000000000"
 
 --sukuriamas rysys su Arduino Nano per UART sasaja
@@ -56,6 +59,8 @@ function Main()
                 mode = "client",
                 protocol = "tlsv1_2",
                 cafile = cafilePath,
+                certificate=clientCertPath,
+                key=clientKeyPath,
                 verify = {"peer", "fail_if_no_peer_cert"},
                 options = "all",
              }

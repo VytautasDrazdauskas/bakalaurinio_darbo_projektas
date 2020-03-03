@@ -1,4 +1,5 @@
 import json, os
+from app.json2obj import JsonParse
 
 #absoliutus kelias iki programos
 dir_path = os.path.dirname(os.path.realpath(__package__))
@@ -8,7 +9,4 @@ with open(dir_path +'/config.json') as config_file:
     config = json.load(config_file)
 
 #brokeris
-broker_config = config['broker']
-broker_ip = broker_config['host']
-broker_port = broker_config['port']
-broker_cafile = dir_path + broker_config['cafile']
+broker = JsonParse(config['broker'])

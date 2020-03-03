@@ -96,7 +96,7 @@ class Scheduler():
 
   def start(self):
     scheduler = Scheduler()
-    schedule.every(config.scheduler_interval).seconds.do(scheduler.job)
+    schedule.every(config.scheduler.interval).seconds.do(scheduler.job)
 
     while 1:
         schedule.run_pending()

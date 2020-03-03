@@ -40,3 +40,7 @@ Connected with result code 0
 Sender MAC address: C493000EFEA1
 2020-02-29 11:59:13.445912
 b'{"data":{"act2":"1","temp":"25.25","act3":"1","act1":"1"},"deviceMAC":"C493000EFEA1"}'
+2020-03-03 12:48:14.019813
+Starting Scheduler service...
+2020-03-03 12:48:16.582015
+Starting Scheduler service...

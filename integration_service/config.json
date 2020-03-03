@@ -8,12 +8,14 @@
     "broker":{
         "host":"35.228.206.255",
         "port":8883,
-        "cafile": "/ca.crt"
+        "cafile": "~/int_app/ca.crt",
+        "clientCert": "/home/vytdra/server_certificates/integration-service-certs/client.crt",
+        "clientKey": "/home/vytdra/server_certificates/integration-service-certs/client.key"
     },
     "restful":{
-        "ip":"127.0.0.1",
+        "host":"127.0.0.1",
         "port":"433",
-        "publishresp":"/mqtt/publish-response"
+        "publishResp":"/mqtt/publish-response"
     },
     "scheduler":{
         "interval":10
