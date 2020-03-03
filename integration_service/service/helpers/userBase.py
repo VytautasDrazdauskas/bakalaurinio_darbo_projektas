@@ -28,7 +28,7 @@ def create_table(table_object):
         raise
 
 def create_user_engine(user):
-    engine = create_engine('mysql+pymysql://'+config.db_user+':'+config.db_password+'@'+config.db_ip+':'+config.db_port+'/db_'+get_user_db_name(user))
+    engine = create_engine('mysql+pymysql://'+config.database.user+':'+config.database.password+'@'+config.database.host+':'+config.database.port+'/db_'+get_user_db_name(user))
     return engine
 
 def create_user_session(user):

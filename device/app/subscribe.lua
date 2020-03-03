@@ -90,7 +90,8 @@ function Main()
                 message = function(msg)
                     --nusiunciam brokeriui ACK
                         assert(client:acknowledge(msg)) 
-                        local topic_type = string.match(msg.topic, ".+(/.+)$")                        local sendResponse = false
+                        local topic_type = string.match(msg.topic, ".+(/.+)$")                        
+                        local sendResponse = false
 
                         if (userUID ~= emptyUserUID and topic_type == "/control") then
                                 --Arduino valdymas per UART

@@ -6,7 +6,7 @@ import requests
 class MQTTService():    
     def publish_with_response(topic,response_topic,message, timeout): 
         
-        url = "http://" + config.rest.host + ":" + config.rest.port + "/api" + config.rest.publishResp
+        url = "http://" + config.restful.host + ":" + config.restful.port + "/api" + config.restful.publishResp
 
         data = {
             "topic":topic,
