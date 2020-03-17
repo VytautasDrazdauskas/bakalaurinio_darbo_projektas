@@ -2,14 +2,16 @@ local json = require "libraries.json"
 local fileParser = require "libraries.file_parser"
 local serialController = require "libraries.rs232_controller"
 local socket = require "libraries.socket"
+local aes = require "libraries.cryptography"
 
 local common = {}
 
 --MQTT publish
-function common.PublishData(client,topic,message)
+function common.PublishData(client,topic,message,aesKeyPath)
+    local payload = aes.encrypt(aes.loadKey(aesKeyPath), message)
     client:publish{
             topic = topic,
-            payload = message,
+            payload = payload,
             qos = 0,
             properties = {
                     payload_format_indicator = 1,

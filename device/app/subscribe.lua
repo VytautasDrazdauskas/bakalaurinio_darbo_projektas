@@ -5,6 +5,7 @@ local fileParser = require "libraries.file_parser"
 local serial = require "libraries.rs232_controller"
 local socket = require "libraries.socket"
 local common = require "libraries.common"
+local aes = require "libraries.cryptography"
 
 function Path()
         local str = debug.getinfo(2, "S").source:sub(2)
@@ -20,6 +21,7 @@ local systemName = fileParser.ReadFileData(configPath,"systemname")
 local cafilePath = fileParser.ReadFileData(configPath,"cafile")
 local clientCertPath = fileParser.ReadFileData(configPath,"clientCert")
 local clientKeyPath = fileParser.ReadFileData(configPath,"clientKey")
+local aesKeyPath = fileParser.ReadFileData(configPath,"aesKey")
 
 local emptyUserUID = "00000000-0000-0000-0000-000000000000"
 
@@ -90,12 +92,14 @@ function Main()
                 message = function(msg)
                     --nusiunciam brokeriui ACK
                         assert(client:acknowledge(msg)) 
+                        local command = aes.decryptPayload(msg, aes.loadKey(aesKeyPath))
+
                         local topic_type = string.match(msg.topic, ".+(/.+)$")                        
                         local sendResponse = false
 
                         if (userUID ~= emptyUserUID and topic_type == "/control") then
                                 --Arduino valdymas per UART
-                                if (msg.payload == "reboot") then 
+                                if (command == "reboot") then 
                                         Running = false
                                         --viską išjungiam
                                         serial.Serial_write(serialClient,"ACT1 OFF")
@@ -104,17 +108,17 @@ function Main()
                                         socket.sleep(1)
                                         serial.Serial_write(serialClient,"ACT3 OFF")
                                         --Responsas
-                                        common.PublishData(client,control_response_topic,common.ResponseJson(true,"Command successfully executed!"))
+                                        common.PublishData(client,control_response_topic,common.ResponseJson(true,"Command successfully executed!"), aesKeyPath)
                                         -- tik po to perkraunam
                                         io.popen("reboot")
-                                elseif (msg.payload == "ACT ALL ON") then
+                                elseif (command == "ACT ALL ON") then
                                         serial.Serial_write(serialClient,"ACT1 ON")
                                         socket.sleep(1)
                                         serial.Serial_write(serialClient,"ACT2 ON")
                                         socket.sleep(1)
                                         serial.Serial_write(serialClient,"ACT3 ON")
                                         sendResponse = true
-                                elseif (msg.payload == "ACT ALL OFF") then
+                                elseif (command == "ACT ALL OFF") then
                                         serial.Serial_write(serialClient,"ACT1 OFF")
                                         socket.sleep(1)
                                         serial.Serial_write(serialClient,"ACT2 OFF")
@@ -122,18 +126,18 @@ function Main()
                                         serial.Serial_write(serialClient,"ACT3 OFF")
                                         sendResponse = true
                                 else 
-                                        serial.Serial_write(serialClient,msg.payload)
+                                        serial.Serial_write(serialClient,command)
                                         sendResponse = true
                                 end
                                 
                                 if (sendResponse == true) then
                                         local message = common.ReadData(deviceMAC)
-                                        common.PublishData(client,control_response_topic,common.ResponseJson(true,"Command successfully executed!"))
-                                        common.PublishData(client,pub_topic,message)
+                                        common.PublishData(client,control_response_topic,common.ResponseJson(true,"Command successfully executed!"), aesKeyPath)
+                                        common.PublishData(client,pub_topic,message, aesKeyPath)
                                 end
                         elseif (topic_type == "/setconfig") then
-                                local config_type = string.match(msg.payload, "(.+)%=(.+)")
-                                local config_value = string.match(msg.payload, "=(.*)")
+                                local config_type = string.match(command, "(.+)%=(.+)")
+                                local config_value = string.match(command, "=(.*)")
                                 local res = nil
 
                                 if (config_type == "useruuid") then 
@@ -148,14 +152,14 @@ function Main()
 
                                 if (res == 0) then
                                         -- tik po to perkraunam
-                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(true,config_type .. " changed to " .. config_value .. ". Restarting."))
+                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(true,config_type .. " changed to " .. config_value .. ". Restarting."), aesKeyPath)
                                         io.popen("./run_daemon.sh restart")
                                 elseif (res == 1) then
-                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"Same value."))
+                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"Same value."), aesKeyPath)
                                 elseif (res == -1) then
-                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"File does not exist."))
+                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"File does not exist."), aesKeyPath)
                                 else
-                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"Unknown reason."))
+                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"Unknown reason."), aesKeyPath)
                                 end                        
                         end
                         

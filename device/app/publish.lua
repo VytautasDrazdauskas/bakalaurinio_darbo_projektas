@@ -10,8 +10,10 @@ function Path()
 end
 
 PATH = Path();
-local configPath = PATH .. "broker.conf"
+IsSignalLost = false
+IsProgramRunning = true
 
+local configPath = PATH .. "broker.conf"
 
 --pagrindiniai parametrai
 local deviceMAC = "unknown"  --useruid/system/C493000EFE35/control
@@ -22,7 +24,9 @@ local systemName = fileParser.ReadFileData(configPath,"systemname")
 local cafilePath = fileParser.ReadFileData(configPath,"cafile")
 local clientCertPath = fileParser.ReadFileData(configPath,"clientCert")
 local clientKeyPath = fileParser.ReadFileData(configPath,"clientKey")
-IsSignalLost = false
+local brokerIP = fileParser.ReadFileData(configPath,"ip")
+local delay = fileParser.ReadFileData(configPath,"delay")
+local aesKeyPath = fileParser.ReadFileData(configPath,"aesKey")
 
 function Is_openwrt()
         return(os.getenv("USER") == "root" or os.getenv("USER") == nil)
@@ -40,10 +44,6 @@ end
 
 --tema user/system/prietaisoMAC/duomenuTipas
 local topic = userUID .. "/" .. systemName .. "/" .. deviceMAC .. "/jsondata"
-
---parametrai nuskaitomi is konfiguracinio failo
-local brokerIP = fileParser.ReadFileData(configPath,"ip")
-local delay = fileParser.ReadFileData(configPath,"delay")
 
 function Main()
         --sukuriamas sujungimas su MQTT brokeriu       
@@ -65,13 +65,13 @@ function Main()
         }
         
         print("Program starting...")        
-               
-        while true do
+                       
+        while IsProgramRunning do
                 local result = client:start_connecting()
 
                 if result == false then
-                        print("Connection to broker " .. brokerIP .. " failed:")
-                        return
+                        print("Connection to broker " .. brokerIP .. " failed!")
+                        IsProgramRunning = false
                 else
                         print("Connection with MQTT broker " .. brokerIP .. " established!") -- sekmingas prijungimas
                         IsSignalLost = false
@@ -80,12 +80,12 @@ function Main()
                 local response = Loop(client,delay)
 
                 --dingo signalas
-                if(response == -2)then
+                if(response == -1)then
                         client:close_connection()  
                         common.RestoreConnection("8.8.8.8") --bandom atstatyti rysi
                 else --kitos priezastys                        
                         client:close_connection()                         
-                        break
+                        IsProgramRunning = false
                 end
         end
         print("Program stopped")  
@@ -95,17 +95,17 @@ end
 
 function Loop(client,sleepDelay)
 
-        Running = true
-        while (Running) do  
+        local running = true
+        while (running) do  
                 local message = common.ReadData(deviceMAC)
 
                 if (common.CheckPing("8.8.8.8") == true) then 
-                        common.PublishData(client,topic,message)
+                        common.PublishData(client,topic,message,aesKeyPath)
                         socket.sleep(sleepDelay)
                 else
                         print("Signal is lost.")
                         IsSignalLost = true
-                        return -2
+                        return -1
                 end
         end 
 end

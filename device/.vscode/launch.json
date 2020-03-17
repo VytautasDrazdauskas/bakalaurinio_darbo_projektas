@@ -5,10 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "launch",
+            "type": "lua",
+            "request": "launch",
+            "stopOnEntry": true,
+            "program": "${workspaceFolder}/test.lua",
+            "cwd": "${workspaceFolder}",
+            "path": "${workspaceFolder}/?.lua",
+            "cpath": "${workspaceFolder}/?.dll",
+            "arg": [],
+            "consoleCoding": "utf8"
+        },
+        {
             "name": "Ravi Debugger",
             "type": "lua",
             "request": "launch",
-            "program": "${workspaceRoot}/app/subscribe.lua",
+            "program": "${workspaceRoot}/test.lua",
             "stopOnEntry": true,
             "cwd": "${workspaceRoot}"
         }
