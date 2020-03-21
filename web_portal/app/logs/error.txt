@@ -1,0 +1,348 @@
+2020-03-16 14:01:59.867730
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 14:01:59.923383
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 14:02:28.164048
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 14:13:21.105675
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 14:13:21.232385
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 14:13:45.762676
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 14:16:10.497951
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 14:16:11.961316
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 14:16:26.472295
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 14:16:59.699640
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 14:17:20.909344
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 14:18:37.632022
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 14:41:07.979245
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 14:41:08.072151
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 14:41:08.088318
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 15:37:09.251161
+(MaxRetryError("HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f2aac517cc0>: Failed to establish a new connection: [Errno 111] Connection refused',))",),)
+2020-03-16 15:37:56.443150
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 15:40:16.540097
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 15:40:37.470877
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 15:41:16.372866
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 15:45:28.111880
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 15:50:05.719471
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 15:54:31.136049
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 15:54:52.443007
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 15:55:37.506693
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 15:56:15.144622
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 15:58:09.990690
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:00:04.902917
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:00:51.368708
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:01:59.928796
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:03:46.792861
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:04:43.365425
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:05:28.513489
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:07:08.561540
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:11:34.865482
+(MaxRetryError("HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f4296d5bda0>: Failed to establish a new connection: [Errno 111] Connection refused',))",),)
+2020-03-16 16:12:30.992436
+(MaxRetryError("HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7ff4f508ac50>: Failed to establish a new connection: [Errno 111] Connection refused',))",),)
+2020-03-16 16:13:55.837611
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:15:28.576541
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:16:56.988110
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:18:08.217254
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:18:43.589261
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:22:36.545725
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:23:26.457084
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:24:10.984028
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:24:58.159737
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:27:23.599006
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:27:46.384525
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:28:56.811760
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:29:36.828146
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:32:24.276901
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:33:38.486423
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:34:10.601548
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:35:12.416905
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:36:07.582435
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:38:52.328015
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:39:23.864512
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:40:10.527478
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:41:15.378532
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:45:06.281506
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:46:34.916699
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:47:42.493829
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:48:28.751324
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:49:14.350105
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:51:01.713756
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:52:50.188358
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:53:25.234291
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 16:54:28.506841
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:55:19.670663
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:56:14.532909
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 16:57:21.265450
+Time is up.
+2020-03-16 17:00:00.958891
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:01:03.460964
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:01:19.600734
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:01:44.830164
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:02:26.075023
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:02:57.066454
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:05:29.248639
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:05:50.156135
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 17:08:02.383742
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:08:18.159138
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:10:40.107802
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:10:46.126730
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 17:16:08.499848
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:18:57.054083
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:20:32.754041
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 17:22:07.292989
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:22:58.737559
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 17:23:28.046933
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 17:24:15.100077
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-16 17:25:31.256516
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:25:55.047685
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:26:59.376095
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 17:30:09.421957
+Time is up.
+2020-03-16 18:03:16.703043
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 18:03:16.711575
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 18:03:16.721160
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 18:03:16.732551
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 18:03:16.745831
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 18:03:16.746175
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 18:03:16.746480
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-16 18:03:16.758534
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-17 21:51:00.310626
+Time is up.
+2020-03-17 21:51:00.389083
+Time is up.
+2020-03-17 21:51:00.498489
+Time is up.
+2020-03-17 21:52:11.617584
+Time is up.
+2020-03-17 21:52:11.714633
+Time is up.
+2020-03-17 21:52:11.782677
+Time is up.
+2020-03-17 21:53:31.671178
+Time is up.
+2020-03-17 21:53:31.716287
+Time is up.
+2020-03-17 21:53:31.772925
+Time is up.
+2020-03-17 21:54:03.472394
+Time is up.
+2020-03-17 21:54:03.568512
+Time is up.
+2020-03-17 21:54:03.683688
+Time is up.
+2020-03-19 18:56:47.257648
+(MaxRetryError("HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe19ec338d0>: Failed to establish a new connection: [Errno 111] Connection refused',))",),)
+2020-03-19 18:56:47.489694
+(MaxRetryError("HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe19eca3588>: Failed to establish a new connection: [Errno 111] Connection refused',))",),)
+2020-03-19 18:56:47.863572
+(MaxRetryError("HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe1b72309b0>: Failed to establish a new connection: [Errno 111] Connection refused',))",),)
+2020-03-19 18:57:02.422582
+(MaxRetryError("HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe19eaf6c18>: Failed to establish a new connection: [Errno 111] Connection refused',))",),)
+2020-03-19 18:57:02.521144
+(MaxRetryError("HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe19eaff1d0>: Failed to establish a new connection: [Errno 111] Connection refused',))",),)
+2020-03-19 18:57:02.540656
+(MaxRetryError("HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fe19eb6f8d0>: Failed to establish a new connection: [Errno 111] Connection refused',))",),)
+2020-03-19 18:59:21.842953
+Time is up.
+2020-03-19 18:59:21.931393
+Time is up.
+2020-03-19 18:59:21.987872
+Time is up.
+2020-03-19 19:01:43.076493
+Time is up.
+2020-03-19 19:02:20.027742
+Time is up.
+2020-03-19 19:06:12.700430
+Time is up.
+2020-03-19 19:09:01.117045
+Time is up.
+2020-03-19 19:10:02.844588
+Time is up.
+2020-03-19 19:10:31.497479
+Time is up.
+2020-03-19 19:12:51.665282
+Time is up.
+2020-03-19 19:13:24.574482
+Time is up.
+2020-03-19 19:13:53.448396
+Time is up.
+2020-03-21 11:05:43.921719
+(MaxRetryError("HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fb002173eb8>: Failed to establish a new connection: [Errno 111] Connection refused',))",),)
+2020-03-21 11:06:28.460717
+(MaxRetryError("HTTPConnectionPool(host='127.0.0.1', port=5001): Max retries exceeded with url: /api/mqtt/publish-response (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7fb00215ce10>: Failed to establish a new connection: [Errno 111] Connection refused',))",),)
+2020-03-21 11:08:32.283927
+Time is up.
+2020-03-21 11:16:32.256781
+Time is up.
+2020-03-21 11:16:52.849858
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:17:05.597779
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:17:23.649074
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:17:49.053148
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:17:49.065982
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:17:49.075507
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:17:57.759025
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:17:57.766392
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:17:57.777265
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:18:07.794915
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:18:07.795014
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:18:07.806480
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:18:23.839895
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:21:16.811478
+("'Parse' object has no attribute 'success'",)
+2020-03-21 11:23:38.823112
+Time is up.
+2020-03-21 11:23:56.137459
+Time is up.
+2020-03-21 11:24:09.682558
+Time is up.
+2020-03-21 11:33:56.215194
+Time is up.
+2020-03-21 11:34:22.025163
+Time is up.
+2020-03-21 11:34:22.061305
+Time is up.
+2020-03-21 11:34:22.119506
+Time is up.
+2020-03-21 11:35:06.905577
+Time is up.
+2020-03-21 11:35:21.935400
+Time is up.
+2020-03-21 11:35:22.678433
+Time is up.
+2020-03-21 11:35:52.223456
+Time is up.
+2020-03-21 11:36:38.471828
+Time is up.
+2020-03-21 11:36:38.526649
+Time is up.
+2020-03-21 11:36:55.261812
+Time is up.
+2020-03-21 11:37:38.374456
+Time is up.
+2020-03-21 11:37:38.420788
+Time is up.
+2020-03-21 11:37:38.459546
+Time is up.
+2020-03-21 11:37:58.565494
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-21 11:38:34.868501
+Time is up.
+2020-03-21 11:39:12.996920
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-21 12:19:36.015451
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-21 12:19:36.015489
+('Expecting value: line 1 column 1 (char 0)',)
+2020-03-21 12:19:57.904008
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-21 13:47:30.360300
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)
+2020-03-21 14:26:47.142303
+(ProtocolError('Connection aborted.', RemoteDisconnected('Remote end closed connection without response',)),)

@@ -8,6 +8,7 @@
   "restful": {
     "host": "35.228.206.255",
     "port": "433",
-    "publishResp": "/mqtt/publish-response"
+    "publishResp": "/mqtt/publish-response",
+    "publish": "/mqtt/publish"
   }
 }

@@ -153,10 +153,6 @@ def add_new_device(code, device_name, device_type):
                     flash('Prietaisas sėkmingai užregistruotas!', 'success')
                 else:
                     flash('Prietaisas neužregistruotas!', 'danger')
-
-                # REIKIA VALIDACIJOS, kad devaisas paupdatino savo userio uuid
-                # Dar geriau butu per RESTful API daryti. Gal reiketu panaudoti QR koda patvirtinimui is devaiso puses.
-
             else:
                 flash("Toks prietaisas jau pridėtas!", "danger")
                 session.rollback()
@@ -599,7 +595,7 @@ def execute_device_action(id, command):
 
             # publishinam komanda
             response = Parse(MqttService.publish_with_response(
-                topic, response_topic, payload, 10))
+                topic, response_topic, payload, 10, device.mac))
 
             if (response.success):
                 return messenger.raise_notification(True, 'Komanda įvykdyta sėkmingai!')
@@ -647,7 +643,7 @@ def send_device_configuration(device_id, data_type, data):
 
             # publishinam komanda
             response = Parse(MqttService.publish_with_response(
-                topic, response_topic, payload, 10))
+                topic, response_topic, payload, 10, device.mac))
 
             if (response.success):
                 if (data_type == 'interval'):

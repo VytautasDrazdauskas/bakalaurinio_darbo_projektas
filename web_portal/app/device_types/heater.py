@@ -170,11 +170,11 @@ def get_deffered_data(session,device_id,values):
         })
 
 def get_data_range(session, device_id, date_from, date_to, resolution):
-    row_count = session.query(func.count(HeaterData.id)).filter(HeaterData.date > date_from, HeaterData.date < date_to).filter_by(device_id=device_id).scalar()
-    data_list = []
-    if (row_count > resolution):
-        all_data = session.query(HeaterData).filter(HeaterData.date > date_from, HeaterData.date < date_to).filter_by(device_id=device_id).all()
+    row_count = session.query(func.count(HeaterData.id)).filter(HeaterData.date > date_from, HeaterData.date < date_to).filter_by(device_id=device_id).scalar()    
+    all_data = session.query(HeaterData).filter(HeaterData.date > date_from, HeaterData.date < date_to).filter_by(device_id=device_id).all()
 
+    data_list = []
+    if (row_count > resolution):        
         skip_rows = floor(row_count/resolution)
         counter = 0
         data_sum = 0
@@ -189,7 +189,7 @@ def get_data_range(session, device_id, date_from, date_to, resolution):
                 counter=0
                 data_sum=0
     else:
-        data_list = session.query(HeaterData).filter(HeaterData.date > date_from, HeaterData.date < date_to).filter_by(device_id=device_id).all()  
+        data_list = all_data
 
     data_object_list = []
     for data in data_list:
