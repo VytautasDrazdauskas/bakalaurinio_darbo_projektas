@@ -4,7 +4,7 @@ import time
 import requests
 
 class MQTTService():    
-    def publish_with_response(topic,response_topic,message, timeout): 
+    def publish_with_response(topic,response_topic,message, timeout, mac): 
         
         url = "http://" + config.restful.host + ":" + config.restful.port + "/api" + config.restful.publishResp
 
@@ -12,7 +12,8 @@ class MQTTService():
             "topic":topic,
             "response_topic":response_topic,
             "message":message,
-            "timeout":timeout
+            "timeout":timeout,
+            "mac":mac
         }
 
         with requests.Session() as session:
