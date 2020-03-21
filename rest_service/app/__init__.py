@@ -1,14 +1,15 @@
-#!/usr/bin/python3.5
+#!/usr/bin/python3.6
 from flask import Flask
 from flask import Blueprint
 from flask_restful import Api
-from app.resources.mqtt_service import MQTTPublishWithResponse
+from app.resources.mqtt_service import MQTTPublishWithResponse, MQTTPublish
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
 
 # Route
 api.add_resource(MQTTPublishWithResponse, '/mqtt/publish-response')
+api.add_resource(MQTTPublish, '/mqtt/publish')
 
 app = Flask(__name__)
 

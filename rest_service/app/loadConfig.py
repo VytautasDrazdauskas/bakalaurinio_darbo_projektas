@@ -10,3 +10,6 @@ with open(dir_path +'/config.json') as config_file:
 
 #brokeris
 broker = JsonParse(config['broker'])
+
+#raktai
+keys = JsonParse(config['keys'])

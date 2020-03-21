@@ -4,12 +4,12 @@ import json
 import paho.mqtt.client as mqtt
 import app.loadConfig as config
 from app.json2obj import JsonParse
+from app.cryptography import AESCipher
 import time
 import os
 import ssl
 
 response = ""
-dir_path = os.path.dirname(os.path.realpath(__package__))
 
 class MQTTPublishWithResponse(Resource):
 
@@ -17,46 +17,117 @@ class MQTTPublishWithResponse(Resource):
         return {"success": False, "reason": "No data provided"}, 400
 
     def put(self):
-        data = JsonParse(request.get_json(force=True))
+        try:
+            data = JsonParse(request.get_json(force=True))
 
-        if not data:
-            return {"success": False, "reason": "No data provided"}, 400
+            if not data:
+                return {"success": False, "reason": "No data provided"}, 400
 
-        topic = data.topic
-        response_topic = data.response_topic
-        message = data.message
-        timeout = data.timeout
-
-        global response
-        response = ""
-
-        def on_message(self, userdata, msg):
-            global response
-            response = json.loads(msg.payload.decode('utf-8'))
-            self.disconnect()
-
-        # sukuriam klienta
-        client = mqtt.Client()
-        client.on_message = on_message
-        client.tls_set(ca_certs=config.broker.cafile, certfile=config.broker.clientCert, keyfile=config.broker.clientKey)
-
-        # prisijungiam prie brokerio su confige esanciais parametrais
-        client.connect(host=config.broker.host, port=config.broker.port)
-        client.subscribe(topic=response_topic, qos=2)
-        client.publish(topic=topic, payload=message, qos=2)
-
-        # timeris
-        start_time = time.time()
-        wait_time = timeout
-        while True:
-            client.loop()
-            if (response == ""):
-                elapsed_time = time.time() - start_time
-                if elapsed_time > wait_time:
-                    client.disconnect()
-                    break
+            topic = data.topic
+            response_topic = data.response_topic
+            mac = data.mac        
+            timeout = data.timeout
+            
+            #tikriname, ar egzistuoja AES raktas
+            aes = AESCipher()
+            if (mac is not None):
+                key = aes.load_key(filename=mac)
+                if key is not None:
+                    enc = aes.encrypt(plain_text=data.message, key=key)
+                    message = json.dumps(enc)
+                else:
+                    message = json.dumps(data.message)
             else:
-                client.disconnect()
-                return response, 200
+                message = json.dumps(data.message)
+                
 
-        return {"success": False, "reason": "Time is up."}, 400
+            global response
+            response = ""
+
+            def on_message(self, userdata, msg):
+                global response
+                resp = json.loads(msg.payload.decode('utf-8'))
+
+                #tikrinam, ar duomenys yra uzsifruoto paketo formato
+                if('iv' in resp and 'data' in resp):
+                    key = aes.load_key(mac)
+                    dec = aes.decrypt(enc=resp, key=key)
+                    response = json.loads(dec)
+                else: #jei ne, laikom, jog nera sifruotes
+                    response = resp
+
+                self.disconnect()
+
+            # sukuriam klienta
+            client = mqtt.Client()
+            client.on_message = on_message
+            #client.tls_set(ca_certs=config.broker.cafile, certfile=config.broker.clientCert, keyfile=config.broker.clientKey)
+
+            # prisijungiam prie brokerio su confige esanciais parametrais
+            client.connect(host=config.broker.host, port=config.broker.port)
+            client.subscribe(topic=response_topic, qos=2)
+            client.publish(topic=topic, payload=message, qos=2)
+
+            # timeris
+            start_time = time.time()
+            wait_time = timeout
+            while True:
+                client.loop()
+                if (response == ""):
+                    elapsed_time = time.time() - start_time
+                    if elapsed_time > wait_time:
+                        client.disconnect()
+                        break
+                else:
+                    client.disconnect()
+                    return response, 200
+
+            return {"success": False, "reason": "Time is up."}, 400
+
+        except Exception as ex:
+            return {"success": False, "reason": ex.args}, 400
+
+class MQTTPublish(Resource):
+
+    def get(self):
+        return {"success": False, "reason": "No data provided"}, 400
+
+    def put(self):
+        try:
+            data = JsonParse(request.get_json(force=True))
+
+            if not data:
+                return {"success": False, "reason": "No data provided"}, 400
+
+            topic = data.topic
+            response_topic = data.response_topic
+            mac = data.mac        
+            timeout = data.timeout
+            
+            #tikriname, ar egzistuoja AES raktas
+            aes = AESCipher()
+            if (mac is not None):
+                key = aes.load_key(filename=mac)
+                if key is not None:
+                    enc = aes.encrypt(plain_text=data.message, key=key)
+                    message = json.dumps(enc)
+                else:
+                    message = json.dumps(data.message)
+            else:
+                message = json.dumps(data.message)
+            
+            # sukuriam klienta
+            client = mqtt.Client()
+            #client.tls_set(ca_certs=config.broker.cafile, certfile=config.broker.clientCert, keyfile=config.broker.clientKey)
+
+            # prisijungiam prie brokerio su confige esanciais parametrais
+            client.connect(host=config.broker.host, port=config.broker.port)
+            client.publish(topic=topic, payload=message, qos=2)
+
+        except Exception as ex:
+            return {"success": False, "reason": ex.args}, 400
+        finally:
+            return {"success": True, "reason": "All good."}, 200
+            client.disconnect()
+
+        
