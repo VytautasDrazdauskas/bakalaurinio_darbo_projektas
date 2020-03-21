@@ -92,8 +92,17 @@ function Main()
                 message = function(msg)
                     --nusiunciam brokeriui ACK
                         assert(client:acknowledge(msg)) 
-                        local command = aes.decryptPayload(msg, aes.loadKey(aesKeyPath))
+                        print("Krovinys: " .. msg.payload)
+                        print("Kelias iki rakto: " .. aesKeyPath)
 
+                        local command = assert(aes.decryptPayload(msg.payload, aes.loadKey(aesKeyPath)))
+
+                        if (command == nil) then 
+                                print("Duomenys neiššifruoti")
+                                return 
+                        end
+
+                        print("Komanda: " .. command)
                         local topic_type = string.match(msg.topic, ".+(/.+)$")                        
                         local sendResponse = false
 

@@ -107,14 +107,16 @@ end
 
 function crypto.decryptPayload(payload, key)
     local parsed_payload = json.decode(payload)
-    print(key)
     local data = {
         iv = parsed_payload.iv,
         data = parsed_payload.data
     }
-    print('1')
+
+    print(data.iv)
+    print("data: " .. data.data)
+    print("Key: " .. key)
+
     local result = crypto.decrypt(data.iv, key, data.data)
-    print('2')
     return result
 end
 
