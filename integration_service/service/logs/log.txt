@@ -44,3 +44,9 @@ b'{"data":{"act2":"1","temp":"25.25","act3":"1","act1":"1"},"deviceMAC":"C493000
 Starting Scheduler service...
 2020-03-03 12:48:16.582015
 Starting Scheduler service...
+2020-03-21 14:54:49.222078
+Starting MQTT service...
+2020-03-21 14:54:49.329841
+[Errno 2] No such file or directory
+2020-03-21 14:54:49.335155
+[Errno 2] No such file or directory

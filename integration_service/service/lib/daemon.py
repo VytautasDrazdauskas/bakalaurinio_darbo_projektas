@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.6
 import sys, os, time, atexit
 from signal import SIGTERM
  

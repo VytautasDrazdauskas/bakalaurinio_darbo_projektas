@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.6
 import paho.mqtt.client as mqtt
 import json, datetime, os
 import sqlalchemy as db

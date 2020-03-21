@@ -19,3 +19,6 @@ scheduler = JsonParse(config['scheduler'])
 
 #restful servisas
 restful = JsonParse(config['restful'])
+
+#AES raktai
+keys = JsonParse(config['keys'])

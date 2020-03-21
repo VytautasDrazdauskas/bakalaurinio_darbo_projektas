@@ -15,9 +15,13 @@
     "restful":{
         "host":"127.0.0.1",
         "port":"433",
-        "publishResp":"/mqtt/publish-response"
+        "publishResp":"/mqtt/publish-response",
+        "publish": "/mqtt/publish"
     },
     "scheduler":{
         "interval":10
-    }
+    },
+    "keys":{
+        "directory": "/mnt/d/VGTU_bakalauras/IV_kursas/bakalaurinis_darbas/Repository/integration_service/device_keys/"
+      }
 }

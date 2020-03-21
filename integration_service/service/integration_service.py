@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.6
 import paho.mqtt.client as mqtt
 import datetime, os
 import sqlalchemy as db
@@ -14,11 +14,16 @@ import service.controller.devices as device_controller
 import service.device_types.default_device as default_device
 import service.device_types.heater as heater
 from decimal import Decimal
-import time
+import time, json
 from service.lib.json2obj import JsonParse
+from service.helpers.cryptography import AESCipher
 
 def Str2Bool(input):
   return input.lower() in ("yes", "true", "t", "1")
+
+def GetTopicData(input,position):
+  data = input.split("/")  
+  return data[position]
 
 class IntegrationService():
     
@@ -28,21 +33,37 @@ class IntegrationService():
 
     def on_message(self, userdata, msg):
         try:
-            payload = JsonParse(msg.payload.decode('utf-8'))    
-            #logai
-            logger.log('Sender MAC address: ' + payload.deviceMAC)
-            logger.log(str(msg.payload))
+            device_mac = GetTopicData(msg.topic,2)
+            logger.log('data received from ' + device_mac)
+            logger.log(msg.topic)
+            logger.log(msg.payload.decode('utf-8'))
+            #duomenu desifravimas
+            aes = AESCipher()
+            data = json.loads(msg.payload)
+            
+            #tikrinam, ar duomenys yra uzsifruoto paketo formato
+            if('iv' in data and 'data' in data):
+                key = aes.load_key(device_mac)
+                dec = aes.decrypt(enc=data, key=key)
 
-            #sukuriam sesija   
-            #parenkam dominancius duomenis is isparsinto JSON dict objekto
-            device_mac = payload.deviceMAC
-                        
+                if dec is None:
+                    raise Exception('Nepavyko issifruoti!')
+
+                logger.log(json.loads(dec))
+                payload = JsonParse(dec)
+            else:
+                raise ValueError('Netinkamo formato paketas!')
+            
             #atidarom pagrindines DB sesija
             session = Session()
 
             #surandam DB iregistruota prietaisa, prietaiso savininka ir paskutinius duomenis
             device = session.query(Devices).filter_by(mac=device_mac).first()
             user = session.query(Users).filter_by(id=device.user_id).first()
+
+            if (GetTopicData(msg.topic,0) != user.uuid):
+                logger.log("Vartotojo UUID neatitinka temoje pateikto UUID! Nutraukiama.")
+                raise ValueError('Vartotojo UUID neatitinka temoje pateikto UUID! Nutraukiama.')
             
             #naudotojo asmenines DB sesijas
             user_session = userDB.create_user_session(user)
@@ -72,17 +93,17 @@ class IntegrationService():
                         temp = Decimal(payload.data.temp)
 
                         if (temp_treshold is not None):
-                            #jei temperatura per didele, ijungiam LED
                             if (temp >= temp_treshold and last_data is not None and last_data.temp < temp_treshold):
                                 logger.log('Temperature treshold exceeded: ' + str(temp))
                                 device_controller.save_device_history(user_session,user_device,"Temperatūros riba (" + str(temp_treshold) + ") viršyta pagal konfigūraciją \"" + configuration.name + "\"! Temperatūra: " + str(temp) + " Išjungiama programa.")
             
-                                #riba virsyta
+                                #riba virsyta, isjungiam rutinini darba
                                 device_controller.execute_job(user, user_device, configuration, True)
                             elif (temp < temp_treshold and last_data is not None and last_data.temp >= temp_treshold):
                                 logger.log('Temperature lowered below treshold: ' + str(temp))    
                                 device_controller.save_device_history(user_session,user_device,"Temperatūra " + str(temp) + " žemesnė už nustatytą ribą (" + str(temp_treshold) + "). Atstatoma konfigūracijos \"" + configuration.name + "\" programa.")
-                                #temperatura sumazejo, bet jobas nesibaige
+                                
+                                #temperatura sumazejo, bet rutininis darbas nesibaige
                                 device_controller.execute_job(user, user_device, configuration)
                     
                     temp = Decimal(payload.data.temp)
