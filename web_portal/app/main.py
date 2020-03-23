@@ -167,6 +167,14 @@ def configure_device():
         data = request.form['data']
     return user_device.send_device_configuration(device_id, data_type, data)
 
+@main.route('/save-aes-interval', methods=['POST'])
+@login_required
+def save_aes_interval():  
+    if request.method == "POST":
+        device_id = request.form['device_id']
+        interval = request.form['interval']
+    return user_device.save_device_aes_interval(device_id, interval)
+
 @main.route('/activate-device-configuration', methods=['POST'])
 @login_required
 def activate_device_configuration():

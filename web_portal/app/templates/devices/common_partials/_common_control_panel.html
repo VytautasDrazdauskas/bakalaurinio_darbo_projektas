@@ -73,9 +73,60 @@
                 <div class="form-value-column">
                     <input class="input form-field is-large" type="number" id="interval-field" placeholder="Intervalas" value="{{ device.publish_interval }}">
                 </div> 
-            </div>      
+                <div class="form-row">
+                    <div class="form-label-column"> 
+                    </div> 
+                    <div class="form-value-column">
+                        <label class="switch">
+                            <input id="s-sw" type="checkbox">
+                            <span class="slider round content" value="S"></span>
+                        </label>
+                        <label class="switch">
+                            <input id="m-sw" type="checkbox">
+                            <span class="slider round content" value="M"></span>
+                        </label>
+                        <label class="switch">
+                            <input id="h-sw" type="checkbox">
+                            <span class="slider round content" value="H" ></span>
+                        </label>  
+                    </div>              
+                </div> 
+            </div>
+                 
             <div class="form-label-column">
                 <button id="execute-interval-btn" class="fancy-button">Išsiųsti intervalą</button>
+            </div>             
+        </div>
+        <div class="form-row">
+            <div class="form-label-column">
+                <div class="form-label-column">
+                    <h1>AES rakto keitimo intervalas:</h1>  
+                </div>   
+                <div class="form-value-column">
+                    <input class="input form-field is-large" type="number" id="aes-interval-field" placeholder="Intervalas" value="{{ device.aes_key_interval }}">
+                </div> 
+                <div class="form-row">
+                    <div class="form-label-column"> 
+                    </div> 
+                    <div class="form-value-column">
+                        <label class="switch">
+                            <input id="aes-s-sw" type="checkbox">
+                            <span class="slider round content" value="S"></span>
+                        </label>
+                        <label class="switch">
+                            <input id="aes-m-sw" type="checkbox">
+                            <span class="slider round content" value="M" ></span>
+                        </label>
+                        <label class="switch">
+                            <input id="aes-h-sw" type="checkbox">
+                            <span class="slider round content" value="H"></span>
+                        </label>  
+                    </div>              
+                </div>                
+            </div>
+                
+            <div class="form-label-column">
+                <button id="save-aes-interval-btn" class="fancy-button">Išsaugoti intervalą</button>
             </div>             
         </div>
     </div>

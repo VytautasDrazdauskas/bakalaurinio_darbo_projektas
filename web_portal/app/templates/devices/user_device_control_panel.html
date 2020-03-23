@@ -34,8 +34,61 @@
         $('#execute-interval-btn').on( 'click', function () {
             var device_id = "{{ device.id }}";
             var interval = document.getElementById("interval-field").value;
+            var sSw = document.getElementById("s-sw");
+            var mSw = document.getElementById("m-sw");
+            var hSw = document.getElementById("h-sw");
 
-            ConfigDevice(device_id,"interval",interval);
-        });     
+            var intervalValue = ConvertTime(interval,sSw,mSw,hSw);
+
+            ConfigDevice(device_id,"interval",intervalValue);
+        });  
+
+        $('#s-sw, #m-sw, #h-sw').on( 'click', function () {
+            $('#s-sw')[0].checked = false;
+            $('#m-sw')[0].checked = false;
+            $('#h-sw')[0].checked = false;
+            this.checked = true;
+        }); 
+
+        $('#aes-s-sw, #aes-m-sw, #aes-h-sw').on( 'click', function () {
+            $('#aes-s-sw')[0].checked = false;
+            $('#aes-m-sw')[0].checked = false;
+            $('#aes-h-sw')[0].checked = false;
+            this.checked = true;
+        }); 
+
+        $('#save-aes-interval-btn').on( 'click', function () {
+            var device_id = "{{ device.id }}";
+            var interval = document.getElementById("aes-interval-field").value;
+
+            var sSw = document.getElementById("aes-s-sw");
+            var mSw = document.getElementById("aes-m-sw");
+            var hSw = document.getElementById("aes-h-sw");
+
+            var intervalValue = ConvertTime(interval,sSw,mSw,hSw);
+
+            createLoader();
+            $.ajax({
+                url: "/save-aes-interval",
+                type: "POST",
+                data: {
+                device_id: device_id,
+                interval: intervalValue
+                },
+                success: function(response) {
+                removeLoader();
+                getResponseMessage(response);
+                },
+                error: function(error) {
+                removeLoader();
+                getErrorMessage(error);
+                }
+            });
+        });    
+
+        $( document ).ready(function() {
+            TimeSwitchOnLoad($('#interval-field')[0],$('#s-sw')[0],$('#m-sw')[0],$('#h-sw')[0]);
+            TimeSwitchOnLoad($('#aes-interval-field')[0],$('#aes-s-sw')[0],$('#aes-m-sw')[0],$('#aes-h-sw')[0]);
+        }); 
     </script>
 {% endblock %}

@@ -74,7 +74,7 @@ restartDaemons()
     cd $SCRIPTPATH
     rm $SCRIPTPATH/log.txt
     
-    #BROKER_IP=`cat $SCRIPTPATH/broker.conf | grep ip= | awk -F= '{print $2}'`
+    #BROKER_IP=`cat $SCRIPTPATH/config.conf | grep ip= | awk -F= '{print $2}'`
 
     #patikrinam, ar yra interneto rysys
     while ! ping -c 1 -W 1 8.8.8.8 > /dev/null 2>&1; do

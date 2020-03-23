@@ -13,7 +13,7 @@ function Path()
 end
 
 PATH = Path();
-local configPath = PATH .. "broker.conf"
+local configPath = PATH .. "../config.conf"
 
 local deviceMAC = "unknown"  --useruid/system/C493000EFE02/control
 local userUID = fileParser.ReadFileData(configPath,"useruuid")
@@ -92,9 +92,6 @@ function Main()
                 message = function(msg)
                     --nusiunciam brokeriui ACK
                         assert(client:acknowledge(msg)) 
-                        print("Krovinys: " .. msg.payload)
-                        print("Kelias iki rakto: " .. aesKeyPath)
-
                         local command = assert(aes.decryptPayload(msg.payload, aes.loadKey(aesKeyPath)))
 
                         if (command == nil) then 
@@ -149,12 +146,19 @@ function Main()
                                 local config_value = string.match(command, "=(.*)")
                                 local res = nil
 
+                                print(config_type)
+
                                 if (config_type == "useruuid") then 
                                         res = fileParser.UpdateFileData(configPath,config_type,config_value)
                                 elseif (config_type == "systemname") then 
                                         res = fileParser.UpdateFileData(configPath,config_type,config_value)
                                 elseif (config_type == "delay") then
                                         res = fileParser.UpdateFileData(configPath,config_type,config_value)
+                                elseif (config_type == "newaeskey") then --atnaujinamas aes raktas. Pirma issiunciam patvirtinima, po to keiciam ir perkraunam
+                                        print("Keiciamas AES raktas...")
+                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(true,"AES key has been changed!"), aesKeyPath)
+                                        res = fileParser.OverwriteFileData(aesKeyPath,config_value)
+                                        return
                                 end
                                 print(res)
                                 print(setconfig_response_topic)

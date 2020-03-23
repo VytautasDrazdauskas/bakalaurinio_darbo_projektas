@@ -166,6 +166,32 @@ function ConfigDevice(device_id, type, data) {
   });
 }
 
+function ConvertTime(time,sSw,mSw,hSw){
+  if(sSw.checked === true){
+    return time;
+  }
+  else if(mSw.checked === true){
+    return Math.floor(time * 60);
+  }
+  else if(hSw.checked === true){
+    return Math.floor(time * 3600);
+  }
+}
+
+function TimeSwitchOnLoad(interval, sSw, mSw, hSw){
+  if (interval.value >= 60 && interval.value < 3600){
+      mSw.checked = true;
+      interval.value = Math.round(interval.value / 60);
+  }
+  else if (interval.value >= 3600){
+      hSw.checked = true;
+      interval.value = Math.round(interval.value / 3600);
+  }
+  else {
+      sSw.checked = true;
+  }
+}
+
 $(document).ready(function() {
   //Submit mygtuko veiksmai
   $("form").submit(function(e) {

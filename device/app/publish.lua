@@ -13,7 +13,7 @@ PATH = Path();
 IsSignalLost = false
 IsProgramRunning = true
 
-local configPath = PATH .. "broker.conf"
+local configPath = PATH .. "../config.conf"
 
 --pagrindiniai parametrai
 local deviceMAC = "unknown"  --useruid/system/C493000EFE35/control
@@ -25,7 +25,7 @@ local cafilePath = fileParser.ReadFileData(configPath,"cafile")
 local clientCertPath = fileParser.ReadFileData(configPath,"clientCert")
 local clientKeyPath = fileParser.ReadFileData(configPath,"clientKey")
 local brokerIP = fileParser.ReadFileData(configPath,"ip")
-local delay = fileParser.ReadFileData(configPath,"delay")
+local delay = tonumber(fileParser.ReadFileData(configPath,"delay"))
 local aesKeyPath = fileParser.ReadFileData(configPath,"aesKey")
 
 function Is_openwrt()
@@ -101,7 +101,7 @@ function Loop(client,sleepDelay)
 
                 if (common.CheckPing("8.8.8.8") == true) then 
                         common.PublishData(client,topic,message,aesKeyPath)
-                        socket.sleep(sleepDelay)
+                        common.sleep(sleepDelay)
                 else
                         print("Signal is lost.")
                         IsSignalLost = true

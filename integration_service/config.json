@@ -13,7 +13,7 @@
         "clientKey": "/home/vytdra/server_certificates/integration-service-certs/client.key"
     },
     "restful":{
-        "host":"127.0.0.1",
+        "host":"35.228.206.255",
         "port":"433",
         "publishResp":"/mqtt/publish-response",
         "publish": "/mqtt/publish"

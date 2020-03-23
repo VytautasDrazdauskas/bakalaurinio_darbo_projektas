@@ -32,11 +32,13 @@ class Devices(Base):
     mac = db.Column(db.String(12), unique=True)
     uuid = db.Column(db.String(36), unique=True)
     user_id=db.Column(db.Integer,db.ForeignKey('users.id'), nullable=True)
+    aes_key_change_date = db.Column(db.DateTime, nullable=True, default=None)
 
-    def __init__(self, mac, user_id):
+    def __init__(self, mac, user_id, aes_key_change_date=None):
         self.uuid = str(uuid4())
         self.mac = mac
         self.user_id = user_id
+        self.aes_key_change_date = aes_key_change_date
 
 #Rutininių darbų tvarkaraštis
 class DeviceJobs(Base):
@@ -74,13 +76,15 @@ class UserDevices(Base):
     date_added_local = db.Column(db.DateTime, nullable=False, default=datetime.now)
     device_type = db.Column(db.Integer, nullable=False)   
     publish_interval = db.Column(db.Integer, nullable=False, default=30)
+    aes_key_interval = db.Column(db.Integer, nullable=True)
 
-    def __init__(self, device_name, mac, status, device_type, publish_interval):
+    def __init__(self, device_name, mac, status, device_type, publish_interval, aes_key_interval):
         self.device_type = device_type
         self.status = status
         self.device_name = device_name
         self.mac = mac
         self.publish_interval = publish_interval
+        self.aes_key_interval = aes_key_interval
 
 class UserDeviceHistory(Base):
     __tablename__ = "user_device_history"

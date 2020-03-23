@@ -21,6 +21,7 @@ from app.helpers.code_decode import decode
 import numpy as np
 import cv2
 from PIL import Image
+from datetime import timedelta  
 
 
 class Parse(object):
@@ -104,33 +105,33 @@ def add_new_device(code, device_name, device_type):
             session.commit()
 
         # patikrinam, ar toks prietaisas egzistuoja MainDB
-        deviceInMain = main_db_session.query(
-            models.Devices).filter_by(uuid=code).first()
+        device_in_main = main_db_session.query(models.Devices).filter_by(uuid=code).first()
 
-        if deviceInMain is None:
+        if device_in_main is None:
             flash("Toks prietaisas neegzistuoja!", "danger")
             session.rollback()
             main_db_session.rollback()
-        elif deviceInMain.user_id is not None and deviceInMain.user_id != current_user.id:
+        elif device_in_main.user_id is not None and device_in_main.user_id != current_user.id:
             flash("Prietaisas priklauso kitam naudotojui!", "danger")
             session.rollback()
             main_db_session.rollback()
-        elif deviceInMain.user_id is None:
+        elif device_in_main.user_id is None:
             device = session.query(models.UserDevices).filter_by(
-                mac=deviceInMain.mac).first()
+                mac=device_in_main.mac).first()
             # pridedam prietaisa i userio DB
             if not device:
                 new_device = models.UserDevices(
                     device_name=device_name,
-                    mac=deviceInMain.mac,
+                    mac=device_in_main.mac,
                     status=enums.DeviceState.Registered.value,
                     device_type=device_type,
-                    publish_interval=30
+                    publish_interval=30,
+                    aes_key_interval=None
                 )
 
                 session.add(new_device)
 
-                deviceInMain.user_id = current_user.id
+                device_in_main.user_id = current_user.id
 
                 device_type = select_device_type(new_device)
 
@@ -141,7 +142,7 @@ def add_new_device(code, device_name, device_type):
                 defaultUUID = "00000000-0000-0000-0000-000000000000"
 
                 payload = "useruuid=" + current_user.uuid
-                topic = defaultUUID + "/" + systemName + "/" + deviceInMain.mac + "/setconfig"
+                topic = defaultUUID + "/" + systemName + "/" + device_in_main.mac + "/setconfig"
                 response_topic = topic + "/response"
 
                 response = Parse(MqttService.publish_with_response(
@@ -192,7 +193,8 @@ def get_user_devices():
                 date_added=str(device.date_added_local),
                 device_type=device.device_type,
                 device_type_name=enums.DeviceType(device.device_type).name,
-                publish_interval=device.publish_interval
+                publish_interval=device.publish_interval,
+                aes_key_interval=device.aes_key_interval
             )
             devicesArr.append(deviceObj)
 
@@ -295,7 +297,8 @@ def get_device_view_model(device_id):
         date_added=str(device.date_added_local),
         device_type=device.device_type,
         device_type_name=enums.DeviceType(device.device_type).name,
-        publish_interval=device.publish_interval
+        publish_interval=device.publish_interval,
+        aes_key_interval=device.aes_key_interval
     )
 
     return model
@@ -617,11 +620,35 @@ def execute_device_action(id, command):
     else:
         return messenger.raise_notification(False, 'Naudotojas nėra autentifikuotas!')
 
+def save_device_aes_interval(device_id, interval):
+    try:
+        session = create_user_session()
+        main_db_session = db.session.session_factory()
+        interval = None if interval == "" else int(interval)
+
+        device = session.query(models.UserDevices).filter_by(id=device_id).first()
+        device.aes_key_interval = interval
+
+        device_in_main = main_db_session.query(models.Devices).filter_by(mac=device.mac).first()
+        device_in_main.aes_key_change_date = None if interval == None else datetime.now() + timedelta(seconds=interval)
+        
+        main_db_session.commit()
+        session.commit()
+
+        return messenger.raise_notification(True, 'AES rakto keitimo intervalas išsaugotas!')
+    except Exception as ex:
+        Logger.log_error(ex.args)
+        flash('Nenumatyta klaida')
+        session.rollback()
+        main_db_session.rollback()
+    finally:
+        session.close()
+        main_db_session.close()
 
 def send_device_configuration(device_id, data_type, data):
     if current_user.is_authenticated:
         try:
-            session = create_user_session()
+            session = create_user_session()            
             device = session.query(models.UserDevices).filter_by(
                 id=device_id).first()
 

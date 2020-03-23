@@ -12,6 +12,26 @@ def get_device_config(session, device, job):
     elif (device.device_type == enums.DeviceType.Default.value):
         return session.query(default_device.DefaultDeviceConfig).filter_by(uuid=job.config_uuid).first()
 
+def send_device_configuration(user, device, type, value):
+    systemName = "system"
+    topic = user.uuid + "/" + systemName + "/" + device.mac + "/setconfig"
+    response_topic = topic + "/response"
+
+    payload = type + "=" + value
+    result = False
+    
+    response = JsonParse(mqtt.publish_with_response(topic=topic, response_topic=response_topic, message=payload, timeout=5, mac=device.mac))
+
+    if(response.success):
+        result = True
+    elif (response.success is False and response.reason == "Time is up."):
+        device.status = enums.DeviceState.Offline.value
+        logger.log_scheduler('Nėra ryšio su įrenginiu: ' + response.reason)
+    else:
+        logger.log_scheduler('Klaidos: ' + response.reason)
+        
+    return result
+
 def execute_job(user, device, config, stop_job=False):
     payload_list = []
     if (device.device_type == enums.DeviceType.Heater.value):

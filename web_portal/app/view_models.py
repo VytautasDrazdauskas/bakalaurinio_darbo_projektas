@@ -50,7 +50,7 @@ class UserDeviceHistoryView():
         }
 
 class UserDevicesView():
-    def __init__(self, id, device_name, mac, state, date_added, device_type, device_type_name, publish_interval):
+    def __init__(self, id, device_name, mac, state, date_added, device_type, device_type_name, publish_interval, aes_key_interval):
         self.id = id
         self.device_name = device_name
         self.mac = mac
@@ -59,6 +59,7 @@ class UserDevicesView():
         self.device_type = device_type
         self.device_type_name = device_type_name
         self.publish_interval = publish_interval
+        self.aes_key_interval = aes_key_interval
 
     @property
     def serialize(self):
@@ -70,5 +71,6 @@ class UserDevicesView():
             'date_added': self.date_added,
             'device_type': self.device_type,
             'device_type_name': self.device_type_name,
-            'publish_interval': self.publish_interval
+            'publish_interval': self.publish_interval,
+            'aes_key_interval':self.aes_key_interval
         }

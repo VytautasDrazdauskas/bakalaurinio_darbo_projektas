@@ -45,17 +45,17 @@ function crypto.encrypt(key,data)
     }
     
     --uzsifruojamas
-    local cipher = chiperData.cipher()
+    local cipher = assert(chiperData.cipher()
             .setKey(chiperData.key)
             .setBlockCipher(AES256Cipher)
-            .setPadding(chiperData.padding);
+            .setPadding(chiperData.padding));
 
-    local cipherOutput = cipher
+    local cipherOutput = assert(cipher
             .init()
             .update(Stream.fromArray(chiperData.iv))
             .update(Stream.fromArray(chiperData.plaintext))
             .finish()
-            .asHex();
+            .asHex());
 
     --suformuojamas krovinys
     local payload = {
@@ -90,17 +90,18 @@ function crypto.decrypt(iv,key,data)
         padding = ZeroPadding
     }
     
-    local decipher = chiperData.decipher()
+    local decipher = assert(chiperData.decipher()
             .setKey(chiperData.key)
             .setBlockCipher(AES256Cipher)
-            .setPadding(chiperData.padding);
+            .setPadding(chiperData.padding));
 
-    local plainOutput = decipher
+    local plainOutput = assert(decipher
                         .init()
                         .update(Stream.fromArray(chiperData.iv))
                         .update(Stream.fromArray(chiperData.ciphertext))
                         .finish()
-                        .asHex();
+                        .asHex(), "nepavyko issifruoti");
+
     local result = string.fromhex(plainOutput)
     return string.match(result, "(.+)%;(.+)")
 end
@@ -116,7 +117,7 @@ function crypto.decryptPayload(payload, key)
     print("data: " .. data.data)
     print("Key: " .. key)
 
-    local result = crypto.decrypt(data.iv, key, data.data)
+    local result = assert(crypto.decrypt(data.iv, key, data.data))
     return result
 end
 

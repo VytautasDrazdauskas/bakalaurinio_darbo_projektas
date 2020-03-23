@@ -39,6 +39,14 @@ function file_parser.ReadFileData(pathToFile, type)
         return data
 end
 
+function file_parser.OverwriteFileData(pathToFile, inputData)
+        local file = io.open(pathToFile, "w+") 
+        file:write(inputData)
+        file:close()
+
+        return 0
+end
+
 function file_parser.UpdateFileData(pathToFile, type, inputData)
         local res, err = file_parser.ReadFileData(pathToFile, type)
         if err then return -1; end

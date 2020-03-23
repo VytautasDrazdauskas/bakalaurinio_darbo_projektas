@@ -426,6 +426,18 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
+.slider.content:before {
+  font-size: large;
+  content: attr(value);
+  text-align: center;
+}
+
+.slider.content {
+  font-size: large;
+  content: attr(value);
+  text-align: center;
+}
+
 /* Rounded sliders */
 .slider.round {
   border-radius: 34px;
