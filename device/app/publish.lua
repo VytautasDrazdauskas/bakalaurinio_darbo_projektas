@@ -3,6 +3,7 @@ local mqtt = require "libraries.mqtt.init"
 local fileParser = require "libraries.file_parser"
 local common = require "libraries.common"
 local socket = require "libraries.socket"
+local aes = require "libraries.cryptography"
 
 function Path()
         local str = debug.getinfo(2, "S").source:sub(2)
@@ -100,7 +101,7 @@ function Loop(client,sleepDelay)
                 local message = common.ReadData(deviceMAC)
 
                 if (common.CheckPing("8.8.8.8") == true) then 
-                        common.PublishData(client,topic,message,aesKeyPath)
+                        common.PublishData(client,topic,message,aes.loadKey(aesKeyPath))
                         common.sleep(sleepDelay)
                 else
                         print("Signal is lost.")

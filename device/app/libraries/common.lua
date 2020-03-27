@@ -15,8 +15,8 @@ function common.sleep(n)  -- seconds
 end
 
 --MQTT publish
-function common.PublishData(client,topic,message,aesKeyPath)
-    local payload = aes.encrypt(aes.loadKey(aesKeyPath), message)
+function common.PublishData(client,topic,message,aesKey)
+    local payload = aes.encrypt(aesKey, message)
     client:publish{
             topic = topic,
             payload = payload,
@@ -37,6 +37,7 @@ function common.RestoreConnection(ip)
 
     IsSignalLost = false
     print("Connection with " .. ip .. " restored!")
+    io.popen("./run_daemon.sh reboot")
     return true
 end
 

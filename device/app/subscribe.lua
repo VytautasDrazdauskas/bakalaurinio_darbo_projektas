@@ -49,8 +49,8 @@ local config_topic = device_root_topic .. "/setconfig"
 
 --Publish topics
 local pub_topic = device_root_topic .. "/jsondata"
-local control_response_topic = device_root_topic .. "/control/response"
-local setconfig_response_topic = device_root_topic .. "/setconfig/response"
+local control_response_topic = device_root_topic .. "/control/response/"
+local setconfig_response_topic = device_root_topic .. "/setconfig/response/"
 
 --parametrai nuskaitomi is konfiguracinio failo
 local brokerIP = fileParser.ReadFileData(configPath,"ip")
@@ -92,7 +92,16 @@ function Main()
                 message = function(msg)
                     --nusiunciam brokeriui ACK
                         assert(client:acknowledge(msg)) 
-                        local command = assert(aes.decryptPayload(msg.payload, aes.loadKey(aesKeyPath)))
+                        local data = json.decode(assert(aes.decryptPayload(msg.payload, aes.loadKey(aesKeyPath))))
+                        local aesKey = aes.loadKey(aesKeyPath)
+                        local command = data.command
+                        local response_id = data.response_id
+                        
+                        --prie response temos pridedam sesijos id
+                        if (response_id ~= nil) then
+                                control_response_id_topic = control_response_topic .. response_id
+                                setconfig_response_id_topic = setconfig_response_topic .. response_id
+                        end
 
                         if (command == nil) then 
                                 print("Duomenys neiššifruoti")
@@ -114,7 +123,9 @@ function Main()
                                         socket.sleep(1)
                                         serial.Serial_write(serialClient,"ACT3 OFF")
                                         --Responsas
-                                        common.PublishData(client,control_response_topic,common.ResponseJson(true,"Command successfully executed!"), aesKeyPath)
+                                        if(response_id ~= nil) then
+                                                common.PublishData(client,control_response_id_topic,common.ResponseJson(true,"Command successfully executed!"), aesKey)
+                                        end
                                         -- tik po to perkraunam
                                         io.popen("reboot")
                                 elseif (command == "ACT ALL ON") then
@@ -136,10 +147,10 @@ function Main()
                                         sendResponse = true
                                 end
                                 
-                                if (sendResponse == true) then
+                                if (sendResponse == true and response_id ~= nil) then
                                         local message = common.ReadData(deviceMAC)
-                                        common.PublishData(client,control_response_topic,common.ResponseJson(true,"Command successfully executed!"), aesKeyPath)
-                                        common.PublishData(client,pub_topic,message, aesKeyPath)
+                                        common.PublishData(client,control_response_id_topic,common.ResponseJson(true,"Command successfully executed!"), aesKey)
+                                        common.PublishData(client,pub_topic,message, aesKey)
                                 end
                         elseif (topic_type == "/setconfig") then
                                 local config_type = string.match(command, "(.+)%=(.+)")
@@ -156,23 +167,27 @@ function Main()
                                         res = fileParser.UpdateFileData(configPath,config_type,config_value)
                                 elseif (config_type == "newaeskey") then --atnaujinamas aes raktas. Pirma issiunciam patvirtinima, po to keiciam ir perkraunam
                                         print("Keiciamas AES raktas...")
-                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(true,"AES key has been changed!"), aesKeyPath)
                                         res = fileParser.OverwriteFileData(aesKeyPath,config_value)
+
+                                        if res == 0 and response_id ~= nil then
+                                                common.PublishData(client,setconfig_response_id_topic,common.ResponseJson(true,"AES key has been changed!"), aesKey)    
+                                        else
+                                                common.PublishData(client,setconfig_response_id_topic,common.ResponseJson(false,"AES key has not been changed!"), aesKey) 
+                                        end
                                         return
                                 end
                                 print(res)
                                 print(setconfig_response_topic)
 
-                                if (res == 0) then
-                                        -- tik po to perkraunam
-                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(true,config_type .. " changed to " .. config_value .. ". Restarting."), aesKeyPath)
+                                if (res == 0 and response_id ~= nil) then
+                                        common.PublishData(client,setconfig_response_id_topic,common.ResponseJson(true,config_type .. " changed to " .. config_value .. ". Restarting."), aesKey)
                                         io.popen("./run_daemon.sh restart")
                                 elseif (res == 1) then
-                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"Same value."), aesKeyPath)
+                                        common.PublishData(client,setconfig_response_id_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"Same value."), aesKey)
                                 elseif (res == -1) then
-                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"File does not exist."), aesKeyPath)
+                                        common.PublishData(client,setconfig_response_id_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"File does not exist."), aesKey)
                                 else
-                                        common.PublishData(client,setconfig_response_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"Unknown reason."), aesKeyPath)
+                                        common.PublishData(client,setconfig_response_id_topic,common.ResponseJson(false,config_type .. " was not changed to " .. config_value,"Unknown reason."), aesKey)
                                 end                        
                         end
                         

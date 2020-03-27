@@ -2,34 +2,34 @@
 from service.helpers.cryptography import AESCipher
 import binascii
 import json
-from service.aes_scheduler_service import AesScheduler
+# from service.aes_scheduler_service import AesScheduler
 
-scheduler_service = AesScheduler()
-scheduler_service.start()  
+# scheduler_service = AesScheduler()
+# scheduler_service.start()  
 
-# aes = AESCipher()
+aes = AESCipher()
 
 # #key = aes.generate_key("slaptas laptazodis")
 # #print(len(key))
 
 # #aes.save_key(key, "C493000EFEA1")
-# payload = '{"data":"B64A2C06F4FB31A0E11209F3EFC702EC445F11372D240ACD0390B6E4685447D0527BDBA0A6E8666D7B08C96E412AA0E89E06209C26F647664C7D3F7E7A22A72AD3A80EBF064E54E5EA26F178D9837751FA59043EF3415296E87BA6FB98B5AAE2","iv":[237,225,245,67,226,76,194,231,193,123,87,104,126,100,183,22]}'
-# #key = aes.load_key("key1")
+payload = '{"data":"EA8CF363C33F552E8DEC77A0CDB4FE101C5C280F6DE77D72B085A9FD82036BC1FB2AD5BBC213CF568BA44B2953F9C3D4D3087DF3CBC7D5DC924CCA8886421BB843D870B03E1171C86AD32934BF5DBDD2632BE3B08251B7C71C83C6BB0E60F1AB","iv":[1,85,106,86,211,95,94,51,191,154,5,206,75,210,87,128]}'
+#key = aes.load_key("key1")
 # #message = "ACT ALL ON;"
 
 # #enc = aes.encrypt(message,key)
 
 # #data = json.dumps(enc)
 
-# loaded_key = aes.load_key("C493000EFEA1")
-# enc2 = json.loads(payload)
+loaded_key = aes.load_key("C493000EFEA1")
+enc2 = json.loads(payload)
 
 # if('iv' in enc2):
 #     print('t')
 
-# dec = aes.decrypt(enc2,loaded_key)
+dec = aes.decrypt(enc2,loaded_key)
 
 # #dec1 = aes.decrypt(enc,loaded_key)
 
-# print(dec)
+print(dec)
 # #print(dec1)

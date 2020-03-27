@@ -8,6 +8,7 @@ from app.cryptography import AESCipher
 import time
 import os
 import ssl
+from uuid import uuid4
 
 response = ""
 
@@ -24,21 +25,27 @@ class MQTTPublishWithResponse(Resource):
                 return {"success": False, "reason": "No data provided"}, 400
 
             topic = data.topic
-            response_topic = data.response_topic
+            response_id = str(uuid4())
+            response_topic = data.response_topic + "/" + response_id          
             mac = data.mac        
             timeout = data.timeout
             
+            payload = {
+                "command":data.message,
+                "response_id":response_id
+            }
+
             #tikriname, ar egzistuoja AES raktas
             aes = AESCipher()
             if (mac is not None):
                 key = aes.load_key(filename=mac)
                 if key is not None:
-                    enc = aes.encrypt(plain_text=data.message, key=key)
+                    enc = aes.encrypt(plain_text=json.dumps(payload), key=key)
                     message = json.dumps(enc)
                 else:
-                    message = json.dumps(data.message)
+                    return {"success": False, "reason": "AES key not found."}, 400
             else:
-                message = json.dumps(data.message)
+                return {"success": False, "reason": "Mac is empty."}, 400
                 
 
             global response
@@ -103,13 +110,17 @@ class MQTTPublish(Resource):
             response_topic = data.response_topic
             mac = data.mac        
             timeout = data.timeout
+
+            payload = {
+                "command":data.message
+            }
             
             #tikriname, ar egzistuoja AES raktas
             aes = AESCipher()
             if (mac is not None):
                 key = aes.load_key(filename=mac)
                 if key is not None:
-                    enc = aes.encrypt(plain_text=data.message, key=key)
+                    enc = aes.encrypt(plain_text=json.dumps(payload), key=key)
                     message = json.dumps(enc)
                 else:
                     message = json.dumps(data.message)
