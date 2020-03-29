@@ -17,7 +17,7 @@ class AESCipher(object):
             iv = secrets.randbits(256)
             iv_vector = pyaes.Counter(iv)
             aes = pyaes.AESModeOfOperationCTR(key, pyaes.Counter(iv))
-            data = aes.encrypt(plain_text + ";")
+            data = aes.encrypt(plain_text + ";;")
             hex = binascii.hexlify(data)
             return {'data':hex.decode("ASCII"),'iv':iv_vector.value}
         except Exception as ex:
@@ -29,7 +29,7 @@ class AESCipher(object):
             iv = IV(enc['iv'])
             aes = pyaes.AESModeOfOperationCTR(key, iv)
             result = aes.decrypt(binascii.unhexlify(enc['data'])).decode('utf-8')
-            return result.split(';')[0]  #grazinam viska iki terminatoriaus
+            return result.split(';;')[0]  #grazinam viska iki terminatoriaus
         except Exception as ex:
             return None
 

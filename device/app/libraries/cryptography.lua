@@ -8,12 +8,7 @@
 local String = require("string");
 local Array = require("libraries.lockbox.util.array");
 local Stream = require("libraries.lockbox.util.stream");
-local ECBMode = require("libraries.lockbox.cipher.mode.ecb");
-local CBCMode = require("libraries.lockbox.cipher.mode.cbc");
-local CFBMode = require("libraries.lockbox.cipher.mode.cfb");
-local OFBMode = require("libraries.lockbox.cipher.mode.ofb");
 local CTRMode = require("libraries.lockbox.cipher.mode.ctr");
-local IGEMode = require("libraries.lockbox.cipher.mode.ige");
 local ZeroPadding = require("libraries.lockbox.padding.zero");
 local AES256Cipher = require("libraries.lockbox.cipher.aes256");
 local json = require "libraries.json"
@@ -35,7 +30,7 @@ end
 function crypto.encrypt(key,data)
     --generuojamas inicializacinis vektorius
     local iv = crypto.generateIV()
-    local message = data .. ";"
+    local message = data .. ";;"
     local chiperData = {
         cipher = CTRMode.Cipher,
         iv = iv,
@@ -102,8 +97,9 @@ function crypto.decrypt(iv,key,data)
                         .finish()
                         .asHex(), "nepavyko issifruoti");
 
-    local result = string.fromhex(plainOutput)
-    return string.match(result, "(.+)%;(.+)")
+    local decoded = string.fromhex(plainOutput)
+    local result = string.match(decoded, "(.+)%;;(.+)")
+    return result
 end
 
 function crypto.decryptPayload(payload, key)
@@ -113,19 +109,13 @@ function crypto.decryptPayload(payload, key)
         data = parsed_payload.data
     }
 
-    print(data.iv)
-    print("data: " .. data.data)
-    print("Key: " .. key)
-
-    local result = assert(crypto.decrypt(data.iv, key, data.data))
+    local result = crypto.decrypt(data.iv, key, data.data)
     return result
 end
 
 function crypto.loadKey(keyPath)
-    --uzkraunam rakto hex
     local key_file = io.open(keyPath,"rb")
     local key = key_file:read()
-    --print(key)
     key_file:close()
     return key
 end

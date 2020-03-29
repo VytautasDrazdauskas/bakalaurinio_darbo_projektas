@@ -92,7 +92,9 @@ function Main()
                 message = function(msg)
                     --nusiunciam brokeriui ACK
                         assert(client:acknowledge(msg)) 
-                        local data = json.decode(assert(aes.decryptPayload(msg.payload, aes.loadKey(aesKeyPath))))
+                        local json_payload = aes.decryptPayload(msg.payload, aes.loadKey(aesKeyPath))
+                        print(json_payload)
+                        local data = json.decode(json_payload)
                         local aesKey = aes.loadKey(aesKeyPath)
                         local command = data.command
                         local response_id = data.response_id

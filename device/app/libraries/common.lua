@@ -3,15 +3,13 @@ local fileParser = require "libraries.file_parser"
 local serialController = require "libraries.rs232_controller"
 local socket = require "libraries.socket"
 local aes = require "libraries.cryptography"
-local clock = os.clock
 
 local common = {}
 
 
-function common.sleep(n)  -- seconds
-   local t0 = clock()
-   while clock() - t0 <= n do
-   end
+function common.sleep(s)  -- seconds
+    local ntime = os.time() + s
+    repeat until os.time() > ntime
 end
 
 --MQTT publish

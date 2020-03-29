@@ -68,7 +68,7 @@ class MQTTPublishWithResponse(Resource):
             # sukuriam klienta
             client = mqtt.Client()
             client.on_message = on_message
-            #client.tls_set(ca_certs=config.broker.cafile, certfile=config.broker.clientCert, keyfile=config.broker.clientKey)
+            client.tls_set(ca_certs=config.broker.cafile, certfile=config.broker.clientCert, keyfile=config.broker.clientKey)
 
             # prisijungiam prie brokerio su confige esanciais parametrais
             client.connect(host=config.broker.host, port=config.broker.port)
@@ -129,7 +129,7 @@ class MQTTPublish(Resource):
             
             # sukuriam klienta
             client = mqtt.Client()
-            #client.tls_set(ca_certs=config.broker.cafile, certfile=config.broker.clientCert, keyfile=config.broker.clientKey)
+            client.tls_set(ca_certs=config.broker.cafile, certfile=config.broker.clientCert, keyfile=config.broker.clientKey)
 
             # prisijungiam prie brokerio su confige esanciais parametrais
             client.connect(host=config.broker.host, port=config.broker.port)

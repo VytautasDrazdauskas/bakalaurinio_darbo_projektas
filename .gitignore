@@ -47,3 +47,10 @@ integration_service/service/helpers/__pycache__/loadConfig.cpython-36.pyc
 integration_service/service/lib/__pycache__/json2obj.cpython-36.pyc
 integration_service/service/lib/__pycache__/json2obj.cpython-36.pyc
 orbit-2.2.4-1.src.rock
+device_web
+
+device/iot-dev-certs/ca.crt
+device/iot-dev-certs/client.crt
+device/iot-dev-certs/client.csr
+device/iot-dev-certs/client.key
+device_web/orbit
