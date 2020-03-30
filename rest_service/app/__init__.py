@@ -11,7 +11,7 @@ api = Api(api_bp)
 # Route
 api.add_resource(MQTTPublishWithResponse, '/mqtt/publish-response')
 api.add_resource(MQTTPublish, '/mqtt/publish')
-api.add_resource(DeviceKeyGen,'/mqtt/device-key-gen')
+api.add_resource(DeviceKeyGen,'/admin/device-key-gen')
 
 app = Flask(__name__)
 

@@ -10,6 +10,6 @@
     "port": "4444",
     "publishResp": "/mqtt/publish-response",
     "publish": "/mqtt/publish",
-    "deviceKeyGen": "/mqtt/device-key-gen"
+    "deviceKeyGen": "/admin/device-key-gen"
   }
 }
