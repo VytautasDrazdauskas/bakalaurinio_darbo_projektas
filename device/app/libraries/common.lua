@@ -8,8 +8,7 @@ local common = {}
 
 
 function common.sleep(s)  -- seconds
-    local ntime = os.time() + s
-    repeat until os.time() > ntime
+    socket.sleep(s)
 end
 
 --MQTT publish

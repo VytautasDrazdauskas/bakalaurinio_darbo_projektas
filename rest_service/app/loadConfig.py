@@ -13,3 +13,6 @@ broker = JsonParse(config['broker'])
 
 #raktai
 keys = JsonParse(config['keys'])
+
+#irenginiu sertifikatai
+device_certs = JsonParse(config['deviceCerts'])

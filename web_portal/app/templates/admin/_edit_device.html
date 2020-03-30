@@ -2,20 +2,64 @@
 
 {% block boxContent %}
 <div class="tab-box">
-    <h1>Naujas IoT sistemos prietaisas</h1>
-    <form method="POST" action="/admin_panel/admin_edit_device">
-        <div class="form-container">
-            <div class="form-row">
-                <div class="form-label-column">
-                    {{ form.mac.label }}    
+    {% if form.id.data != None %}
+        <h1>IoT sistemos prietaisas</h1>
+    {% else %}
+        <h1>Naujas IoT sistemos prietaisas</h1>
+    {% endif %}
+    <div class="box"> 
+    {% if form.id.data != None %}
+        <form method="POST" action="{{ url_for('admin.admin_edit_device',id=form.id.data) }}">
+    {% else %}
+        <form method="POST" action="{{ url_for('admin.admin_create_device') }}">
+    {% endif %}        
+            {{ form.id }}  
+            <div class="form-container">
+                <div class="form-row">
+                    <div class="form-label-column">
+                        {{ form.mac.label }}    
+                    </div>
+                    <div class="form-value-column">
+                        {{ form.mac(id="mac", class="form-field") }}
+                    </div>
                 </div>
-                <div class="form-value-column">
-                    {{ form.mac(id="macField", class="form-field") }}
-                </div>
-            </div>                 
-        </div>                    
-        <input type="submit" class="fancy-button" value="Pateikti">       
-    </form>   
-    <button id="backBtn" class="fancy-button">Atgal</button>       
+                    {% if form.id.data != None %}
+                        <div class="form-row">
+                            <div class="form-label-column">
+                                {{ form.uuid.label }}    
+                            </div>
+                            <div class="form-value-column">
+                                {{ form.uuid(id="uuid", class="form-field", disabled="true") }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-label-column">
+                                {{ form.user.label }}    
+                            </div>
+                            <div class="form-value-column">
+                                {{ form.user(id="user", class="form-field", disabled="true") }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-label-column">
+                                {{ form.next_aes_key_change.label }}    
+                            </div>
+                            <div class="form-value-column">
+                                {{ form.next_aes_key_change(id="aes", class="form-field", disabled="true") }}
+                            </div>
+                        </div>
+                    {% endif %}
+                                 
+            </div>      
+            <div class="form-row">   
+                <div class="form-label-column">           
+                    <input type="submit" class="fancy-button" value="Išsaugoti prietaisą">    
+                </div>   
+        </form>   
+            <div class="form-value-column">
+                <button id="backBtn" class="fancy-button">Atšaukti</button>
+            </div>
+        </div>
+    </div>       
 </div>
 {% endblock %}

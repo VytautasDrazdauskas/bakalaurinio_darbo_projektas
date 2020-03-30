@@ -3,6 +3,7 @@ from flask import Flask
 from flask import Blueprint
 from flask_restful import Api
 from app.resources.mqtt_service import MQTTPublishWithResponse, MQTTPublish
+from app.resources.device_key_gen import DeviceKeyGen
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
@@ -10,6 +11,7 @@ api = Api(api_bp)
 # Route
 api.add_resource(MQTTPublishWithResponse, '/mqtt/publish-response')
 api.add_resource(MQTTPublish, '/mqtt/publish')
+api.add_resource(DeviceKeyGen,'/mqtt/device-key-gen')
 
 app = Flask(__name__)
 

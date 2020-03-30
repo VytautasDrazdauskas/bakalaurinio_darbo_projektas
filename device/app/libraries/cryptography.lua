@@ -11,9 +11,22 @@ local Stream = require("libraries.lockbox.util.stream");
 local CTRMode = require("libraries.lockbox.cipher.mode.ctr");
 local ZeroPadding = require("libraries.lockbox.padding.zero");
 local AES256Cipher = require("libraries.lockbox.cipher.aes256");
-local json = require "libraries.json"
+local json = require("libraries.json")
+
 
 local crypto = {}
+
+--String helperiai
+
+function string.split(str, sep)
+    local fields = {}
+
+    local sep = sep or " "
+    local pattern = string.format("([^%s]+)", sep)
+    string.gsub(str, pattern, function(c) fields[#fields + 1] = c end)
+
+    return fields
+end
 
 function string.fromhex(str)
     return (str:gsub('..', function (cc)
@@ -97,8 +110,8 @@ function crypto.decrypt(iv,key,data)
                         .finish()
                         .asHex(), "nepavyko issifruoti");
 
-    local decoded = string.fromhex(plainOutput)
-    local result = string.match(decoded, "(.+)%;;(.+)")
+    local decoded = string.fromhex(plainOutput)    
+    local result = string.split(decoded,";;")[1]
     return result
 end
 

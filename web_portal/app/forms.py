@@ -16,6 +16,13 @@ class ProfileForm(FlaskForm):
     
 class DeviceForm(FlaskForm):
     device_name = form.StringField('Prietaiso pavadinimas', validators=[DataRequired()])
+
+class DeviceAdminForm(FlaskForm):
+    id = form.HiddenField()
+    mac = form.StringField('MAC adresas', validators=[DataRequired()])
+    uuid = form.StringField('UUID identifikatorius')
+    user = form.StringField('Naudotojas')
+    next_aes_key_change = form.DateTimeField('Artimiausio AES rakto keitimo data')
     
 class DeviceConfigBaseForm(FlaskForm):
     config_name = form.StringField('Pavadinimas', validators=[DataRequired()])

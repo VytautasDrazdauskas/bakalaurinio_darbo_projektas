@@ -10,7 +10,6 @@
                     <th>MAC adresas</th>
                     <th>UUID numeris</th>
                     <th>Naudotojas</th>
-                    <th>Būsena</th>
                     <th></th>				
                 </tr>
             </thead>			
@@ -19,10 +18,36 @@
     </div>
 </div>
 <script>
-    $( window ).on( "load", loadDevicesTable );
+    $(document).ready(function () {
+
+            var table = $('#devicesTable').DataTable({
+                "ajax": {
+                    "url": "{{ url_for('admin.get_devices_list') }}",
+                    "data_type": "json",
+                    "dataSrc": "data",
+                    "contentType":"application/json",
+                    "error": function (xhr){
+                        notification("Klaida: " + xhr.responseText, 5000);
+                    }  
+                },
+                "columns": [
+                    {"data": "mac"},
+                    {"data": "uuid"},
+                    {"data": "user"},
+                    {"defaultContent": "<button1 class='fancy-button'>Redaguoti</button1>"}      
+                ]
+            });
+
+            $('#devicesTable tbody').on( 'click', 'button1', function () {
+                var data = table.row( $(this).parents('tr')).data();
+                var id = data.id
+
+                window.location = "{{ url_for('admin.admin_edit_device',id=Null) }}" + id;	//perziuros langas
+            });       
+        });
 
     $("#createDevice").click(function(){
-        window.location = "{{ url_for('admin.admin_edit_device') }}"
+        window.location = "{{ url_for('admin.admin_create_device') }}"
     });
 </script>
 {% endblock %}

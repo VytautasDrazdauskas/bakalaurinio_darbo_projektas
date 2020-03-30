@@ -2,8 +2,8 @@ import os
 from flask import Blueprint, render_template, request, redirect, flash, url_for
 from flask_login import login_required, current_user
 from app import ALLOWED_EXTENSIONS
-from app.forms import DeviceForm
-from app.controllers.admin_panel import get_profiles, get_system_devices, save_device_form
+from app.forms import DeviceAdminForm
+from app.controllers.admin_panel import get_profiles, get_system_devices, get_system_device, save_device_form
 from werkzeug.utils import secure_filename
 
 
@@ -37,11 +37,11 @@ def get_system_profiles():
 
 @admin.route('/admin-panel/get-system-devices')
 @login_required
-def get_system_devices():
+def get_devices_list():
     if (not current_user.is_admin):
         flash('Neteisėtas naudotojo veiksmas!')
 
-    return get_all_devices()
+    return get_system_devices()
 
 @admin.route('/admin-panel/analytics')
 @login_required
@@ -61,15 +61,36 @@ def admin_system_devices():
 
     return render_template('admin/_system_devices.html')
 
-@admin.route('/admin-panel/admin-edit-device', methods=('GET', 'POST'))
+@admin.route('/admin-panel/admin-create-device', methods=('GET', 'POST'))
 @login_required
-def admin_edit_device():
+def admin_create_device():
     if (not current_user.is_admin):
         flash('Neteisėtas naudotojo veiksmas!')
         return render_template('error_page.html')
 
-    form = DeviceForm()
+    form = DeviceAdminForm()
     if form.is_submitted():
-        response = save_device_form(form)
-        return redirect('/admin/_systemDevices')
+        response = save_device_form(form=form)
+        return redirect(url_for('admin.admin_system_devices'))
+    
+    return render_template('admin/_edit_device.html', form=form)
+
+@admin.route('/admin-panel/admin-edit-device/<id>', methods=('GET', 'POST'))
+@login_required
+def admin_edit_device(id=None):
+    if (not current_user.is_admin):
+        flash('Neteisėtas naudotojo veiksmas!')
+        return render_template('error_page.html')
+
+    form = DeviceAdminForm()
+    if form.is_submitted():
+        response = save_device_form(form=form)
+        return redirect(url_for('admin.admin_system_devices'))
+
+    device = get_system_device(id=int(id))
+    form.id.data = device.id
+    form.mac.data = device.mac
+    form.uuid.data = device.uuid
+    form.user.data = device.user.email if device.user != None else "Nepriskirta"
+    form.next_aes_key_change.data = device.aes_key_change_date
     return render_template('admin/_edit_device.html', form=form)

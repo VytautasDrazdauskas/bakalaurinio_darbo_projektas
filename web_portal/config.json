@@ -7,8 +7,9 @@
   },
   "restful": {
     "host": "127.0.0.1",
-    "port": "5000",
+    "port": "4444",
     "publishResp": "/mqtt/publish-response",
-    "publish": "/mqtt/publish"
+    "publish": "/mqtt/publish",
+    "deviceKeyGen": "/mqtt/device-key-gen"
   }
 }

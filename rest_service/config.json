@@ -4,9 +4,13 @@
     "port": 1883,
     "cafile": "/home/vytdra/rest_service/ca.crt",
     "clientCert": "/home/vytdra/server_certificates/restful-service-certs/client.crt",
-    "clientKey": "/home/vytdra/server_certificates/restful-service-certs/client.key"
+    "clientKey": "/home/vytdra/server_certificates/restful-service-certs/client.key",
+    "caPassword": "slaptasSlaptazodis"
   },
   "keys":{
     "directory": "/mnt/d/VGTU_bakalauras/IV_kursas/bakalaurinis_darbas/Repository/integration_service/device_keys/"
+  },
+  "deviceCerts":{
+    "directory":"/mnt/d/VGTU_bakalauras/IV_kursas/bakalaurinis_darbas/Repository/integration_service/device_certs/"
   }
 }

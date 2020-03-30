@@ -36,10 +36,10 @@ class Devices(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     mac = db.Column(db.String(12), unique=True)
     uuid = db.Column(db.String(36), unique=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True, default=None)
     aes_key_change_date = db.Column(db.DateTime, nullable=True, default=None)
 
-    def __init__(self, mac, user_id, aes_key_change_date=None):
+    def __init__(self, mac, user_id=None, aes_key_change_date=None):
         self.uuid = str(uuid4())
         self.mac = mac
         self.user_id = user_id

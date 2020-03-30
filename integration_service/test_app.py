@@ -2,6 +2,7 @@
 from service.helpers.cryptography import AESCipher
 import binascii
 import json
+import os
 # from service.aes_scheduler_service import AesScheduler
 
 # scheduler_service = AesScheduler()
@@ -34,4 +35,11 @@ payload = '{"data":"EA8CF363C33F552E8DEC77A0CDB4FE101C5C280F6DE77D72B085A9FD8203
 dec = payload.split(';;')[0]
 
 print(dec)
-# #print(dec1)
+import subprocess
+
+res = subprocess.check_call(["ls","-al"])
+print(res)
+
+isDir = os.path.isdir("./tmp")
+
+print(isDir)
