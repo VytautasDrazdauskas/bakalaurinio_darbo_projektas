@@ -32,8 +32,6 @@ class AesScheduler():
         
         for device in devices_to_update:
           try:
-            logger.log_aes_scheduler("Updating device AES key. Device MAC: " + device.mac)
-
             user = session.query(model.Users).filter_by(id=device.user_id).first()
 
             #sukuriama naudotojo db sesija          
@@ -42,7 +40,10 @@ class AesScheduler():
             
             #busena turi buti aktyvi
             if (user_device.status != enums.DeviceState.Active.value):
+              device.aes_key_change_date = today + timedelta(seconds=user_device.aes_key_interval)
+              device_controller.save_device_history(user_session,user_device, "Prietaiso AES raktas nepakeistas. Kitas bandymas: " + str(device.aes_key_change_date))
               user_session.close()
+              session.commit()
               continue
 
             #sugeneruojamas naujas AES raktas ir konvertuojama i HEX

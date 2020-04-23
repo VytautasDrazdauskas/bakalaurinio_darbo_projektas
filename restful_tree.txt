@@ -1,0 +1,12 @@
+.
+├── app
+│   ├── __init__.py
+│   ├── cryptography.py
+│   ├── json2obj.py
+│   ├── loadConfig.py
+│   └── resources
+│       ├── device_key_gen.py
+│       └── mqtt_service.py
+├── config.json
+└── send_to_server.sh
+

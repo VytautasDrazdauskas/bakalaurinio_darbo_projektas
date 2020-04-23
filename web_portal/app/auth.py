@@ -84,7 +84,7 @@ def signup_post():
 
         return redirect(url_for('auth.login'))
     except Exception as ex:
-        Logger.log_error(ex.args)
+        Logger.log_error(ex.args[0])
     finally:
         session.close()
 

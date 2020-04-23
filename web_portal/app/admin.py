@@ -5,7 +5,9 @@ from app import ALLOWED_EXTENSIONS
 from app.forms import DeviceAdminForm
 from app.controllers.admin_panel import get_profiles, get_system_devices, get_system_device, save_device_form
 from werkzeug.utils import secure_filename
-
+import pyqrcode
+import io
+import base64
 
 admin = Blueprint('admin', __name__)
 
@@ -93,4 +95,10 @@ def admin_edit_device(id=None):
     form.uuid.data = device.uuid
     form.user.data = device.user.email if device.user != None else "Nepriskirta"
     form.next_aes_key_change.data = device.aes_key_change_date
-    return render_template('admin/_edit_device.html', form=form)
+
+    #QR kodo sugeneravimas
+    c = pyqrcode.create(device.uuid)
+    s = io.BytesIO()
+    c.png(s,scale=4)
+    out = base64.b64encode(s.getvalue()).decode("ascii")
+    return render_template('admin/_edit_device.html', form=form, qr_code=out)

@@ -1,3 +1,5 @@
+#Paimta iš https://stackoverflow.com/questions/49084842/creating-a-python-object-from-a-json-string
+
 import json
 
 class JsonParse(object):

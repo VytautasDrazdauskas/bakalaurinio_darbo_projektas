@@ -469,6 +469,12 @@ input:checked + .slider:before {
   height: max-content;
 }
 
+p {
+  color: #026670;
+  font-family: "Trebuchet MS", Helvetica, sans-serif;
+  text-align: justify;
+}
+
 .box {
   background-color: #fff;
   border-radius: 6px;

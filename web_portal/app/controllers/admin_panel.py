@@ -66,7 +66,9 @@ def save_device_form(form):
         session.autocommit = False #neleis daryti auto commit, po kiekvieno objekto pakeitimo bus daromas flush.
         session.autoflush = True
 
-        if (form.id.data is None):   
+        id = int(form.id.data) if form.id.data is not None and form.id.data != '' else None
+
+        if (id is None):   
                     
             deviceObj = Devices(
                 mac = form.mac.data
@@ -84,17 +86,16 @@ def save_device_form(form):
 
             session.add(deviceObj)            
             flash('Prietaisas MAC: ' + deviceObj.mac + ' sukurtas!', 'success')  
-        else:
-            id = int(form.id.data)
+        else:            
             device = session.query(Devices).filter(Devices.id == id).first()
             device.mac = form.mac.data
             
         session.commit()
     except Exception as ex:
         session.rollback()        
-        Logger.log_error(ex.args)
+        Logger.log_error(ex.args[0])
         session.close()   
-        flash(ex.args, 'danger')
+        flash(ex.args[0], 'danger')
         return False
     finally:
         session.close()      

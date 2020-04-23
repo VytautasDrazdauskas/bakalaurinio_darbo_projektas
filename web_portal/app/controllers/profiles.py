@@ -55,8 +55,8 @@ def save_user_profile(form):
             flash('Klaidingas dabartinis naudotojo slaptažodis! Įveskite slaptažodi dar kartą!','danger')
             return -1
     except Exception as ex:
-        Logger.log_error(ex.args)
-        flash('Klaidos: ' + ex.args,'danger')
+        Logger.log_error(ex.args[0])
+        flash('Klaidos: ' + ex.args[0],'danger')
     finally:
         session.close()
 

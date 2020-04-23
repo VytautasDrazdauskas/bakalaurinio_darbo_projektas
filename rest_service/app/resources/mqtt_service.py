@@ -2,6 +2,7 @@ from flask_restful import Resource
 from flask import request
 import json
 import paho.mqtt.client as mqtt
+import paho.mqtt.publish as publish
 import app.loadConfig as config
 from app.json2obj import JsonParse
 from app.cryptography import AESCipher
@@ -106,13 +107,14 @@ class MQTTPublish(Resource):
             if not data:
                 return {"success": False, "reason": "No data provided"}, 400
 
+            response_id = str(uuid4())  
             topic = data.topic
-            response_topic = data.response_topic
-            mac = data.mac        
-            timeout = data.timeout
+            mac = data.mac   
+               
 
             payload = {
-                "command":data.message
+                "command":data.message,
+                "response_id":response_id
             }
             
             #tikriname, ar egzistuoja AES raktas
@@ -123,22 +125,23 @@ class MQTTPublish(Resource):
                     enc = aes.encrypt(plain_text=json.dumps(payload), key=key)
                     message = json.dumps(enc)
                 else:
-                    message = json.dumps(data.message)
+                    return {"success": False, "reason": "AES key not found."}, 400
             else:
-                message = json.dumps(data.message)
-            
-            # sukuriam klienta
-            client = mqtt.Client()
-            client.tls_set(ca_certs=config.broker.cafile, certfile=config.broker.clientCert, keyfile=config.broker.clientKey)
-
+                return {"success": False, "reason": "Mac is empty."}, 400
+                       
             # prisijungiam prie brokerio su confige esanciais parametrais
-            client.connect(host=config.broker.host, port=config.broker.port)
-            client.publish(topic=topic, payload=message, qos=2)
+            tls_config = {
+                'ca_certs':config.broker.cafile, 
+                'certfile':config.broker.clientCert, 
+                'keyfile':config.broker.clientKey
+            }
+
+            publish.single(topic=topic, payload=message, qos=2, hostname=config.broker.host, port=config.broker.port,tls=tls_config)
+
+            return {"success": True, "reason": "Completed"}, 200
 
         except Exception as ex:
-            return {"success": False, "reason": ex.args}, 400
-        finally:
-            return {"success": True, "reason": "All good."}, 200
-            client.disconnect()
+            return {"success": False, "reason": ex.args}, 400    
+            
 
         

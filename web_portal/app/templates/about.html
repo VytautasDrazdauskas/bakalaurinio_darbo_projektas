@@ -1,13 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="has-text-centered">
+<div class="has-text-centered">     
 	<h1 class="title">
 		Apie projektą
 	</h1>
-	<h2 class="subtitle">
-		<p>	Šis projektas skirtas daiktų interneto sistemos valdymui.</p>
-		<p>	Bakalaurinį darbą atliko VGTU EF studentas Vytautas Drazdauskas.</p>
-	</h2>
+</div>
+<br>
+<div class="box" style="width: 800px;">              
+	<div class="has-text-centered">
+		
+		<h1 class="subtitle">
+				Pažangaus daiktų interneto sprendimo kūrimas
+		</h1>
+		<h1>
+				Bakalaurinį darbą atliko VGTU EF studentas Vytautas Drazdauskas.
+		</h1>
+	</div>
+	</br>
+	<img src="/static/scheme.png" class="system-schematics box" width="inherit">
+	<h1 class="subtitle">
+		Darbo tikslas
+	</h1>
+	<p>
+		Sukurti ir ištirti didelio našumo daiktų interneto įrenginius bei daiktų interneto įrenginių valdymo sistemą, kuri pasižymi paprasta naudotojo sąsaja, padidinta duomenų perdavimo sauga ir gebėjimu automatiškai konfigūruotis.
+	</p>
+	<br>
+
+	<h1 class="subtitle">
+		Duomenys ir reikalavimai
+	</h1>
+	<p>
+			Sprendimą turi sudaryti trys daiktų interneto įrenginiai su OpenWRT operacine sistema ir debesijoje patalpintais integracijų, duomenų bazės ir aplikacijų serveriais. Daiktų interneto įrenginiai tarpusavyje ir su serveriais turi komunikuoti naudojant 802.11s ryšio protokolą ir MQTT duomenų perdavimo protokolą.
+	Daiktų interneto įrenginiai jungiasi prie įgaliotojo įrenginio naudojant bevielio visuotinio pasiekiamumo tinklą. Perduodami duomenys visuomet yra šifruojami kintamu slaptažodžiu. Valdymo portale turi būti atvaizduojami prie naudotojo sistemos prijungti prietaisai, prietaisų perduoti duomenys, vartotojo sąsaja prietaisų valdymui ir automatinių darbų konfigūravimo sąsaja. Valdymo portalas turi naudoti debesijos kompiuterijos resursus ir būti pritaikytas daugeliui, vieno nuo kitų izoliuotų, vartotojų.
+	</p>
 </div>
 {% endblock %}

@@ -3,63 +3,93 @@
 {% block boxContent %}
 <div class="tab-box">
     {% if form.id.data != None %}
-        <h1>IoT sistemos prietaisas</h1>
+        <h3 class="title">IoT sistemos prietaisas</h3>
     {% else %}
-        <h1>Naujas IoT sistemos prietaisas</h1>
+        <h3 class="title">Naujas IoT sistemos prietaisas</h3>
     {% endif %}
     <div class="box"> 
-    {% if form.id.data != None %}
-        <form method="POST" action="{{ url_for('admin.admin_edit_device',id=form.id.data) }}">
-    {% else %}
+    {% if form.id.data == None %}
         <form method="POST" action="{{ url_for('admin.admin_create_device') }}">
     {% endif %}        
             {{ form.id }}  
             <div class="form-container">
-                <div class="form-row">
-                    <div class="form-label-column">
-                        {{ form.mac.label }}    
+                {% if form.id.data == None %}
+                    <div class="form-row">
+                        <div class="form-label-column">
+                            {{ form.mac.label }}    
+                        </div>
+                        <div class="form-value-column">
+                            {{ form.mac(id="mac", class="form-field") }}
+                        </div>
                     </div>
-                    <div class="form-value-column">
-                        {{ form.mac(id="mac", class="form-field") }}
+                {% else%}
+                    <div class="form-row">
+                        <div class="form-label-column">
+                            {{ form.mac.label }}    
+                        </div>
+                        <div class="form-value-column">
+                            {{ form.mac(id="mac", class="form-field", disabled="true") }}
+                        </div>
                     </div>
-                </div>
-                    {% if form.id.data != None %}
-                        <div class="form-row">
-                            <div class="form-label-column">
-                                {{ form.uuid.label }}    
-                            </div>
-                            <div class="form-value-column">
-                                {{ form.uuid(id="uuid", class="form-field", disabled="true") }}
-                            </div>
+                    <div class="form-row">
+                        <div class="form-label-column">
+                            {{ form.uuid.label }}    
                         </div>
-                        <div class="form-row">
-                            <div class="form-label-column">
-                                {{ form.user.label }}    
-                            </div>
-                            <div class="form-value-column">
-                                {{ form.user(id="user", class="form-field", disabled="true") }}
-                            </div>
+                        <div class="form-value-column">
+                            {{ form.uuid(id="uuid", class="form-field", disabled="true") }}
                         </div>
-                        <div class="form-row">
-                            <div class="form-label-column">
-                                {{ form.next_aes_key_change.label }}    
-                            </div>
-                            <div class="form-value-column">
-                                {{ form.next_aes_key_change(id="aes", class="form-field", disabled="true") }}
-                            </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label-column">
+                            {{ form.user.label }}    
                         </div>
-                    {% endif %}
+                        <div class="form-value-column">
+                            {{ form.user(id="user", class="form-field", disabled="true") }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-label-column">
+                            {{ form.next_aes_key_change.label }}    
+                        </div>
+                        <div class="form-value-column">
+                            {{ form.next_aes_key_change(id="aes", class="form-field", disabled="true") }}
+                        </div>                            
+                    </div>  
+                    <div class="form-row">
+                        <div class="form-label-column">
+                            <h1>QR kodas:</h1>  
+                        </div>
+                        <div class="form-value-column">
+                            <a download="QR-code.png" href="data:image/png;base64,{{ qr_code|safe }}">
+                                <img id="QRCodeImg" src=""> 
+                            </a>   
+                        </div>  
+                    </div>                            
+                {% endif %}
                                  
             </div>      
-            <div class="form-row">   
+            <div class="form-row">  
+        {% if form.id.data == None %}
                 <div class="form-label-column">           
                     <input type="submit" class="fancy-button" value="Išsaugoti prietaisą">    
-                </div>   
-        </form>   
+                </div>  
+            </form>
+        {% endif %}     
             <div class="form-value-column">
-                <button id="backBtn" class="fancy-button">Atšaukti</button>
+                <input type="button" id="back-btn" class="fancy-button" value="Atšaukti"></input>
             </div>
         </div>
     </div>       
 </div>
+<script>
+    $(document).ready(function () {
+        var byteArray = "{{ qr_code|safe }}"
+        $('#QRCodeImg').attr('src', `data:image/png;base64,${byteArray}`);
+
+        $('#back-btn').on('click', function () {            
+            window.location.href = "{{ url_for('admin.admin_system_devices') }}"
+        });
+    });
+    
+</script>
 {% endblock %}

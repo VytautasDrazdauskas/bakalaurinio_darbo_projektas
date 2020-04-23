@@ -145,8 +145,9 @@ def add_new_device(code, device_name, device_type):
                 topic = defaultUUID + "/" + systemName + "/" + device_in_main.mac + "/setconfig"
                 response_topic = topic + "/response"
 
-                response = Parse(MqttService.publish_with_response(
-                    topic, response_topic, payload, 10))
+                service = MqttService()
+
+                response = service.publish_with_response(topic, response_topic, payload, 10, new_device.mac)
 
                 if(response.success):
                     session.commit()
@@ -202,8 +203,8 @@ def get_user_devices():
             'data': [result.serialize for result in devicesArr]
         })
     except Exception as ex:
-        Logger.log_error(ex.args)
-        return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args)
+        Logger.log_error(ex.args[0])
+        return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args[0])
     finally:
         session.close()
 
@@ -351,8 +352,8 @@ def get_device_configurations(device_id):
         })
 
     except Exception as ex:
-        Logger.log_error(ex.args)
-        return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args)
+        Logger.log_error(ex.args[0])
+        return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args[0])
     finally:
         session.close()
 
@@ -382,9 +383,9 @@ def save_device_config(form, device, config_uuid):
             return flash('Rutininis darbas vykdomas pagal šią konfigūraciją! Atšaukite rutininį darbą!', 'danger')
 
     except Exception as ex:
-        Logger.log_error(ex.args)
+        Logger.log_error(ex.args[0])
         flash('Nenumatyta klaida išsaugant "' + device_config.name +
-              '" prietaisą! Klaida: ' + ex.args, 'danger')
+              '" prietaisą! Klaida: ' + ex.args[0], 'danger')
         session.rollback()
     finally:
         session.close()
@@ -452,8 +453,8 @@ def configure_device_jobs(device, device_config, is_active):
         main_db_session.commit()
         return JsonParse.decode_jsonify(jsonify(success=True))
     except Exception as ex:
-        Logger.log_error(ex.args)
-        return JsonParse.decode_jsonify(jsonify(success=False, message="Įvyko vidinė klaida:" + ex.args))
+        Logger.log_error(ex.args[0])
+        return JsonParse.decode_jsonify(jsonify(success=False, message="Įvyko vidinė klaida:" + ex.args[0]))
     finally:
         main_db_session.close()
 
@@ -494,8 +495,8 @@ def stop_job(device, config_uuid):
     except Exception as ex:
         session.rollback()
         main_db_session.rollback()
-        Logger.log_error(ex.args)
-        return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args)
+        Logger.log_error(ex.args[0])
+        return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args[0])
     finally:
         main_db_session.close()
         session.close()
@@ -539,8 +540,8 @@ def activate_device_configuration(device, config_uuid):
 
     except Exception as ex:
         session.rollback()
-        Logger.log_error(ex.args)
-        return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args)
+        Logger.log_error(ex.args[0])
+        return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args[0])
     finally:
         session.close()
 
@@ -565,8 +566,8 @@ def delete_device_config(device, config_uuid):
 
     except Exception as ex:
         session.rollback()
-        Logger.log_error(ex.args)
-        return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args)
+        Logger.log_error(ex.args[0])
+        return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args[0])
     finally:
         session.close()
 
@@ -577,7 +578,7 @@ def execute_device_action(id, command):
             session = create_user_session()
             device = session.query(models.UserDevices).filter_by(id=id).first()
 
-            if (device.status != enums.DeviceState.Active.value and device.status != enums.DeviceState.Registered.value):
+            if (device.status != enums.DeviceState.Active.value and device.status != enums.DeviceState.Registered.value and command != 'REBOOT'):
                 return messenger.raise_notification(False, 'Prietaisas nėra aktyvus! Negalima operacija!', )
 
             systemName = "system"
@@ -596,9 +597,9 @@ def execute_device_action(id, command):
                 session.commit()
                 payload = "reboot"
 
+            service = MqttService()
             # publishinam komanda
-            response = Parse(MqttService.publish_with_response(
-                topic, response_topic, payload, 10, device.mac))
+            response = service.publish_with_response(topic, response_topic, payload, 10, device.mac)
 
             if (response.success):
                 return messenger.raise_notification(True, 'Komanda įvykdyta sėkmingai!')
@@ -612,8 +613,8 @@ def execute_device_action(id, command):
 
         except Exception as ex:
             session.rollback()
-            Logger.log_error(ex.args)
-            return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args)
+            Logger.log_error(ex.args[0])
+            return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args[0])
         finally:
             session.close()
 
@@ -637,7 +638,7 @@ def save_device_aes_interval(device_id, interval):
 
         return messenger.raise_notification(True, 'AES rakto keitimo intervalas išsaugotas!')
     except Exception as ex:
-        Logger.log_error(ex.args)
+        Logger.log_error(ex.args[0])
         flash('Nenumatyta klaida')
         session.rollback()
         main_db_session.rollback()
@@ -668,9 +669,9 @@ def send_device_configuration(device_id, data_type, data):
             else:
                 return messenger.raise_notification(False, 'Komanda netinkamo tipo!')
 
+            service = MqttService()
             # publishinam komanda
-            response = Parse(MqttService.publish_with_response(
-                topic, response_topic, payload, 10, device.mac))
+            response = service.publish_with_response(topic, response_topic, payload, 10, device.mac)
 
             if (response.success):
                 if (data_type == 'interval'):
@@ -687,8 +688,8 @@ def send_device_configuration(device_id, data_type, data):
 
         except Exception as ex:
             session.rollback()
-            Logger.log_error(ex.args)
-            return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args)
+            Logger.log_error(ex.args[0])
+            return messenger.raise_notification(False, 'Įvyko vidinė klaida:' + ex.args[0])
         finally:
             session.close()
 

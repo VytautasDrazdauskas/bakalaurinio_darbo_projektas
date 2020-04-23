@@ -3,6 +3,7 @@ from flask import json, jsonify
 import time
 import app.load_config as app_config
 import requests
+from app.helpers.json2obj import JsonParse
 
 class MqttService():
 
@@ -21,4 +22,4 @@ class MqttService():
 
         with requests.Session() as session:
             response = session.put(url=self.url, json=data)            
-            return response.text
+            return JsonParse(response.text)
