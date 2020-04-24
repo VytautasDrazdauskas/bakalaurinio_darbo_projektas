@@ -4,8 +4,11 @@ def save_config(mesh_id, password, mesh_fwding):
     mesh_cmd = "wireless.@wifi-iface[0].mesh_id=" + mesh_id
     key_cmd = "wireless.@wifi-iface[0].key=" + password
 
-    if (mesh_fwding == None):
-        mesh_fwding = '0'
+    if (mesh_fwding == "on"):
+        mesh_fwding = "1"
+    else:
+        mesh_fwding = "0"
+
     fwding_cmd = "wireless.@wifi-iface[0].mesh_fwding=" + mesh_fwding
 
     subprocess.call(["uci", "set", mesh_cmd])
@@ -34,3 +37,12 @@ def reboot_wifi():
     subprocess.call(["wifi"])
 
     return 1
+
+def get_mac(interface):
+  try:
+    mac = open('/sys/class/net/'+interface+'/address').readline()
+  except:
+    mac = "00:00:00:00:00:00"
+  mac = mac[0:17]
+  result = mac.replace(':','')
+  return result.upper()

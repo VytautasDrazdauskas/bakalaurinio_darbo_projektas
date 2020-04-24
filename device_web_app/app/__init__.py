@@ -30,10 +30,18 @@ class Handler( BaseHTTPServer.BaseHTTPRequestHandler ):
         if (self.path == "/index" or self.path == "/"):
             self.wfile.write( open('views/index.htm').read())            
         elif (self.path == "/mesh"):
-            mesh_id = '1' #controllers.load_mesh_id()
-            password = '1' #controllers.load_key()
-            mesh_fwding = '1' #controllers.load_mesh_fwding()
-            self.wfile.write( open('views/mesh.htm').read().format(mesh_id=mesh_id, password=password, mesh_fwding=mesh_fwding))
+            mesh_id = controllers.load_mesh_id()
+            password = controllers.load_key()
+            mesh_fwding = controllers.load_mesh_fwding()
+            mac = controllers.get_mac("mesh0")
+
+            #vietoj JS
+            if ("1" in mesh_fwding):
+                mesh_fwding = "checked"
+            else:
+                mesh_fwding = ""
+
+            self.wfile.write( open('views/mesh.htm').read().format(mesh_id=mesh_id, password=password, mesh_fwding=mesh_fwding, mac=mac))
         elif (self.path == "/reboot-wifi"):
             controllers.reboot_wifi()
             self.wfile.write( open('views/success.htm').read())

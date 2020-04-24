@@ -14,13 +14,21 @@
             </div>
             <div>
                 <h2>IoT irenginio Mesh tinklo nustatymai (802.11s)</h2>
+                <div class="form-row">
+                    <div class="form-label-column">
+                        <h3>MAC:</h3>  
+                    </div>
+                    <div class="form-value-column">
+                        <h3>{mac}</h3>
+                    </div>
+                </div>
                 <form action="/mesh_save" method="post">
                 <div class="form-row">
                     <div class="form-label-column">
                         <h3>Mesh ID:</h3>  
                     </div>
                     <div class="form-value-column">
-                        <input class="input form-field" type="text" id="meshId" value="{mesh_id}" name="meshId">
+                        <input class="input form-field is-large" type="text" id="meshId" value="{mesh_id}" name="meshId">
                     </div>
                 </div>
                 <div class="form-row">
@@ -28,7 +36,7 @@
                         <h3>Slaptazodis:</h3> 
                     </div>
                     <div class="form-value-column">
-                    <input class="input form-field" type="password" id="password" value="{password}" name="password">
+                    <input class="input form-field is-large" type="password" id="password" value="{password}" name="password">
                     </div>
                 </div>   
                 <div class="form-row">
@@ -37,7 +45,7 @@
                     </div>
                     <div class="form-value-column">
                         <label class="switch">
-                            <input id="meshFwding" name="meshFwding" type="checkbox" value="{mesh_fwding}">
+                            <input id="meshFwding" name="meshFwding" type="checkbox" {mesh_fwding}>
                             <span class="slider round"></span>
                         </label>
                     </div>
