@@ -98,6 +98,11 @@ function Main()
                         local aesKey = aes.loadKey(aesKeyPath)
                         local command = data.command
                         local response_id = data.response_id
+
+                        --patikrinam, ar paketas nera dubliuotas
+                        if (response_id ~= nil and fileParser.IsDublicate(response_id)) then
+                                return -1
+                        end
                         
                         --prie response temos pridedam sesijos id
                         if (response_id ~= nil) then
@@ -107,7 +112,7 @@ function Main()
 
                         if (command == nil) then 
                                 print("Duomenys neiššifruoti")
-                                return 
+                                return -1
                         end
 
                         print("Komanda: " .. command)
@@ -171,6 +176,9 @@ function Main()
                                         print("Keiciamas AES raktas...")
                                         res = fileParser.OverwriteFileData(aesKeyPath,config_value)
 
+                                        --isvalomas paketu identifikatoriu failas
+                                        fileParser.ResetDublicateFile()
+
                                         if res == 0 and response_id ~= nil then
                                                 common.PublishData(client,setconfig_response_id_topic,common.ResponseJson(true,"AES key has been changed!"), aesKey)    
                                         else
@@ -178,8 +186,6 @@ function Main()
                                         end
                                         return
                                 end
-                                print(res)
-                                print(setconfig_response_topic)
 
                                 if (res == 0 and response_id ~= nil) then
                                         common.PublishData(client,setconfig_response_id_topic,common.ResponseJson(true,config_type .. " changed to " .. config_value .. ". Restarting."), aesKey)

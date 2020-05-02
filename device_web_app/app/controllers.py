@@ -34,7 +34,7 @@ def load_key():
     return password
 
 def reboot_wifi():
-    subprocess.call(["wifi"])
+    subprocess.Popen("sleep 3; wifi;", stdout=subprocess.PIPE, shell=True)
 
     return 1
 

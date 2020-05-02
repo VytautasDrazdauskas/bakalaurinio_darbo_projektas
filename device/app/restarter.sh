@@ -4,6 +4,8 @@ SCRIPT=$(readlink -f $0)
 SCRIPTPATH=`dirname $SCRIPT`
 
 mkdir -p restarter_logs
+rm restarter_logs/*
+rm restarter_log.txt
 
 while :
 do  

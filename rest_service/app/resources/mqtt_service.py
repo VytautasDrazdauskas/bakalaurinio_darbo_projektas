@@ -69,12 +69,11 @@ class MQTTPublishWithResponse(Resource):
             # sukuriam klienta
             client = mqtt.Client()
             client.on_message = on_message
-            client.tls_set(ca_certs=config.broker.cafile, certfile=config.broker.clientCert, keyfile=config.broker.clientKey)
 
             # prisijungiam prie brokerio su confige esanciais parametrais
             client.connect(host=config.broker.host, port=config.broker.port)
-            client.subscribe(topic=response_topic, qos=2)
-            client.publish(topic=topic, payload=message, qos=2)
+            client.subscribe(topic=response_topic, qos=0)
+            client.publish(topic=topic, payload=message, qos=0)
 
             # timeris
             start_time = time.time()
@@ -130,13 +129,8 @@ class MQTTPublish(Resource):
                 return {"success": False, "reason": "Mac is empty."}, 400
                        
             # prisijungiam prie brokerio su confige esanciais parametrais
-            tls_config = {
-                'ca_certs':config.broker.cafile, 
-                'certfile':config.broker.clientCert, 
-                'keyfile':config.broker.clientKey
-            }
 
-            publish.single(topic=topic, payload=message, qos=2, hostname=config.broker.host, port=config.broker.port,tls=tls_config)
+            publish.single(topic=topic, payload=message, qos=2, hostname=config.broker.host, port=config.broker.port)
 
             return {"success": True, "reason": "Completed"}, 200
 

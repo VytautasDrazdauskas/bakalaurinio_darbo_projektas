@@ -8,6 +8,10 @@ local function ReadLine(line,type)
         return result
 end
 
+local function isempty(s)
+        return s == nil or s == ''
+end
+
 function file_parser.GetData(string,type)
 	local result = nil
 	
@@ -75,6 +79,29 @@ function file_parser.UpdateFileData(pathToFile, type, inputData)
 
                 return 0
         end
+end
+
+--funkcijos skirtos paketo ID dublikato tikrinimui.
+--Paketo ID response_id saugomi tol, kol nepakeiciamas AES raktas
+function file_parser.IsDublicate(response_id)
+        local command = "cat temp_ids | grep " .. response_id
+        local handle = io.popen(command)
+        local result = handle:read("*a")
+        handle:close()
+
+        if (isempty(result)) then
+                local edit_command = "echo '" .. response_id .. "' >> temp_ids"
+                local handle = io.popen(edit_command)
+                return false
+        else
+                return true
+        end
+end
+
+function file_parser.ResetDublicateFile()
+        local command = "> temp_ids"
+        local handle = io.popen(command)
+        handle:close()
 end
 
 return file_parser

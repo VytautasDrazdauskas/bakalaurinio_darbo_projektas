@@ -1,15 +1,28 @@
 local rs232_controller = {}
 Serial = require ("luars232")
+local socket = require "socket"
+
+function file_exists(name)
+    local f=io.open(name,"r")
+    if f~=nil then io.close(f) return true else return false end
+ end
 
 --Sukuria klienta
 function rs232_controller.Serial_connect(port_name)
-    local e, c = Serial.open(port_name)
-    if e ~= Serial.RS232_ERR_NOERROR then
-        local err = Serial.error_tostring(e)
-        print("Serial port opening error: " .. err)
-        return nil,-1
+    local e, c = nil
+    while true do
+        if (file_exists(port_name)) then
+            e, c = Serial.open(port_name)
+            if e ~= Serial.RS232_ERR_NOERROR then
+                local err = Serial.error_tostring(e)
+                print("Serial port opening error: " .. err)
+                return nil,-1
+            end
+            break
+        end
+        print("neegzistuoja failas " .. port_name)
+        socket.sleep(5)
     end
-
     return c,1
 end
 
