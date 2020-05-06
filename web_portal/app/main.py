@@ -7,7 +7,7 @@ import app.controllers.profiles as profiles
 import app.controllers.devices as user_device
 import app.helpers.enums as enums
 from app.helpers.messaging import raise_notification
-from app.forms import NewDeviceForm, ProfileForm
+from app.forms import NewDeviceForm, ProfileForm, DeviceForm
 
 main = Blueprint('main', __name__)
 
@@ -48,6 +48,21 @@ def new_device():
     if form.validate_on_submit():
         user_device.new_device_post(request, form.device_name.data, form.device_type.data.value)
     return render_template('devices/new_device.html', form=form)
+
+@main.route('/edit-device/<id>', methods=['GET', 'POST'])
+@login_required
+def edit_device(id):    
+    form = DeviceForm() 
+    device = user_device.get_device_view_model(id)  
+
+    if form.validate_on_submit():
+        user_device.edit_device(id, form)
+    else:        
+        form.device_name.default = device.device_name
+        form.device_type.default = device.device_type
+        form.process()
+
+    return render_template('devices/edit_device.html', form=form, device=device)
 
 @main.route('/user-devices')
 @login_required

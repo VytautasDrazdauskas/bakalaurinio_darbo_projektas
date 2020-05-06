@@ -16,6 +16,7 @@ class ProfileForm(FlaskForm):
     
 class DeviceForm(FlaskForm):
     device_name = form.StringField('Prietaiso pavadinimas', validators=[DataRequired()])
+    device_type = form.SelectField('Prietaiso tipas', choices = DeviceType.choices(), coerce = DeviceType.coerce)
 
 class DeviceAdminForm(FlaskForm):
     id = form.HiddenField()

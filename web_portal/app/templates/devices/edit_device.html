@@ -1,0 +1,38 @@
+{% extends "/devices/device_panel.html" %}
+
+{% block boxContent %}
+<div class="tab-box">
+    
+        <div class="column is-4 is-offset-4  has-text-centered">
+            <h1 class="subtitle has-text-centered">Prietaiso redagavimas</h1> 
+            <div class="control-panel">
+                <div class="content-box">
+                    <h1 class="subtitle has-text-centered">Bendrieji parametrai</h1> 
+                    <form method=post enctype=multipart/form-data action="{{ url_for('main.edit_device', id=device.id) }}"> 
+                        {{ form.hidden_tag() }}
+                        <div class="form-row">
+                            <div class="form-label-column">
+                                {{ form.device_name.label }}    
+                            </div>
+                            <div class="form-value-column">
+                                {{ form.device_name(class="input form-field is-large") }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-label-column">
+                                {{ form.device_type.label }}
+                            </div>                     
+                            <div class="form-value-column">
+                                {{ form.device_type(class="input form-field is-large") }}
+                            </div>                 
+                        </div>   
+                    </div>
+                    </div>
+                </br>
+                <button style="float: right;" class="fancy-button" type="submit">Išsaugoti prietaisą</button>            
+            </form>
+            
+            <button id="back-btn" style="float: left;" class="fancy-button">Atšaukti</button>
+        </div>    
+</div>
+{% endblock %}

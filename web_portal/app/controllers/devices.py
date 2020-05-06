@@ -81,6 +81,26 @@ def new_device_post(request, device_name, device_type):
     else:
         flash("Failas nėra tinkamo formato!", "danger")
 
+def edit_device(id,form):
+    session = create_user_session()
+
+    try:
+        device = session.query(models.UserDevices).filter_by(id=id).first()
+
+        if(device is not None):
+            device.device_name = form.device_name.data
+            device.device_type = form.device_type.data.value
+        else:
+            flash("Prietaisas neegzistuoja!",'danger')
+
+        session.commit()
+        flash("Įrenginys išsaugotas!",'success')
+    except Exception as Ex:
+        Logger.log_error(Ex.args[0])
+        flash('Nenumatyta klaida: ' + Ex.args[0], 'danger')
+
+    finally:
+        session.close()
 
 def save_device_history(session, device, text):
     device_history = models.UserDeviceHistory(

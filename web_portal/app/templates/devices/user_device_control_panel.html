@@ -18,11 +18,16 @@
             {% include '/devices/common_partials/_common_control_panel.html' %}           
         <br/>
         <button id="back-btn" style="float: left;" class="fancy-button">Atšaukti</button>
+        <button id="edit-btn" style="float: left;" class="fancy-button">Redaguoti</button>
         <button id="refresh-btn" style="float: right;" class="fancy-button">Atnaujinti</button>
         <button id="reboot-btn" style="float: right;" class="fancy-button">Perkrauti prietaisą</button>      
         </div>
     </div>
     <script>
+        $('#edit-btn').on('click', function (){
+            window.location = "{{ url_for('main.edit_device', id=device.id) }}"
+        });
+
         $('#reboot-btn').on( 'click', function () {
             var device_id = "{{ device.id }}"
 
