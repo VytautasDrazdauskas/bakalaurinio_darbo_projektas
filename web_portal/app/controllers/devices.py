@@ -591,6 +591,43 @@ def delete_device_config(device, config_uuid):
     finally:
         session.close()
 
+def execute_device_command(id, command):
+    if current_user.is_authenticated:
+        try:
+            session = create_user_session()
+            device = session.query(models.UserDevices).filter_by(id=id).first()
+
+            systemName = "system"
+            topic = current_user.uuid + "/" + systemName + "/" + device.mac + "/control"
+            response_topic = topic + "/response"
+
+            service = MqttService()
+            # publishinam komanda
+            response = service.publish_with_response(topic, response_topic, command, 10, device.mac)
+
+            if (response.success):
+                return response.message
+            if (response.success is False and response.reason == "Time is up."):
+                device.status = enums.DeviceState.Offline.value
+                session.commit()
+                Logger.log_error(response.reason)
+                flash('Serviso klaida:' + response.reason, 'danger')
+                return -1
+            else:
+                flash('Įvyko vidinė klaida', 'danger')
+                return -1
+
+        except Exception as ex:
+            session.rollback()
+            Logger.log_error(ex.args[0])
+            flash('Įvyko vidinė klaida:' + ex.args[0], 'danger')
+            return -1
+        finally:
+            session.close()
+
+    else:
+        flash('Naudotojas nėra autentifikuotas!', 'danger')
+        return -1
 
 def execute_device_action(id, command):
     if current_user.is_authenticated:
@@ -659,7 +696,7 @@ def save_device_aes_interval(device_id, interval):
         return messenger.raise_notification(True, 'AES rakto keitimo intervalas išsaugotas!')
     except Exception as ex:
         Logger.log_error(ex.args[0])
-        flash('Nenumatyta klaida')
+        flash('Nenumatyta klaida', 'danger')
         session.rollback()
         main_db_session.rollback()
     finally:

@@ -65,6 +65,8 @@ function removeLoader() {
 }
 
 function notification(msg, duration) {
+  removeLoader();
+
   var el = document.createElement("div");
   el.setAttribute("class", "notification-box");
 
@@ -82,6 +84,8 @@ function notification(msg, duration) {
 }
 
 function notificationDanger(msg, duration) {
+  removeLoader();
+  
   var el = document.createElement("div");
   el.setAttribute("class", "notification-box-danger");
 
@@ -135,11 +139,9 @@ function ControlDevice(device_id, command) {
       command: command
     },
     success: function(response) {
-      removeLoader();
       getResponseMessage(response);
     },
     error: function(error) {
-      removeLoader();
       getErrorMessage(error);
     }
   });
@@ -155,12 +157,10 @@ function ConfigDevice(device_id, type, data) {
       type: type,
       data: data
     },
-    success: function(response) {
-      removeLoader();
+    success: function(response) {      
       getResponseMessage(response);
     },
     error: function(error) {
-      removeLoader();
       getErrorMessage(error);
     }
   });
@@ -335,7 +335,7 @@ function formatJsonDate(d) {
     s(d.getMonth() + 1, 2) +
     "-" +
     s(d.getDate(), 2) +
-    "T" +
+    " " +
     s(d.getHours(), 2) +
     ":" +
     s(d.getMinutes(), 2) +

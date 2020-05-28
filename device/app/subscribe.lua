@@ -12,6 +12,7 @@ function Path()
         return str:match("(.*/)")
 end
 
+
 PATH = Path();
 local configPath = PATH .. "../config.conf"
 
@@ -131,10 +132,15 @@ function Main()
                                         serial.Serial_write(serialClient,"ACT3 OFF")
                                         --Responsas
                                         if(response_id ~= nil) then
-                                                common.PublishData(client,control_response_id_topic,common.ResponseJson(true,"Command successfully executed!"), aesKey)
+                                                common.PublishData(client,control_response_id_topic,common.ResponseJson(true, "Command successfully executed!"), aesKey)
                                         end
                                         -- tik po to perkraunam
                                         io.popen("reboot")
+                                elseif (command == "getip") then
+                                        local localIP = common.GetLocalIP()
+                                        print(localIP)
+                                        common.PublishData(client, control_response_id_topic, common.ResponseJson(true, localIP), aesKey)
+                                        sendResponse = false
                                 elseif (command == "ACT ALL ON") then
                                         serial.Serial_write(serialClient,"ACT1 ON")
                                         socket.sleep(1)

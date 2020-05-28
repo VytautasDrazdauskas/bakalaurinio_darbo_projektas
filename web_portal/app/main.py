@@ -182,6 +182,17 @@ def configure_device():
         data = request.form['data']
     return user_device.send_device_configuration(device_id, data_type, data)
 
+@main.route('/device-network-config/<id>', methods=['GET'])
+def device_network_config(id):
+    if (id != None):
+        device_ip = user_device.execute_device_command(id, "getip")
+        if (device_ip != -1):
+            url = "http://" + device_ip + ":8080"
+            return redirect(url, code=302)
+        else: 
+            return redirect(url_for('main.edit_device', id=id), code=302)
+
+
 @main.route('/save-aes-interval', methods=['POST'])
 @login_required
 def save_aes_interval():  

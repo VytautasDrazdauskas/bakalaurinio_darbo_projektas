@@ -5,10 +5,10 @@
     <div class="form-row">
         <div class="form-label-column">
             <div class="form-value-column">
-                <input class="input form-field is-large" type="datetime-local" id="date-interval-from" placeholder="Data nuo" value="">
+                <input class="input form-field is-large" type="text" id="date-interval-from" placeholder="Data nuo" value="">
             </div> 
             <div class="form-value-column">
-                <input class="input form-field is-large" type="datetime-local" id="date-interval-to" placeholder="Data iki">
+                <input class="input form-field is-large" type="text" id="date-interval-to" placeholder="Data iki">
             </div> 
         </div>      
         <div class="form-label-column">
@@ -19,7 +19,15 @@
     <script>
         $(document).ready(function () {
             createLoader();
-            
+            $('#date-interval-from').Zebra_DatePicker({
+                format: 'Y-m-d H:i',
+                direction: false
+            });
+            $('#date-interval-to').Zebra_DatePicker({
+                format: 'Y-m-d H:i',
+                direction: false
+            });
+
             var deviceId = '{{ device.id }}';
             var dateTo = new Date($.now())
             var dateFrom = new Date($.now());
@@ -58,6 +66,11 @@
             var dateFrom = document.getElementById("date-interval-from").value;
             var dateTo = document.getElementById("date-interval-to").value;
             var resolution = document.getElementById("resolution-field").value;
+
+            if (dateFrom > dateTo){
+                notificationDanger("Pradžios data negali būti vėlesnė už pabaigos datą!",5000)
+                return
+            }
 
             $.ajax({
                 url: "{{ url_for('main.get_device_data_range') }}",

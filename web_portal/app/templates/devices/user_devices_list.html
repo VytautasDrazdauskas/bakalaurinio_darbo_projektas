@@ -38,11 +38,11 @@
                     {"data": "state"},
                     {"data": "date_added"},
                     {"data": "device_type_name"},
-                    {"defaultContent": "<button1 class='fancy-button'>Peržiūrėti</button1>"}      
+                    {"defaultContent": "<button class='fancy-button'>Peržiūrėti</button>"}      
                 ]
             });
 
-            $('#userDevicesTable tbody').on( 'click', 'button1', function () {
+            $('#userDevicesTable tbody').on( 'click', 'button', function () {
                 var data = table.row( $(this).parents('tr')).data();
                 var id = data.id
 

@@ -9,6 +9,14 @@ class DeviceState(enum.Enum):
     Deleted = 6
     Rebooting = 7
 
+class DeviceTransferState(enum.Enum):
+    Created = 1
+    Sent = 2
+    Received = 3
+    Transfered = 4
+    Canceled = 5
+    Rejected = 6
+
 class ConfigState(enum.Enum):
     Active = True
     Disabled = False

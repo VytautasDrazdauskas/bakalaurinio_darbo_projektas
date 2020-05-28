@@ -80,5 +80,19 @@ function common.ResponseJson(success, message, reason)
     return json.encode(response)
 end
 
+function common.GetLocalIP()
+    local command = "ifconfig br-mesh | grep -i mask | grep -o '[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}\\.[0-9]\\{1,3\\}' | head -n 1" 
+    local handler = io.popen(command)
+    local response = handler:read("*a")
+    handler:close()  
+
+    if response == nil then 
+        response = 'N/A' 
+    end
+
+    response = string.gsub(response, '^%s*(.-)%s*$', '%1')
+
+    return response
+end
 
 return common

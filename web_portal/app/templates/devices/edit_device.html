@@ -26,6 +26,14 @@
                                 {{ form.device_type(class="input form-field is-large") }}
                             </div>                 
                         </div>   
+                        <div class="form-row">
+                            <div class="form-label-column">
+                                Įrenginio tinklo nustatymai lokaliame tinkle
+                            </div>                     
+                            <div class="form-value-column">
+                                <button id="config-dev-btn" class="fancy-button" type="button">Konfigūratorius</button> 
+                            </div>                 
+                        </div>   
                     </div>
                     </div>
                 </br>
@@ -35,4 +43,13 @@
             <button id="back-btn" style="float: left;" class="fancy-button">Atšaukti</button>
         </div>    
 </div>
+ <script>
+        $('#config-dev-btn').on('click', function () {    
+            if (confirm("Ar jūs esate prisijungęs įrenginio tinkle?")){ 
+                createLoader();               
+                window.location.href = "{{ url_for('main.device_network_config', id=device.id) }}"                
+            }        
+            
+        });
+    </script>
 {% endblock %}
